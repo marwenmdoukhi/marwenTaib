@@ -1,0 +1,133 @@
+.d-flex {
+    display: flex;
+}
+.d-flex.flex-row {
+    flex-direction: row;
+}
+.d-flex.flex-row-reverse {
+    flex-direction: row-reverse;
+}
+.d-flex.flex-column {
+    flex-direction: column;
+}
+.d-flex.flex-column-reverse {
+    flex-direction: column-reverse;
+}
+.d-flex.justify-content-start {
+    justify-content: flex-start;
+}
+.d-flex.justify-content-end {
+    justify-content: flex-end;
+}
+.d-flex.justify-content-center {
+    justify-content: center;
+}
+.d-flex.justify-content-between {
+    justify-content: space-between;
+}
+.d-flex.justify-content-around {
+    justify-content: space-around;
+}
+.d-flex.align-items-start {
+    align-items: flex-start;
+}
+.d-flex.align-items-end {
+    align-items: flex-end;
+}
+.d-flex.align-items-center {
+    align-items: center;
+}
+.d-flex.align-items-baseline {
+    align-items: baseline;
+}
+.d-flex.align-items-stretch {
+    align-items: stretch;
+}
+.d-flex.align-content-start {
+    align-content: flex-start;
+}
+.d-flex.align-content-end {
+    align-content: flex-end;
+}
+.d-flex.align-content-center {
+    align-content: center;
+}
+.d-flex.align-content-around {
+    align-content: space-around;
+}
+.d-flex.align-content-between {
+    align-content: space-between;
+}
+.d-flex.align-content-stretch {
+    align-content: stretch;
+}
+.d-flex.flex-wrap {
+    flex-wrap: wrap;
+}
+.d-flex.flex-nowrap {
+    flex-wrap: nowrap;
+}
+.d-flex .align-self-start {
+    align-self: flex-start;
+}
+.d-flex .align-self-end {
+    align-self: flex-end;
+}
+.d-flex .align-self-center {
+    align-self: center;
+}
+.d-flex .align-self-baseline {
+    align-self: baseline;
+}
+.d-flex .align-self-stretch {
+    align-self: stretch;
+}
+.d-flex .flex-fill {
+    flex: 1 1 auto !important;
+}
+.d-flex .order-0 {
+    order: 0;
+}
+.d-flex .order-1 {
+    order: 1;
+}
+.d-flex .order-2 {
+    order: 2;
+}
+.d-flex .order-3 {
+    order: 3;
+}
+.d-flex .order-4 {
+    order: 4;
+}
+.d-flex .order-5 {
+    order: 5;
+}
+.d-flex .order-6 {
+    order: 6;
+}
+.d-flex .order-7 {
+    order: 7;
+}
+.d-flex .order-8 {
+    order: 8;
+}
+.d-flex .order-9 {
+    order: 9;
+}
+.d-flex .order-10 {
+    order: 10;
+}
+.d-flex .order-11 {
+    order: 11;
+}
+.d-flex .order-12 {
+    order: 12;
+}
+.d-inline-flex {
+    display: inline-flex;
+}
+
+.d-flex-grow-1 {
+    flex-grow: 1;
+}

@@ -1,0 +1,77 @@
+{% extends 'admin.html.twig' %}
+
+{% block title %}Edit Product{% endblock %}
+
+{% block body %}
+    <div class="sub-header-container">
+        <header class="header navbar navbar-expand-sm">
+            <nav class="breadcrumb-two" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('product_index') }}" >Produit</a>
+                    </li>
+                    <li class="breadcrumb-item active ml-2"><a href="javascript:void(0);">{{ Boutique.name }}</a></li>
+                </ol>
+            </nav>
+        </header>
+    </div>
+    <h1>Edit Product</h1>
+
+    {{ include('admin/product/_form.html.twig', {'button_label': 'Editer'}) }}
+
+    {% for image in Boutique.images %}
+        <div class="mb-3 mt-3">
+            <img src="{{ absolute_url(asset('uploads/produitmultiples/'~image.name)) }}" alt="" width="150">
+
+            {# On ajoute un lien permettant de supprimer une image (sera géré en Ajax) #}
+            <a href="{{ path('annonces_delete_image', {id: image.id})}}" data-delete data-token="{{ csrf_token('delete' ~ image.id )}}">Supprimer</a>
+        </div>
+    {% endfor %}
+
+{% endblock %}
+{% block javascripts %}
+
+<script>
+    if( $('#product_promo').is(':checked') ){
+        $("#promo").show ();
+    } else {
+        $("#promo").hide ();
+    }
+</script>
+
+    <script>
+        var secondUpload = new FileUploadWithPreview('product_imageFile')
+        var secondUpload = new FileUploadWithPreview('product_imagesmulisple')
+
+
+        $('#product_promo').on('change',function() {
+
+            if (product_promo.checked)
+            {
+
+                $("#promo").show ();
+            }
+            else
+            {
+                $("#promo").hide ();
+
+            }
+
+        });
+        var ss = $("#product_categories").select2({
+            tags: true,
+        });
+
+        var ss = $("#product_bois").select2({
+            tags: true,
+        });
+
+        var ss = $("#product_personnaliser").select2({
+            tags: true,
+        });
+
+    </script>
+
+
+    <script src="{{ asset('images.js') }}"></script>
+
+{% endblock %}

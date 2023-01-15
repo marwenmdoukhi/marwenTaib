@@ -1,0 +1,19 @@
+<table id="demandeterminer " class="table table-hover w-100" >
+    <thead>
+    <tr>
+        <th>Produit</th>
+        <th>QTE</th>
+        <th>Prix</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for detailcommande in detailcommande %}
+        <tr>
+            <td>{{ detailcommande.Product.name }}</td>
+            <td>{{  detailcommande.quantite}}</td>
+            <td>{{  detailcommande.Product.price |number_format(3, '.', ',')}}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

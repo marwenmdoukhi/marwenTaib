@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}e-Actes sous signature privée{% endblock %}
+
+{% block body %}
+
+    <div class="dashboard-panel" >
+        <dashboard-counsel>
+            <div class="spinner"></div>
+        </dashboard-counsel>
+    </div>
+{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <style type="text/css">
+        a#CybotCookiebotDialogPoweredbyCybot {
+            display: none;
+        }
+        div#CybotCookiebotDialogPoweredByText {
+            display: none;
+        }
+    </style>
+
+{% endblock %}
+{% block javascripts %}
+    <!-- Matomo -->
+
+    <script type="text/javascript">
+
+        var _paq = window._paq || [];
+
+        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+
+        _paq.push(['trackPageView']);
+
+        _paq.push(['enableLinkTracking']);
+
+        (function() {
+
+            var u="//stats.avocat.fr/";
+
+            _paq.push(['setTrackerUrl', u+'matomo.php']);
+
+            _paq.push(['setSiteId', {{ envId }}]);
+
+            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+
+            g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+
+        })();
+
+    </script>
+
+    <script type="text/javascript" language="javascript" src="{{ asset('dist/dashboard-counsel.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+{% endblock %}

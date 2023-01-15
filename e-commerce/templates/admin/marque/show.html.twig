@@ -1,0 +1,25 @@
+{% extends 'admin.html.twig' %}
+
+{% block title %}Marque{% endblock %}
+
+{% block body %}
+    <h1>Marque</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ marque.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ marque.name }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('marque_index') }}">back to list</a>
+
+    <a href="{{ path('marque_edit', {'id': marque.id}) }}">edit</a>
+
+{% endblock %}

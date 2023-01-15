@@ -1,0 +1,112 @@
+
+
+{{ form_start(form) }}
+<div class="row">
+
+    <div class="col-md-2">
+        <label>Nom du produit</label>
+        {{ form_widget(form.name) }}
+    </div>
+    <div class="col-md-2">
+        <label>Référence </label>
+        {{ form_widget(form.refrence) }}
+    </div>
+    <div class="col-md-2">
+        <label>Prix</label>
+        {{ form_widget(form.price) }}
+    </div>
+    <div class="col-md-2">
+        <label>SEX</label>
+        {{ form_widget(form.sex) }}
+    </div>
+    <div class="col-md-2">
+        <label>Promo</label>
+        {{ form_widget(form.promo) }}
+    </div>
+    <div class="col-md-2" id="promo" style="display: none">
+        <label>Reduction En %</label>
+        {{ form_widget(form.pricePromo) }}
+    </div>
+
+</div>
+<div class="row mt-2">
+
+    <div class="col-md-12">
+    <label>Description</label>
+        {{ form_widget(form.description) }}
+    </div>
+</div>
+
+<div class="row mt-2">
+
+    <div class="col-md-3">
+        <label>Categorie</label>
+        {{ form_widget(form.categories) }}
+    </div>
+    <div class="col-md-3">
+        <label>sub Categorie</label>
+        {{ form_widget(form.subCategory) }}
+    </div>
+    <div class="col-md-3">
+        <label>sub Categorie</label>
+        {{ form_widget(form.subSubCategories) }}
+    </div>
+    <div class="col-md-3">
+        <label>Marque</label>
+        {{ form_widget(form.marque) }}
+    </div>
+
+</div>
+
+
+<div class="custom-file-container" data-upload-id="product_imageFile">
+    <label>Ajouter Image Principale  <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
+    <label class="custom-file-container__custom-file" >
+        {{ form_widget(form.imageFile) }}
+        <input type="hidden" name="MAX_FILE_SIZE" value="10485760" />
+        <span class="custom-file-container__custom-file__custom-file-control"></span>
+    </label>
+    <div class="custom-file-container__image-preview"></div>
+</div>
+
+
+
+<div class="custom-file-container" data-upload-id="product_imagesmulisple">
+    <label>Ajouter  des Images "multiple" <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
+    <label class="custom-file-container__custom-file" >
+        {{ form_widget(form.images) }}
+        <input type="hidden" name="MAX_FILE_SIZE" value="10485760" />
+        <span class="custom-file-container__custom-file__custom-file-control"></span>
+    </label>
+    <div class="custom-file-container__image-preview"></div>
+</div>
+
+<div class="row mt-2 mb-2">
+
+    <div class="col-md-12">
+        <label>lien Youtube</label>
+        {{ form_widget(form.linkYoutube) }}
+    </div>
+</div>
+
+<div class="row mt-2 mb-2">
+
+    <div class="col-md-12">
+        <label>Facilté de Paiement</label>
+        {{ form_widget(form.easeOfPayment) }}
+    </div>
+</div>
+    <button class="btn btn-primary ">{{ button_label|default('Ajouter') }}</button>
+{{ form_end(form) }}
+
+
+
+<style>
+    input[type=number]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+    }
+</style>
+
+<script src="{{ asset('backadmin/plugins/file-upload/file-upload-with-preview.min.js') }}"></script>
+
+

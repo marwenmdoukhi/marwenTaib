@@ -1,0 +1,13 @@
+fos_rest:
+    body_converter:
+        enabled: true
+    routing_loader: false
+    allowed_methods_listener: true
+    view:
+        formats: { json: true, xml: false, rss: false }
+    serializer:
+        serialize_null: true
+    format_listener:
+        rules:
+            - { path: '^/api', fallback_format: json }
+            - { path: '^/', stop: true }

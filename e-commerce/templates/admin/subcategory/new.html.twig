@@ -1,0 +1,25 @@
+{% extends 'admin.html.twig' %}
+
+{% block title %}New Sub Category{% endblock %}
+{% block body %}
+
+    <div class="sub-header-container">
+        <header class="header navbar navbar-expand-sm">
+            <nav class="breadcrumb-two" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('sub_category_new') }}" >Sub categorie</a>
+                    </li>
+                    <li class="breadcrumb-item active ml-2"><a href="javascript:void(0);">Ajouter Sub categorie</a></li>
+                </ol>
+            </nav>
+
+        </header>
+    </div>
+    <h1>Liste Des Sub Categories</h1>
+
+
+    {{ include('admin/subcategory/_form.html.twig') }}
+
+
+
+{% endblock %}

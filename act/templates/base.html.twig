@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    {% block stylesheets %}
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
+        <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    {% endblock %}
+</head>
+<body>
+<!-- Side navigation -->
+<div class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-content">
+            <div class="logo">
+                <img alt="logo" src="{{ asset("logo/logo.svg") }}">
+            </div>
+
+            <div class="user-info">
+                {% if app.user.username %}
+                    {% if app.request.pathinfo == '/dashboard' %}
+                        <div class="username">Maître <span style="text-transform: uppercase;" >{{ app.user.name }}</span>
+                            <a style="float: right;cursor: pointer;width: 20px" onclick="callAngularFunction()" ><i class="fa fa-cog" style="color: white" alt=""></i></a>
+                        </div>
+                    {% elseif app.request.pathinfo == '/dashboard-counsel' %}
+                        <div class="username">Maître <span style="text-transform: uppercase;" >{{ app.user.name }}</span>
+                            <a style="float: right;cursor: pointer;width: 20px" onclick="callAngularFunctionForCouncel()" ><i class="fa fa-cog" style="color: white" alt=""></i></a>
+                        </div>
+                    {% elseif app.request.pathinfo == '/myact' %}
+                        <div class="username">Maître <span style="text-transform: uppercase;" >{{ app.user.name }}</span>
+                            <a style="float: right;cursor: pointer;width: 20px" onclick="callAngularFunctionForActs()" ><i class="fa fa-cog" style="color: white" alt=""></i></a>
+                        </div>
+                    {% elseif  app.request.pathinfo == '/contact'%}
+                        <div class="username">Maître <span style="text-transform: uppercase;" >{{ app.user.name }}</span>
+                            <a style="float: right;cursor: pointer;width: 20px" onclick="callAngularFunctionForContacts()" ><i class="fa fa-cog" style="color: white" alt=""></i></a>
+                        </div>
+                    {% elseif  app.request.pathinfo == '/informations'%}
+                            <div class="username">Maître <span style="text-transform: uppercase;" >{{ app.user.name }}</span>
+                                <a style="float: right;cursor: pointer;width: 20px" onclick="callAngularFunctionForInformation()" ><i class="fa fa-cog" style="color: white" alt=""></i></a>
+                            </div>
+                    {% elseif  app.request.pathinfo == '/faq'%}
+                            <div class="username">Maître <span style="text-transform: uppercase;" >{{ app.user.name }}</span>
+                                <a style="float: right;cursor: pointer;width: 20px" onclick="callAngularFunctionForFaq()" ><i class="fa fa-cog" style="color: white" alt=""></i></a>
+                            </div>
+                    {% endif %}
+                {% endif %}
+                <div class="user-role">
+                    {% if app.user.roles[0] == "ROLE_USER" %}
+                        <span class="role">Initiateur</span>
+                    {% else %}
+                        <span class="role">  Avocat validateur</span>
+                    {% endif %}
+                    <a href="{{ path('acts') }}"><img src="{{ asset("logo/switch.svg") }}" alt=""></a>
+                </div>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="active">
+                    {% if app.user.roles[0] == "ROLE_USER" %}
+                    <a href="{{ path('dashboard') }}">
+                        <img alt="folder" class="dossier" src="{{ asset('logo/dashboard.svg') }}">
+                        <span class="menu-title">Tableau de bord</span>
+                    </a>
+                    {% else %}
+                    <a href="{{ path('dashboard_counsel') }}">
+                        <img alt="folder" class="dossier" src="{{ asset('logo/dashboard.svg') }}">
+                        <span class="menu-title">Tableau de bord</span>
+                    </a>
+                    {% endif %}
+                </li>
+                <li>
+                    <a href="{{ path('act') }}">
+                        <img alt="folder" class="dossier" src="{{ asset('logo/dossier.svg') }}">
+                        <span class="menu-title">Mes actes</span>
+                    </a>
+                </li>
+                {% if app.user.roles[0]=='ROLE_USER' %}
+                    <li>
+                        <a href="{{ path('contact') }}">
+                            <img alt="folder" class="dossier" src="{{ asset('logo/white.svg') }}">
+                            <span class="menu-title">Contacts</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+            <div class="support-cnb">
+                <a class="button-text" href="{{ path('informations') }}">Informations légales</a>
+                <a class="button-aide" href="{{ path('faq') }}">Aide</a>
+                <br>
+                <a class="button-aide" href="#gestion-cookies"  data-toggle="modal" data-target="#gestion-cookies" rel="modal:open">Gestion des cookies</a>
+
+            </div>
+            <div class="sidebar-info-box">
+                <a class="social-list__link" target="_blank" href="https://www.facebook.com/Conseil.National.Barreaux"><i style="color: white" class="fa fa-facebook-f"></i></a>
+                <a class="social-list__link" target="_blank" href="https://twitter.com/cnbarreaux"><i style="color: white" class="fa fa-twitter"></i></a>
+                <a class="social-list__link" target="_blank" href="https://www.linkedin.com/company/conseil-national-des-barreaux---les-avocats"><i style="color: white" class="fa fa-linkedin"></i></a>
+                <a class="social-list__link" target="_blank" href="https://www.youtube.com/channel/UCTU74i6OWDKxH8viiBOhFfQ"><i style="color: white" class="fa fa-youtube-play"></i></a>
+
+            </div>
+
+            <div class="sidebar-disconnect">
+                <a data-target="#logout" data-toggle="modal" href="#logout" style="-ms-user-select: none;
+    user-select: none;text-decoration: none;background-color: transparent; outline-width: 0;">
+                    <img alt="logout" src="{{ asset('logo/deco.svg') }}">
+                    <span class="disconnect-text">Déconnexion</span>
+                </a>
+                {#                <img alt="logout" src="{{ asset('logo/white.svg') }}">#}
+                {#                <span class="disconnect-text">Déconnexion</span>#}
+            </div>
+            <div class="app-version">
+                {% if (app.request.server.get('APP_VERSION')) %}
+                <p class="text-version">Version {{ app.request.server.get('APP_VERSION') }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+    </nav>
+    {% block body %}{% endblock %}
+</div>
+<div class="modal fade" id="logout" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin: auto">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header"><h4 class="modal-title main-title">Déconnexion</h4></div>
+            <div class="modal-body" style="font-weight: bold">Êtes-vous sûr de vouloir quitter l’application?</div>
+            <div class="modal-footer">
+                <a style="margin-right: 2%;background-color: white;border-color: gray;color: black;text-decoration:none;" type="submit"
+                   class="btn next-button" data-dismiss="modal">Retour</a>
+                <a href="{{ path('logout') }}" type="submit" class="btn next-button pull-right">Valider</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="gestion-cookies" tabindex="-1" role="dialog" aria-labelledby="gestionCookies" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Gestion des cookies</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aia-hidden="true">&times;</span></button>
+
+            </div>
+            <div class="modal-body">
+                <script id="CookieDeclaration" src="https://consent.cookiebot.com/2286c416-2472-4e6e-9dc8-1af5d75c4b00/cd.js" type="text/javascript" async></script>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% block javascripts %}
+    <script src="{{ asset('css/jquery-1.12.0.min.js') }}"></script>
+    <!-- Bootstrap Js CDN -->
+    <script src="{{ asset('css/bootstrap.min.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $(".drop-down").click(function () {
+                $(".drop-down").toggleClass('selected-part');
+            });
+            $('.menu-button').click(function () {
+                $('.side-nav').animate({left: '-300px'}, 100);
+            });
+
+            $('.close-menu').click(function () {
+                $('.menu').animate({left: '-200px'}, 100);
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                $('#sidebarCollapse').toggleClass('button-position');
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        function showCookiebot(){
+            $(document).ready(function () {
+                CookieConsent.show();
+            });
+        }
+    </script>
+
+
+
+{% endblock %}
+<script>
+    function role(x) {
+        return x;
+    }
+</script>
+
+<script>
+    let routes = ['dashboard-counsel', 'myact'];
+    if (role("{{ app.user.roles[0] }}") === "ROLE_USER") {
+        routes = ['dashboard', 'myact', 'contact'];
+    }
+
+    window.onload = function () {
+        let listItems = document.querySelectorAll('.sidebar-menu li');
+        listItems.forEach(function (el, index) {
+            el.classList.remove('active');
+            if (window.location.pathname === '/' + (routes[index])) {
+                el.classList.add('active');
+            }
+        });
+
+
+        let wrapperEl = document.querySelector('.wrapper');
+        if (wrapperEl) {
+            wrapperEl.addEventListener('click', function (event) {
+                if (event.target.className === wrapperEl.className && wrapperEl.classList.contains('menu-open')) {
+                    wrapperEl.classList.remove('menu-open');
+                }
+            });
+        }
+    };
+</script>
+
+
+</body>
+<script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="2286c416-2472-4e6e-9dc8-1af5d75c4b00" data-blockingmode="auto" type="text/javascript"></script>
+<script>
+    function callAngularFunction() {
+        window.angularComponentReference.zone.run(() => { window.angularComponentReference.loadAngularFunction(); });
+    }
+    function callAngularFunctionForCouncel() {
+        window.angularComponentReference.zone.run(() => { window.angularComponentReference.loadAngularFunctionforCounsel(); });
+    }
+    function callAngularFunctionForActs() {
+        window.angularComponentReference.zone.run(() => { window.angularComponentReference.loadAngularFunctionforActs(); });
+    }
+    function callAngularFunctionForContacts() {
+        window.angularComponentReference.zone.run(() => { window.angularComponentReference.loadAngularFunctionforContacts(); });
+    }
+    function callAngularFunctionForInformation() {
+        window.angularComponentReference.zone.run(() => { window.angularComponentReference.loadAngularFunctionforInformation(); });
+    }
+    function callAngularFunctionForFaq() {
+        window.angularComponentReference.zone.run(() => { window.angularComponentReference.loadAngularFunctionforFaq(); });
+    }
+
+</script>
+
+</html>

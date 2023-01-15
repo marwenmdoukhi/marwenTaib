@@ -1,0 +1,50 @@
+#Configuration File
+#.env
+*.cmd
+*.ps1
+/.vs
+/.env.local
+/.env.local.php
+/.env.*.local
+/.idea
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/var/log
+/vendor/
+/bin/
+/public/404.html
+/public/logs.zip
+###< symfony/framework-bundle ###
+
+###> symfony/phpunit-bridge ###
+.phpunit
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###
+
+###> symfony/webpack-encore-bundle ###
+/front/node_modules/
+/public/build/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###
+*.pdf
+node_modules
+/public/verapdf/
+/src/assets/documents/
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###

@@ -1,0 +1,418 @@
+<p-toast position="top-right"></p-toast>
+<CreateSignataireComponent [vm]="vm" *ngIf="displayModalSignataire==true"></CreateSignataireComponent>
+<createAvocat [vm]="vm" *ngIf="displayModalAvocat==true"></createAvocat>
+<searchAvocat [vm]="vm" *ngIf="displaySearchAvocat==true"></searchAvocat>
+<displayComments [vm]="vm" *ngIf="vm.displayComments==true"></displayComments>
+<consultActArchive [vm]="vm" *ngIf="vm.displayArchive==true"></consultActArchive>
+
+
+<div class="search-header" [@slideInOut] *ngIf="!vm.displayAllResult  && vm.displayActeRefused && !vm.displayComments && !displayModalSignataire && !displayModalAvocat && !vm.displayArchive && !displaySearchAvocat">
+    <button class="btn burger-menu-btn visible-xs-block" (click)="vm.toggleSidebar()">
+        <img alt="" src="logo/burger.svg" />
+    </button>
+    <div class="search-input" [ngClass]="vm.inputReasearchBar ? 'search-focused' : ''">
+        <input type="text" id="input" [(ngModel)]="vm.inputReasearchBar"
+               pInputText (focus)="vm.displayDivForReasearchBar=true"
+               placeholder="Chercher un acte, un document, un contact" />
+        <img alt="" src="/logo/search.svg" />
+        <span *ngIf="vm.inputReasearchBar" class="glyphicon glyphicon-remove-sign" (click)="vm.displayDivForReasearchBar=false;vm.inputReasearchBar=null" style=" cursor:pointer; float: right; margin-top: -3%; margin-right: 1%;"></span>
+        <div *ngIf="vm.displayDivForReasearchBar" class="role-name-barre-recherche">
+            <div *ngFor="let c of (vm.allData | barPipe : vm.inputReasearchBar | slice:0:10)" (click)="vm.assignActeModel(c)" style="padding-left: 65px;">
+                <span *ngIf="c.nameActe" [inlineSVG]="'/logo/en-attente.svg'" style="margin-right: 2%; vertical-align: middle;"></span> <span *ngIf="c.nameActe" class="Affaire-Pauline-Grin">{{c.nameActe}}</span><span class="dfendeur" style="margin-left: 1%;" *ngIf="c.nameActe">acte</span>
+                <span *ngIf="c.contactName" [inlineSVG]="'/logo/yellow.svg'" style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.contactName" class="Affaire-Pauline-Grin">{{c.contactLastName | titlecase}} {{c.contactName | uppercase}} contact</span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.contactName">contact</span>
+                <span *ngIf="c.documentName" [inlineSVG]="'/logo/document.svg'" style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.documentName" class="Affaire-Pauline-Grin">{{c.documentName}}.pdf </span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.documentName">document</span>
+            </div>
+            <div *ngIf="vm.inputReasearchBar" class="role-name-barre-recherche" style="border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;border-top: 1px solid #dadada;">
+                <span class="Voir-tous-les-rsult" (click)="vm.displayAllResult=true;vm.displayDivForReasearchBar=false;" style="cursor:pointer;margin-left: 55px">Voir tous les résultats pour « {{vm.inputReasearchBar}} »</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-content" [@slideInOut] *ngIf="!vm.displayAllResult  && vm.displayActeRefused  && !vm.displayComments && !displayModalSignataire && !displayModalAvocat && !vm.displayArchive && !displaySearchAvocat" [ngClass]="vm.inputReasearchBar ? 'overlay' : ''">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="add-act-header">
+                <div>
+                    <span class="glyphicon glyphicon-chevron-left back-title-chevron"
+                          (click)="displayCreateOrder=false;displayConsultOrder=false;vm.displayActeRefused=false;"></span>
+
+                    <span class="add-act-title" *ngIf="!vm.displayActeRefused">Synthèse</span>
+                    <span class="add-act-title" *ngIf="vm.displayActeRefused && currentActe.status=='Cree'">Envoyer pour validation</span>
+                    <span class="add-act-title" *ngIf="vm.displayActeRefused && currentActe.status !='Cree'">Synthèse</span>
+
+                </div>
+                <div class="dropdown" style="margin-right: 1%;">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                        Actions de l'acte
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li style="cursor:pointer" *ngIf="currentActe.status=='En Projet' || currentActe.status=='Abandonne'"><a (click)="vm.onDeleteActe(currentActe)">Supprimer l'acte</a></li>
+                        <li style="cursor:pointer" *ngIf="userConnected.roles[0]!='ROLE_COUNSEL' && (currentActe.status=='Cree' || currentActe.status=='En cours de validation' || currentActe.status=='En cours de signature' || currentActe.status=='Signature refusee' || currentActe.status=='Validation refusee')"><a data-target="#dismissActeModal" data-toggle="modal">Abandonner un acte</a></li>
+                        <li style="cursor:pointer"><a (click)="vm.displayArchive=true">Historique de l'acte</a></li>
+                        <li style="cursor:pointer" *ngIf="currentActe.status!='En Projet'"><a (click)="vm.downloadSynthese()">Télécharger la synthèse</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr />
+        </div>
+        <div>
+            <div class="row">
+                <div class="add-form-steps">
+                    <div class="add-form-content">
+                        <div class="">
+                            <span class="synth-section-title">Informations</span>
+                            <span [inlineSVG]="'/logo/edit.svg'" class="custom-icon pull-right" *ngIf="currentActe.status!='En cours de signature' && currentActe.status!='Signe' && currentActe.status!='En cours de validation'" (click)="activeIndex=0;displayCreateOrder=true;vm.displayActeRefused=false"></span>
+                            <div class="synthese-info hidden-xs">
+                                <div>
+                                    <span class="info-title">Numéro de l'acte</span>
+                                    <span>{{currentActe.folderNumber}}</span>
+                                </div>
+                                <div>
+                                    <span class="info-title">Nom de l'acte</span>
+                                    <span>{{currentActe.name}}</span>
+                                </div>
+                                <div>
+                                    <span class="info-title">Nom du dossier</span>
+                                    <span>{{currentActe.folderName}}</span>
+                                </div>
+                                <div>
+                                    <span class="info-title">Numéro interne du dossier</span>
+                                    <span>{{currentActe.internalNumber}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="visible-xs-block responsive-info-section">
+                            <div class="row mb-10">
+                                <div class="col-xs-12">
+                                    <div class="info-title">N° de l'acte</div>
+                                    <div class="truncate-txt">{{currentActe.folderNumber}}</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-4 pr-5">
+                                    <div class="info-title">Nom de l'acte</div>
+                                    <div class="truncate-txt">{{currentActe.name}}</div>
+                                </div>
+                                <div class="col-xs-4 pr-5 pl-5 side-bordered">
+                                    <div class="info-title">Nom du dossier</div>
+                                    <div class="truncate-txt">{{currentActe.folderName}}</div>
+                                </div>
+                                <div class="col-xs-4 pl-5">
+                                    <div class="info-title">Numéro interne du dossier</div>
+                                    <div class="truncate-txt">{{currentActe.internalNumber}}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="status-section rejected-status">
+
+                            <span class="status-title"><span>Statut:</span> {{vm.getStatut(currentActe['status'])}}</span>
+
+                            <span *ngIf="currentActe.status=='Cree'">Créé le {{vm.getRequestDate(currentActe)}}</span>
+                            <span *ngIf="displayComments && (currentActe.status=='En cours de validation' || currentActe.status=='En cours de signature'|| currentActe.status=='Validation refusee' || currentActe.status=='Signature refusee')" style="text-align: right;color: #1d1e26; float: right;margin-right:15px"><u class="Visualliser-le-comme" style="cursor:pointer;color:#e21647;" (click)="vm.displayComments=true">Visualiser le(s) commentaire(s)</u> </span>
+                        </div>
+
+                        <div class="validation-desc" *ngIf="vm.displayActeRefused && (currentActe.status=='En cours de validation' || currentActe.status=='Cree')">
+                            <p class="validation-desc-title">Définir les validateurs :</p>
+                            <p>Ajouter les validateurs de l'acte parmi les Signataire(s) et les Avocat(s) validateur(s)</p>
+                        </div>
+
+
+
+                        <div class="mt-30">
+                            <span class="synth-section-title">Signataire(s)</span>
+                            <div class="create-folder-section border-grey" (click)="displayModalSignataire=true" *ngIf="(vm.displayActeRefused || currentActe.status=='En cours de validation') && currentActe.status!='En cours de signature' ">
+                                <img src="/logo/active.svg" class="active" alt="add folder" />
+                                <span>Ajouter un signataire</span>
+                            </div>
+                            <div *ngFor="let item of listSignataire; index as i" class="container-fluid">
+                                <div class="responsive-contacts-row">
+                                    <div class="hidden-xs large-contacts-row row">
+
+                                        <div class="col-md-4 pl-0 truncate-txt">
+                                            <img alt="" src="/logo/moral.svg">
+                                            <span tooltip=" {{item.lastName.charAt(0).toUpperCase()+item.lastName.slice(1)}} {{item.name | uppercase}}" placement="top" show-delay="200">
+                                                 <span class="capitalize-text">{{item.lastName}}</span>{{item.name | uppercase}}
+                                            </span>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="pure-material-checkbox">
+                                                <input #inputElSig1 type="checkbox" [disabled]="disabledCheckBox(item)==true" [checked]="item.validator==true && item.mailSent==true && item.actId == currentActe.id " (change)="item.validator=inputElSig1.checked;">
+                                                <span></span>
+                                            </label>
+                                            <span style="margin-right: 5%;">Validateur</span>
+                                        </div>
+                                        <div *ngIf="dateValidatedOrRefused(item)!= ''" class="col-md-5">
+                                            <span *ngIf="dateValidatedOrRefused(item)!= ''" [innerHTML]=dateValidatedOrRefused(item)></span>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <span [innerHTML]=dateSigneddOrRefused(item)></span>
+                                        </div>
+
+                                        <div class="col-md-1">
+
+                                            <div class="pull-right" style="">
+                                                <img alt="" src="/logo/down.svg" data-toggle="collapse" attr.data-target="#{{item.id}}" class="cursor-pointer" style="cursor:pointer">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="visible-xs-block xs-contacts-row row">
+                                        <div class="col-xs-5 pl-0 truncate-txt">
+                                            <div>
+                                                <label class="pure-material-checkbox">
+
+                                                    <input #inputElSig type="checkbox" [disabled]="item.validator==true && item.mailSent==true && item.actId == currentActe.id  " [checked]="item.validator==true && item.mailSent==true && item.actId == currentActe.id " (change)="item.validator=inputElSig.checked">
+                                                    <span></span>
+                                                </label>
+                                                <span>Validateur</span>
+                                            </div>
+                                            <div>
+                                                <span tooltip=" {{item.lastName | titlecase}} {{item.name | uppercase}}" placement="top" show-delay="200">
+                                                    {{item.lastName | titlecase}} {{item.name | uppercase}}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-5">
+                                            <span [innerHTML]=dateSigneddOrRefused(item)></span>
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <div class="" style="margin-top:5px;">
+                                                <img  src="/logo/down.svg" data-toggle="collapse" attr.data-target="#{{item.id}}" class="cursor-pointer" style="cursor:pointer" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div id="{{item.id}}" class="collapse-info collapse row">
+                                    <div class="row p-10">
+                                        <div class="col-md-4 col-xs-6">
+                                            <span class="responsive-info-shift">{{item.codeCountry}} {{item.phoneNumber}}</span>
+                                        </div>
+                                        <div class="col-md-4 col-xs-6 truncate-txt">
+                                            <span tooltip=" {{item.email}}" placement="top" show-delay="200"> {{item.email}} </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                        <div class="mt-30">
+                            <span class="synth-section-title">Avocat(s) validateur(s)</span>
+                            <div class="create-folder-section border-grey " (click)="displayModalAvocat=false;displayModalSignataire=false;displaySearchAvocat=true;" *ngIf="(vm.displayActeRefused || currentActe.status=='En cours de validation') && currentActe.status!='En cours de signature'">
+                                <img src="/logo/active.svg" class="active" alt="add folder" />
+                                <span>Ajouter un avocat validateur</span>
+                            </div>
+
+                            <div *ngIf="listAvocat.length == 0">
+                                <br>
+                                <p>Aucun avocat validateur désigné pour l’acte</p>
+                            </div>
+
+                            <div *ngFor="let item of listAvocat; let last = last; let index = index" class="container-fluid">
+
+                                <div class="responsive-contacts-row">
+                                    <div class="hidden-xs large-contacts-row row">
+                                        <div class="col-md-4 pl-0 truncate-txt">
+                                            <img src="/logo/moral.svg" alt="">
+                                            <span tooltip=" {{item.lastName.charAt(0).toUpperCase()+item.lastName.slice(1)}} {{item.name | uppercase}}" placement="top" show-delay="200">
+                                                 <span class="capitalize-text">{{item.lastName}}</span> {{item.name | uppercase}}
+                                            </span>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="pure-material-checkbox">
+                                                <input #inputElAv type="checkbox" [disabled]="disabledCheckBox(item)==true" [checked]="item.validator==true && item.mailSent==true && item.actId == currentActe.id " (change)="item.validator=inputElAv.checked">
+                                                <span></span>
+                                            </label>
+                                            <span>Validateur</span>
+                                        </div>
+
+                                        <div *ngIf="dateValidatedOrRefused(item)!= ''" class="col-md-5">
+                                            <p *ngIf="dateValidatedOrRefused(item)!= ''" [innerHTML]=dateValidatedOrRefused(item)></p>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <p [innerHTML]=dateSigneddOrRefused(item)></p>
+                                        </div>
+
+
+                                        <div class="col-md-1">
+                                            <div class="pull-right" style="">
+                                                <img src="/logo/down.svg" data-toggle="collapse" attr.data-target="#{{item.id}}" class="cursor-pointer" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="visible-xs-block xs-contacts-row row">
+                                        <div class="col-xs-5 pl-0 truncate-txt">
+                                            <div>
+                                                <label class="pure-material-checkbox">
+                                                    <input #inputElSig type="checkbox" [checked]="item.validator==true && item.mailSent==true && item.actId == currentActe.id " (change)="item.validator=inputElSig.checked">
+                                                    <span></span>
+                                                </label>
+                                                <span>Validateur</span>
+                                            </div>
+                                            <div>
+                                                <span tooltip=" {{item.lastName | titlecase}} {{item.name | uppercase}}" placement="top" show-delay="200">
+                                                    {{item.lastName | titlecase}} {{item.name | uppercase}}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-5">
+                                            <p [innerHTML]=dateSigneddOrRefused(item)></p>
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <div style="margin-top:5px;">
+                                                <img src="/logo/down.svg" data-toggle="collapse" attr.data-target="#{{item.id}}" class="cursor-pointer" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
+
+                                </div>
+                                <div id="{{item.id}}" class="collapse-info collapse row">
+                                    <div class="row p-10">
+                                        <div class="col-md-4 col-xs-6">
+                                            <span class="responsive-info-shift">{{item.codeCountry}} {{item.phoneNumber}}</span>
+                                        </div>
+                                        <div class="col-md-4 truncate-txt col-xs-6">
+                                            <span tooltip=" {{item.email}}" placement="top" show-delay="200"> {{item.email}} </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
+                        <div class="mt-30">
+                            <span class="synth-section-title">Document(s)</span>
+
+                            <div (dragover)="false"
+                                 (dragend)="false"
+                                 (drop)="handleDrop($event)"
+                                 class="compact-doc-upload-container">
+
+                                <label id="dropzone" for="file-input" class="compact-doc-upload">
+                                    <div class="compact-doc-upload-image">
+                                        <img src="/logo/addfile.svg" alt="" />
+                                        <input #inputFile id="file-input" type="file" (change)="onAddDocument($event)" multiple accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" />
+                                    </div>
+
+                                    <div class="compact-doc-upload-titles">
+                                        <span class="compact-doc-upload-title">Ajouter un ou plusieurs documents</span>
+                                        <span class="hidden-xs compact-doc-upload-subtitle">Glissez votre fichier ou téléchargez-le</span>
+                                    </div>
+
+                                </label>
+                            </div>
+                            <div class="doc-upload-container"><div class="form-upload-disclaimer">Pour la signature, le document final fusionnera tous les documents présents pour la signature. L’ordre des documents dans cet écran sera l'ordre définitif proposé lors de la signature de l'acte.</div></div>
+                            <div class="docs-list" *ngIf="listDocument.length!=0;">
+                                <div class="docs-list-header">
+                                    <img src="/logo/active-unfocused.png" alt="document" class="mr-10" />
+                                    <span>
+                                        Mes Document(s)
+                                    </span>
+                                    <span class="pull-right cursor-pointer doc-list-action-icons">
+                                        <span [inlineSVG]="'/logo/download.svg'" (click)="downloadAllDocument()"></span>
+                                    </span>
+                                </div>
+                                <div class="docs-list-content">
+                                    <div *ngFor="let file of listDocument;let i=index" class="docs-list-row">
+                                        <div class="truncate-txt">
+                                            <span [style.pointer-events]="i==0?'none':'auto'" [style.opacity]="i==0?0.5:1" style="cursor : pointer" *ngIf="listDocument.length>1" [inlineSVG]="'/logo/up.svg'" (click)="upDocumentPosition(file)"></span>
+                                            <span style="cursor : pointer" *ngIf="listDocument.length>1" [inlineSVG]="'/logo/down-file.svg'" (click)="downDocumentPosition(file)"></span>
+                                            <span class="docs-list-title">{{file.name}}.pdf</span>
+                                        </div>
+                                        <div class="file-size pl-10">
+                                            {{getFileSize(file.name) | number}} MO
+                                        </div>
+                                        <div class="doc-list-action-icons">
+
+                                            <span class="hidden-xs" [inlineSVG]="'/logo/oeil.svg'" (click)="viewPdf(file)"></span>
+                                            <span>
+                                                <a (click)=downloadPDF(file) title={{file.name}} class="c-black">
+                                                    <span [inlineSVG]="'/logo/download.svg'"></span>
+                                                </a>
+                                            </span>
+                                            <span [inlineSVG]="'/logo/delete.svg'" (click)="deleteDocument(file)" *ngIf="currentActe.status!='En cours de signature' && currentActe.status!='Signe' && currentActe.status!='En cours de validation'"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="add-form-actions responsive-buttons-actions">
+                        <button [disabled]="!canSendToValidation" form="information" type="submit" class="btn next-button" data-target="#modalSendToValidation" data-toggle="modal">Renvoyer pour validation</button>
+                        <button *ngIf="currentActe.status=='Signature refusee'" form="information" type="submit" class="btn  next-button" data-toggle="modal" data-target="#modalSendToSignature">Renvoyer pour signature</button>
+                        <button *ngIf="currentActe.status=='Validation refusee'" form="information" type="submit" class="btn  next-button" data-toggle="modal" data-target="#modalSendToSignature">Envoyer pour signature</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade custom-confirm-modal1" id="modalSendToValidation" tabindex="-1" aria-labelledby="gridModalLabel" role="dialog" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h1 class="custom-m-title">Votre acte sera renvoyé pour validation</h1>
+                <p class="custom-m-desc">L'acte, une fois validé par l'ensemble des validateurs, sera envoyé automatiquement aux Signataire(s).</p>
+                <div class="custom-m-actions">
+                    <button type="submit" class="btn  save-button" data-dismiss="modal" aria-hidden="true">
+                        Annuler
+                    </button>
+                    <button type="button" class="btn  next-button" (click)="changeDocumentPosition();setContactToValidator();" data-dismiss="modal">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalSendToSignature" tabindex="-1" aria-labelledby="gridModalLabel" role="dialog" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="height: 300px;">
+            <button type="button" style="margin-right: 21px;margin-top: 11px;" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <div class="modal-body" style="text-align:center;height: 100px;margin-top: 10%;margin-bottom: 10%;">
+                <span class="Envoyer-pour-validat">L'acte sera envoyé pour signature aux contacts sélectionnés</span><br />
+            </div>
+            <div style="text-align:center">
+                <button form="information" type="submit" class="btn  save-button" style="margin-right: 36px" data-dismiss="modal" aria-hidden="true">
+                    Retour
+                </button>
+                <button form="information" type="button" class="btn  next-button" (click)="changeDocumentPosition();sendMailToSign()" data-dismiss="modal">Oui</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="dismissActeModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content" style="height: 300px;">
+            <button type="button" style="margin-right: 21px;margin-top: 11px;" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <div class="modal-body Votre-dossier-dacte " style="text-align:center;height: 160px;margin-top: 50px;">
+                Êtes-vous sûr de vouloir abandonner l’acte? Cette action est irréversible. Toutefois, l'acte restera disponible pour consultation sur votre espace sauf si vous le supprimez.
+            </div>
+            <div style="text-align:center">
+                <button form="information" type="submit" class="btn  save-button" style="margin-right:36px" data-dismiss="modal" (click)="vm.dismissActe(currentActe)">Oui</button>
+                <button form="information" type="button" class="btn  next-button" data-dismiss="modal" aria-hidden="true">Non</button>
+            </div>
+        </div>
+    </div>
+</div>

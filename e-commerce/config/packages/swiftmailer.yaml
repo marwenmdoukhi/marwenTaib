@@ -1,0 +1,8 @@
+swiftmailer:
+    spool: { type: 'memory' }
+    transport : smtp
+    host: mail.fmw-store.tn
+    port: 587
+    auth_mode: login
+    username: contact@fmw-store.tn
+    password: Fmwstore.123456

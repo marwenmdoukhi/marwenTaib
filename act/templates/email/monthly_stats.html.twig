@@ -1,0 +1,82 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href='https://fonts.googleapis.com/css?family=Palanquin' rel='stylesheet'>
+    <style>
+        .separator {
+            display: flex;
+            align-items: center;
+            text-align: center;
+        }
+
+        .separator::before, .separator::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgb(218, 218, 218);
+        }
+
+        .separator::before {
+            margin-right: 13.25em;
+        }
+
+        .separator::after {
+            margin-left: 13.25em;
+        }
+    </style>
+</head>
+<body>
+<div style="width: 100%;height: 97px;background-color:#ebedf4">
+    <div style=" width: 29%;height: 97px;background-color:#25203e;float: left">
+        <img style=" width: 100%;height: 97px;background-color:#25203e;"
+             src="https://i.ibb.co/nwzLByM/lodopdf.png">
+    </div>
+    <div style="width: 100%;height: 97px;background-color:#ebedf4;">
+        <div style="font-family: Palanquin;font-size: 26px;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;text-align: center;color:#1c1e25;padding-top:20px">
+            Plateforme CNB-Acte Sous Signature Privé
+        </div>
+    </div>
+</div>
+<br>
+<div style="margin-left: 20px">
+    <p style="font-family: Palanquin">Bonjour,</p>
+
+    <h3 style="font-family: Palanquin">Veuillez trouver ci-dessous les statistiques de {{ month }}.</h3>
+
+    <br>
+
+    <tr>
+        <td style="width:363px">&nbsp;</td>
+        <td style="text-align:center; width:123px"><strong>{{ month }}</strong></td>
+    </tr>
+    <tr>
+        <td style="width:363px"><strong>Nombre des actes signés</strong></td>
+        <td style="width:123px">{{ countSignedAct }}</td>
+    </tr>
+    <tr>
+        <td style="width:363px"><strong>Nombre des actes passés par une validation</strong></td>
+        <td style="width:123px">{{ countValidatedAct }}</td>
+    </tr>
+    <tr>
+        <td style="width:363px"><strong>Nombre des actes en cours</strong></td>
+        <td style="width:123px">{{ countWaitingSignAct }}</td>
+    </tr>
+    <tr>
+        <td style="width:363px"><strong>Nombre des signataires {{ year }}</strong></td>
+        <td style="width:123px">{{ countOfSignatures }}</td>
+    </tr>
+    <tr>
+        <td style="width:363px"><strong>Nombre des avocats initiateurs</strong></td>
+        <td style="width:123px">{{ countInitiator }}</td>
+    </tr>
+
+    <br>
+    <p style="font-family: Palanquin">Cordialement,</p>
+
+    <div>
+        <img style="width: 150px;" src="https://encyclopedie.avocats.fr/icon/LogoHome.png">
+    </div>
+
+</div>
+
+</body>
+</html>

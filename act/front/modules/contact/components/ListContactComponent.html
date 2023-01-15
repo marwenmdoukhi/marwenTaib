@@ -1,0 +1,310 @@
+<CreateContactComponent *ngIf="displayContactAdd==true"></CreateContactComponent>
+<ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "ball-clip-rotate-pulse"><p style="color: white" > Loading... </p></ngx-spinner>
+
+<allResult  *ngIf="displayAllResult"></allResult>
+
+<p-toast position="top-right"></p-toast>
+<!--<div class="meter" *ngIf="allContact.length==0">
+    <span style="width:100%;"><span class="progress"></span></span>
+</div>-->
+<p-dialog *ngIf="userConnected && settingsBtn == true"
+          [(visible)]="displayCX " draggable="false" [responsive]="true" [positionTop]="0" modal="true"
+          styleClass="widthModal"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+    <div class="modal-header" *ngIf="settingsBtn == false">
+        <h4 class="modal-title main-title">C’est votre première connexion, bienvenue !</h4>
+    </div>
+    <div class="modal-header" *ngIf="settingsBtn == true">
+        <h4 class="modal-title main-title">Bienvenue, merci de renseigner les informations suivantes afin de certifier votre identité.</h4>
+    </div>
+    <div class="modal-body">
+        <h4 *ngIf="settingsBtn == false" class="secondary-title">Merci de renseigner les informations suivantes afin de certifier votre
+            identité</h4>
+        <h5>Tous les champs marqués d’un astérisque (*) sont obligatoires</h5>
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input style="font-size: 14px;!important;" class="form-control disabledDiv" type="text" value="{{ userConnected.name }}">
+                    <label style="font-size: 11px;!important;" for="lastnameId" class="control-label">Nom*</label><i class="bar" style="width: 100%"></i>
+                </div>
+                <div class="form-group">
+                    <input style="font-size: 14px;!important;" id="lastnameId" class="form-control disabledDiv" type="text"
+                           value="{{ userConnected.lastName }}">
+                    <label style="font-size: 11px;!important;" for="lastnameId" class="control-label">Prenom*</label><i class="bar" style="width: 100%"></i>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input  style="font-size: 14px!important;width: 100%!important;" id="emailId" class="form-control disabledDiv" type="email"
+                            value="{{ (userConnected.email!==userConnected.cnbId+'cnb@cnb.fr')&&(userConnected.email!==userConnected.cnbId+'@cnb.fr')?userConnected.email:null }}">
+                    <label style="font-size: 11px;!important;" for="emailId" class="control-label">Adresse e-mail*</label><i class="bar" style="width: 100%"></i>
+                </div>
+                <div class="form-group">
+                    <input style="font-size: 14px!important;width: 100%!important;" id="phoneId" class="form-control disabledDiv" type="text"
+                           value="{{ userConnected.phoneNumber }}">
+                    <label style="font-size: 11px!important;" for="phoneId" class="control-label">Téléphone*</label><i class="bar" style="width: 100%"></i>
+                </div>
+
+            </div>
+        </div>
+        <h5 style="margin-bottom: 21px" class="var-secondary-title">Si les informations ci-dessus ne sont pas à jour, vous pouvez saisir
+            les champs suivants : </h5>
+
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group mt-10">
+                    <input [(ngModel)]="userConnected.emailApp" autocomplete="new-password" style="font-size: 14px!important;width: 100%!important;%" id="email" class="form-control" type="email"
+                           (keyup)="checkEmailCnb()" >
+                    <label style="font-size: 11px!important;margin-top: -7px" for="email" class="control-label">Adresse e-mail <i style="color: red" *ngIf="isCnbEmail">*</i> (Cette adresse mail
+                        sera utilisée pour vous envoyer des notifications)</label><i class="bar" style="width: 100%"></i>
+                    <div *ngIf="errorMsg"  class="invalid-styles" >Ceci n'est pas une adresse mail
+                        valide</div>
+                    <div *ngIf="hideMsg"  class="invalid-styles" >Ce champs est obligatoire. Merci de saisir votre email.</div>
+                </div>
+            </div>
+            <div class="col-md-2" style="margin-top: -5px">
+                <div class="form-group mt-10">
+                    <international-phone-number autocomplete="new-password" style="font-size: 14px;"   [allowedCountries]="allowedCountries()" [(ngModel)]="userConnected.codeCountryApp"  onPaste="return false" [defaultCountry]="(userConnected.codeCountryApp==='' || userConnected.codeCountryApp===null) ?getCountry():''" id="codeCountrytel"></international-phone-number>
+                    <label id="label" style="font-size: 11px!important;color: gray;margin-top: -13px" for="codeCountrytel" class="control-label truncate-txt">Code pays</label><i
+                        class="bar" style="width: 100%"></i>
+                    <input autocomplete="new-password" style="font-size: 14px!important;width: 100%!important;visibility: hidden" id="codeCountry" class="form-control" type="tel"
+                           value="{{ userConnected.codeCountryApp }}" pattern="^[+][0-9]+$">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mt-10">
+                    <input autocomplete="new-password" style="font-size: 14px!important;width: 100%!important;" id="phone" class="form-control" type="number" [(ngModel)]="userConnected.phoneNumberApp"
+                           pattern="[0-9]$" onkeyup="checkPhoneLength()" (keyup)="checkCnbMobile()">
+                    <label style="font-size: 11px;!important;margin-top: -4px" for="phone" class="control-label truncate-txt">Téléphone <i style="color: red" *ngIf="isCnbPhone">*</i> (Ce n° de téléphone sera
+                        utilisé pour vous envoyer des sms)</label><i class="bar" style="width: 100%"></i>
+                    <div *ngIf="errorPhoneMsg"  class="invalid-styles" >Ceci n'est pas un N de tel valide</div>
+                    <div *ngIf="hidePhoneMsg"  class="invalid-styles" >Ce champs est obligatoire. Merci de saisir votre numéro de téléphone.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a type="submit" class="btn next-button pull-right" id="confirm"
+           href="#" onclick="modifyUserEmailAndPhone();" (click)="displayCX=false">
+            Confirmer
+        </a>
+        <button *ngIf="settingsBtn" form="information" type="submit" class="btn  save-button" style="margin-right:20px" data-dismiss="modal" (click)="settingsBtn=false;annuler()">Annuler</button>
+
+    </div>
+</p-dialog>
+
+<div *ngIf="allContact" [hidden]="displayContactAdd || displayAllResult">
+    <div class="search-header">
+        <button class="btn burger-menu-btn visible-xs-block" (click)="toggleSidebar()">
+            <img alt="" src="logo/burger.svg" />
+        </button>
+        <div class="search-input" [ngClass]="inputReasearchBar ? 'search-focused' : ''">
+            <input type="text" id="input" [(ngModel)]="inputReasearchBar"
+                   pInputText
+                   (focus)="displayDivForReasearchBar=true"
+
+                   placeholder="Chercher un acte, un document, un contact" />
+            <img alt="" src="/logo/search.svg" />
+            <span *ngIf="inputReasearchBar" class="glyphicon glyphicon-remove-sign" (click)="displayDivForReasearchBar=false;inputReasearchBar=null;displayAllResult=false" style="cursor:pointer;top: 19px;right: 13px;position: absolute;"></span>
+            <div *ngIf="displayDivForReasearchBar" class="role-name-barre-recherche">
+                <div *ngFor="let c of (allData | barPipe : inputReasearchBar | slice:0:10)" (click)="setContactTConsylt(c)" style="padding-left: 65px;">
+                    <span *ngIf="c.nameActe" [inlineSVG]="'/logo/en-attente.svg'" style="margin-right: 2%; vertical-align: middle;"></span> <span *ngIf="c.nameActe" class="Affaire-Pauline-Grin">{{c.nameActe}}</span><span class="dfendeur" style="margin-left: 1%;" *ngIf="c.nameActe">acte</span>
+                    <span *ngIf="c.contactName" [inlineSVG]="'/logo/yellow.svg'" style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.contactName" class="Affaire-Pauline-Grin">{{c.contactLastName | titlecase}} {{c.contactName | uppercase}} contact</span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.contactName">contact</span>
+                    <span *ngIf="c.documentName" [inlineSVG]="'/logo/document.svg'" style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.documentName" class="Affaire-Pauline-Grin">{{c.documentName}}.pdf </span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.documentName">document</span>
+                </div>
+                <div *ngIf="inputReasearchBar" class="role-name-barre-recherche" style="border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;border-top: 1px solid #dadada;">
+                    <span class="Voir-tous-les-rsult" (click)="displayAllResult=true;displayDivForReasearchBar=false" style="cursor:pointer;margin-left: 55px;">Voir tous les résultats pour « {{inputReasearchBar}} »</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="main-content" [hidden]=" false" [ngClass]="inputReasearchBar ? 'overlay' : ''">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="my-acte-title">
+                    <span>Contacts ({{allContact.length}})</span>
+                    <select [(ngModel)]="sort" (change)="onChangeFiltre($event.target.value)">
+                        <option value="0">Ordre alphabétique A–Z</option>
+                        <option value="1">Ordre alphabétique Z–A</option>
+                    </select>
+                </div>
+                <hr />
+            </div>
+            <!--filters-->
+            <div class="row mb-30">
+                <div class="filters-container">
+                    <div class="mr-20">
+                        <p-dropdown [options]="choicesNature"
+                                    [(ngModel)]="filterChocieNature"
+                                    (ngModelChange)="filterNatureContact()"
+                                    [filter]="false"
+                                    class="form-control DivFiltre"
+                                    [style]="{width: '200px'}"
+                                    [autoWidth]="false">
+                        </p-dropdown>
+                    </div>
+                    <div class="mr-20">
+                        <p-dropdown [options]="choicesType" *ngIf="filterChocieNature=='ROLE_SIGNATORY'"
+                                    [(ngModel)]="filterChocieType"
+                                    (ngModelChange)="filterTypeContact()"
+                                    [filter]="false"
+                                    class="form-control DivFiltre"
+                                    [style]="{width: '200px'}"
+                                    [autoWidth]="false">
+                        </p-dropdown>
+                    </div>
+                    <div style="margin-left: auto;" *ngIf="filterChocieNature || filterChocieType || sort !=='0'">
+                        <button type="button" class="close" (click)=" initializeFilterAndSorting();" aria-label="Close">
+                            <span>&times;</span>
+                        </button>
+                        <span style="margin-right: 5px;vertical-align: middle;">Supprimer les filtres</span>
+                    </div>
+                </div>
+            </div>
+            <!--end filters-->
+            <div *ngIf="readyOnlyForUser==true && allContact.length>=0" class="row create-folder-section" style="cursor:pointer" (click)="displayContactAdd=true;consultContact=false">
+                <img alt="" src="/logo/active.svg" class="active" alt="add folder" />
+                <span>Ajouter un nouveau contact</span>
+            </div>
+            <!--<div *ngIf="!reloadComplete" class="loader"></div>-->
+            <div class="row" *ngIf="allContact.length>0">
+			
+                <p-table #contactTable [style]="{'width': 'auto','margin-top':'20px','margin-bottom':'20px'}"
+                         [value]="allContact"
+                         sortField="name" [sortOrder]="1"
+                         [rows]="25"
+                         selectionMode="single"
+                         compareSelectionBy="equals"
+                         [paginator]="true"
+                         (onFilter)="isEmpty($event)"
+                         [pageLinks]="3"
+                         [responsive]="true"
+                         styleClass="contact-table-cp"
+                         [globalFilterFields]="['name','lastName','phoneNumber','email']">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th id="th" *ngFor="let col of columns" class="ref" pSortableColumnDisabled="false"
+                                [ngStyle]="styleObject(col)">
+                                {{col.header}}
+                                <p-sortIcon *ngIf="true === false" [field]="col.colkey"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-contact ;let-columns="columns">
+                        <span *ngIf="getLetter(contact)!==''" class="A-Copy" >{{getLetter(contact)}}</span>
+                        <tr [attr.disable]="listeContact.length==0" class="RowMesActes border_bottom" style="height: 65px;font-family: Palanquin,serif">
+                             <td>
+                                <img alt="" src="/logo/moral.svg" class="active" style="margin-top:7px;object-fit: contain;float: left;">
+                                <div style="margin-left: 49px;">
+                                    <div>
+                                        <span class="capitalize-text">{{contact.lastName}}</span> {{contact.name | uppercase}}
+                                    </div>
+                                </div>
+                            </td>
+                            <td *ngIf="contact.phoneNumberEd!==null && contact.cnbId !== null" style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25">
+                                {{contact.codeCountryEd}} {{contact.phoneNumberEd}}
+                            </td>
+                            <td *ngIf="contact.phoneNumberEd!==null && contact.cnbId === null" style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25">
+                                -
+                            </td>
+                            <td *ngIf="(contact.phoneNumberEd && contact.phoneNumberEd==null) || !contact.phoneNumberEd" style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25">
+                                -
+                            </td>
+
+                            <td id="ed1" *ngIf="contact.emailEd && contact.emailEd!==null && contact.cnbId !== null">
+                                {{contact.emailEd}}
+                            </td>
+                            <td id="ed5" *ngIf="contact.emailEd && contact.emailEd!==null && contact.cnbId === null">
+                                -
+                            </td>
+                            <td id="ed2" *ngIf="contact.emailEd && contact.emailEd===null"
+                                style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25">
+                                -
+                            </td>
+                            <td id="ed4" *ngIf="contact.email ===null && contact.cnbId === null"
+                                style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25">
+                                -
+                            </td>
+                            <td id="tel1"
+                                *ngIf="contact.phoneNumber!==null && contact.cnbId ===null"
+                                style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color: #1c1e25">
+                                {{contact.codeCountry}} {{contact.phoneNumber}}
+                            </td>
+                            <td id="tel2"
+                                *ngIf="contact.phoneNumberApp!==null && contact.counselPhone == null && contact.cnbId !==null"
+                                style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color:#1c1e25">
+                                {{contact.codeCountryApp}} {{contact.phoneNumberApp}}
+                            </td>
+                            <td id="tel3"
+                                *ngIf="contact.counselPhone && contact.counselPhone != null && contact.cnbId !==null"
+                                style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color:#1c1e25">
+                                {{contact.counselCodeCountryApp}} {{contact.counselPhone}}
+                            </td>
+                            <td id="tel4"
+                                *ngIf="contact.phoneNumberApp ==null && contact.counselPhone == null && contact.cnbId !==null"
+                                style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color:#1c1e25">
+                                -
+                            </td>
+                            <td id="1" tooltip="contact.emailApp" placement="top" show-delay="200" class="truncate-txt"
+                                *ngIf="contact.emailApp!==null && contact.counselEmail!== null  && contact.cnbId !==null"
+                                style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25">
+                                {{contact.counselEmail}}
+                            </td>
+                            <td id="2" tooltip="contact.emailApp" placement="top" show-delay="200" class="truncate-txt"
+                                *ngIf="contact.emailApp!==null && contact.counselEmail == null  && contact.cnbId !==null"
+                                style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25">
+                                {{contact.emailApp}}
+                            </td>
+                            <td id="3" tooltip="contact.emailApp" placement="top" show-delay="200" class="truncate-txt"
+                                *ngIf="contact.emailApp ==null && contact.counselEmail !== null  && contact.cnbId !==null"
+                                style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25">
+                                {{contact.counselEmail}}
+                            </td>
+                            <td id="4" *ngIf="contact.email!==null && contact.cnbId ===null" style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25">
+                                {{contact.email}}
+                            </td>
+                            <td id="5" *ngIf="contact.emailApp===null && contact.counselEmail===null && contact.cnbId !==null" style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25">
+                                -
+                            </td>
+                            <td id="7" *ngIf="contact.email===null && contact.cnbId ===null" style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25">
+                                -
+                            </td>
+
+
+                            <td style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25">
+                                <div class="doc-list-action-icons" style="float: right;margin-right: 20px;">
+                                    <span *ngIf="readyOnlyForUser==true" [inlineSVG]="'/logo/edit.svg'" (click)="setContactToModify(contact);"></span>
+                                    <span  *ngIf="readyOnlyForUser==true" [inlineSVG]="'/logo/delete.svg'" (click)="deleteContact(contact)" data-target="#delete" data-toggle="modal"></span>
+                                    <span [inlineSVG]="'/logo/oeil.svg'" (click)="consultContactMethod(contact)" data-target="#delete" data-toggle="modal"></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <div *ngIf="noRecordMsgFlag">
+                    <p style="border:1px solid #0000ff1f;text-align: center;">Aucun élément ne correspond à votre recherche</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="delete" role="dialog" *ngIf="displayPopuForDelete==true" data-backdrop="static" data-keyboard="false"  style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="">
+            <div style="text-align:center">
+                <div class="modal-body Votre-dossier-dacte " style="text-align:center;margin-top: 100px;margin-bottom: 70px;">
+                    Êtes-vous sûr de vouloir supprimer {{currentConatct.name|uppercase}} ?
+                    <div style="text-align:center;margin-top: 10%;margin-left: 20px;">
+                        <button form="information" type="submit" class="btn  next-button" (click)="deletContactFromDataBase()" style="margin-right: 5%;">Oui</button>
+                        <button form="information" type="submit" class="btn  save-button" (click)="displayPopuForDelete=false">Retour</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

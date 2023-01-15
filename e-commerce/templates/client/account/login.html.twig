@@ -1,0 +1,100 @@
+{% extends'base.html.twig' %}
+{% block title %}login{% endblock %}
+{% block body %}
+    <div role="main" class="main">
+        <div class="page-header "  style="background-image:url({{ asset('image/banner/login.png') }}) ;background-position: top;background-repeat: no-repeat;background-size: cover">
+            <div class="container h-100 mt-5">
+                <div class="row align-items-center justify-content-center h-100 mt-5">
+                    <div class="col-lg-6 pt-5 mb-5">
+                        <br><br><br><br>
+                        <div class=" appear-animation d-flex flex-column  h-100" data-appear-animation="fadeInLeftShorter" data-appear-animation-delay="350" data-appear-animation-duration="350" >
+                                <h2 class="text-black font-weight-bold text-12-4 mb-3 appear-animation" data-appear-animation="blurIn" data-appear-animation-delay="500" data-plugin-options="{'minWindowWidth': 0}">Se Connecter </h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container py-4">
+            <div class="row justify-content-md-center">
+                <div class="appear-animation col-md-7" data-appear-animation="fadeInLeftShorter" data-appear-animation-delay="750" data-appear-animation-duration="750">
+                    <div class="row justify-content-md-center">
+                        <div class="col-md-11">
+                            <div class="featured-box featured-box-primary text-left mt-0">
+                                <div class="w-100">
+                                    <div class=" d-none test alert alert-danger text-center">Nom d'utilisateur ou mot de passe invalide </div>
+                                    <div class=" success  d-none alert alert-success text-center ">Bienvenue à Fashion for men and women</div>
+                                </div>
+                                <div class="box-content">
+                                    <h4 style="color: #000" class="color-primary font-weight-semibold text-4 text-uppercase mb-3">Je suis un client Fidéle</h4>
+                                    <form  name="Login" action="{{ path('account_login') }}" method="post"   class="needs-validation">
+                                        <div class="form-row">
+                                            <div class="form-group col">
+                                                <label for="user">Adresse Email *</label>
+                                                <input type="text" name="_username" id="user" class="form-control form-control-lg  lesinputs" placeholder="Adresse Email  " required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col">
+                                                <label for="password">Mot de passe</label>
+                                                <input type="password" name="_password" id="password" class="form-control-lg  form-control lesinputs" placeholder="Mote de passe  " required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-lg-6">
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <button  style="background: #000000;color: #fff" value="Connexion"
+                                                        class="btn  testbtn   btn-modern float-right login"
+                                                        data-loading-text="<i class='fa fa-spinner fa-spin'></i> Connexion"
+                                                        type="submit">
+                                                    Connexion
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <hr>
+                                    <div class="text-center">
+                                        <p>Vous n'avez pas encore de compte ? <a href="{{ path('account_register') }}" style="background: #fff; color: #000" class="btn btn-md ">Créer un compte</a></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $('form').on('submit', function (e) {
+            e.preventDefault();
+            login = "{{ path('account_login') }}";
+            pdc = "{{ path('home') }}";
+            $.ajax({
+                url: login,
+                type: 'POST',
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (result) {
+                    if(result == 0)
+                        $('.test').show();
+                    else
+                    {
+                        $(".testbtn").attr("disabled", "disabled");
+                        $('.button-loader').button('loading');
+                        setTimeout(function(){ $('.button-loader').button('reset');
+                                $('.success').show()
+                            }, 2000,
+                        );
+                        setTimeout(function(){
+                                window.location.href = pdc
+                            }, 4000,
+                        );
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

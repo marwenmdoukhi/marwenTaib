@@ -1,0 +1,133 @@
+{% extends 'admin.html.twig' %}
+
+{% block title %}Product index{% endblock %}
+
+
+
+{% block body %}
+
+    <link rel="stylesheet" type="text/css" href="{{ asset('backadmin/plugins/table/datatable/datatables.js') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('backadmin/plugins/table/datatable/dt-global_style.css') }}">
+    <!-- END PAGE LEVEL STYLES -->
+
+    <div class="d-flex bd-highlight mb-3 mt-3">
+
+            <div class="col-md-10">
+                <h3 class="section-title titshow " style="position:relative; top: 6px;">Liste Des Produit</h3>
+
+            </div>
+
+            <div class="col-md-2">
+                <a href="{{ path('product_new') }}" class="btn btn-primary mb-2 mt-2">Ajouter Produit</a>
+
+        </div>
+
+    </div>
+    <div class="row layout-top-spacing">
+        <div class="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
+            <div class="widget-content widget-content-area br-6">
+                <div class="table-responsive mb-4 mt-4">
+                    <table id="alter_pagination" class="table table-hover" style="width:100%">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th class="c">Image</th>
+                            <th>Name</th>
+                            <th>Réference</th>
+                            <th>Price</th>
+                            <th>Promo</th>
+                            <th>Reduction</th>
+                            <th>Prix avec Reduction</th>
+                            <th>Note Produit</th>
+                            <th>date</th>
+
+                            <th>Activer </th>
+                            <th>actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            {% for product in products %}
+
+                            <td>{{ product.id }}</td>
+                            <td>
+                                {% if product.filename %}
+                                    <img src="{{ vich_uploader_asset(product, 'imageFile') |imagine_filter('medium') }}" class="card-img-top"
+                                         style="width: 50%;" alt="{{ product.name }}">
+                                {% endif %}
+                            </td>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.refrence  }}</td>
+                            <td>{{ product.price|number_format(3, '.', ',') }} TND</td>
+                            <td>{{ product.promo ? 'Oui' : 'Non' }}</td>
+                            <td>{{ product.pricePromo }} %</td>
+                            <td>{{ product.newprice|number_format(3, '.', ',') }} TND</td>
+                            <td>
+                                {{ product.avgRatings }} /5
+                            </td>
+                            <td>
+
+                            </td>
+
+                            <td>{{ product.activer ? 'Oui' : 'Non' }}</td>
+                            <td class="text-center">
+                                <ul class="table-controls">
+{#                                    <li><a href="{{ path('product_show',{'slug':product.slug,'id':product.id}) }}" data-toggle="tooltip" data-placement="top" title="Voir"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings text-primary"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></a> </li>#}
+                                    <li><a  href="{{ path('product_edit',{'id':product.id}) }}" data-toggle="tooltip" data-placement="top" title="Editer"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 text-success"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a></li>
+                                    <li>
+                                        {% if ( product.getCreatedAt|date_modify("+10 minutes")|date("m/d/Y H:i:s")) > ("now"|date_modify("+1 hour")|date("m/d/Y H:i:s"))  %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></a></li>
+
+                                        {% endif %}
+                                    {% if product.activer ==true %}
+                                        <a class="btn-danger  btn-sm" href="{{ path('product_descactiver',{'id':product.id}) }}">Désactiver </a>
+                                    {% else %}
+                                        <a class="btn-success  btn-sm" href="{{ path('product_cactiver',{'id':product.id}) }}">Activer </a>
+                                    {% endif %}
+                                </ul>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
+            $('#alter_pagination').DataTable({
+                "pagingType": "full_numbers",
+                "oLanguage": {
+                    "oPaginate": {
+                        "sFirst": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><polyline points="15 18 9 12 15 6"></polyline></svg>',
+                        "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+                        "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>',
+                        "sLast": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>'
+                    },
+                    "sInfo": "Showing page _PAGE_ of _PAGES_",
+                    "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+                    "sSearchPlaceholder": "SearchLunettes...",
+                    "sLengthMenu": "Results :  _MENU_",
+                },
+                "stripeClasses": [],
+                "lengthMenu": [7, 10, 20, 50],
+                "pageLength": 7
+            });
+        });
+
+        $('a[data-confirm]').click(function (ev) {
+            var href = $(this).attr('href');
+            if (!$('#dataConfirmModal').length) {
+                $('body').append('<div id="dataConfirmModal" class="modal" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="dataConfirmLabel">Merci de confirmer</h3></div><div class="modal-body"></div><div class="modal-footer"><button class="btn" data-dismiss="modal" aria-hidden="true">Non</button><a class="btn btn-danger" id="dataConfirmOK">Oui</a></div></div></div></div>');
+            }
+            $(`#dataConfirmModal`).find('.modal-body').text($(this).attr('data-confirm'));
+            $('#dataConfirmOK').attr('href', href);
+            $('#dataConfirmModal').modal({show: true});
+
+            return false;
+        });
+    </script>
+{% endblock %}

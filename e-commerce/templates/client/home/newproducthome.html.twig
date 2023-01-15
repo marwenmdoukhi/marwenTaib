@@ -1,0 +1,90 @@
+<h1 class="section-title ls-n-15 text-center pb-2 m-b-4">Nouveaux articles</h1>
+<div class="row py-4">
+    {% for produit in nouveautes  %}
+        <div class="col-6 col-sm-4 col-md-3 col-xl-2 appear-animate  d-none d-sm-block" data-animation-name="fadeIn"
+             data-animation-delay="300" data-animation-duration="1000">
+            <div class="product-default inner-quickview inner-icon">
+                <figure>
+                    <a href="{{ path('product',{'slug': produit.slug,'category':produit.categories.slug,'id':produit.id}) }}"
+                       class="viewModel">
+                        <img src="{{ asset('uploads/images/products/'~produit.filename) |imagine_filter('detail')}}" width="273"
+                             height="273" alt="{{ produit.name }}" type="image/webp"  />
+                    </a>
+                    <div class="label-group">
+                        {% if produit.promo ==true %}
+                            <div class="product-label label-sale">{{ produit.pricePromo }}%</div>
+                        {% endif %}
+                    </div>
+                </figure>
+                <div class="product-details">
+                    <div class="category-wrap">
+                        <div class="category-list">
+                            {% if produit.refrence != null %}
+                                Réference : <b>{{ produit.refrence }}</b>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <h3 class="product-title">
+                        <a href="{{ path('product',{'slug': produit.slug,'category':produit.categories.slug,'id':produit.id}) }}">
+                            {{ produit.name }}
+                        </a>
+
+                    </h3>
+                    <div class="price-box">
+                        {% if produit.promo ==true %}
+                            <span class="old-price">{{ produit.price |number_format(3, '.', ',') }} DT</span>
+                            <span class="product-price">{{ produit.newprice |number_format(3, '.', ',') }} DT</span>
+                        {% else %}
+                            <span class="product-price">{{ produit.newprice |number_format(3, '.', ',') }} DT</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<div class="row py-4">
+    {% for produit in nouveautesMobile %}
+        <div class="col-6 col-sm-4 col-md-3 col-xl-2 appear-animate  d-block d-sm-none" data-animation-name="fadeIn"
+             data-animation-delay="300" data-animation-duration="1000">
+            <div class="product-default inner-quickview inner-icon">
+                <figure>
+                    <a href="{{ path('product',{'slug': produit.slug,'category':produit.categories.slug,'id':produit.id}) }}"
+                       class="viewModel">
+                        <img src="{{ asset('uploads/images/products/'~produit.filename) |imagine_filter('detail')}}" width="273"
+                             height="273" alt="{{ produit.name }}" type="image/webp"  />
+                    </a>
+                    <div class="label-group">
+                        {% if produit.promo ==true %}
+                            <div class="product-label label-sale">{{ produit.pricePromo }}%</div>
+                        {% endif %}
+                    </div>
+
+                </figure>
+                <div class="product-details">
+                    <div class="category-wrap">
+                        <div class="category-list">
+                            {% if produit.refrence != null %}
+                                Réference : <b>{{ produit.refrence }}</b>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <h3 class="product-title">
+                        <a href="{{ path('product',{'slug': produit.slug,'category':produit.categories.slug,'id':produit.id}) }}">
+                            {{ produit.name }}
+                        </a>
+
+                    </h3>
+                    <div class="price-box">
+                        {% if produit.promo ==true %}
+                            <span class="old-price">{{ produit.price |number_format(3, '.', ',') }} DT</span>
+                            <span class="product-price">{{ produit.newprice |number_format(3, '.', ',') }} DT</span>
+                        {% else %}
+                            <span class="product-price">{{ produit.newprice |number_format(3, '.', ',') }} DT</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

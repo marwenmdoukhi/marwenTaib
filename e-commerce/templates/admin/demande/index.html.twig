@@ -1,0 +1,474 @@
+{% extends 'admin.html.twig' %}
+
+{% block title %}Liste Des Demande{% endblock %}
+
+{% block body %}
+    <div class="mb-3 mt-3">
+        <div class="row row-sm content-body">
+            <div class="col-sm-4 col-xl">
+                <a href="javascript:visibilite('div_texte1');" data-indice='reponse'  class="datatables">
+                    <div class="card card-hover card-social-one">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                <h1 class="card-value"></h1>
+                                <div class="chart-wrapper ">
+                                    <i class="  fa fa-users  fa-4x tx-primary feather feather-help-circle" style="direction: ltr; position: absolute; right: 10px; top: 0px; width: 60px; height: 40px;"></i>
+                                </div>
+                            </div>
+                            <h5 class="card-title tx-primary">Liste Des Demandes {{ toutlesdemande|length}} </h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-4 col-xl mg-t-15 mg-sm-t-0">
+                <a href="javascript:visibilite('div_texte2');" data-indice='refuser'  class="datatables">
+                    <div class="card card-hover card-social-one" style="background-color: #e7515a">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                <h1 class="card-value"></h1>
+                                <div class="chart-wrapper">
+                                    <i  class="  fas fa-user-times fa-4x tx-primary feather feather-help-circle" style="direction: ltr; position: absolute; right: 10px; top: 0px; width: 60px; height: 40px; color: #e83e8c"></i>
+                                </div>
+                            </div>
+                            <h5 class="card-title tx-pink">Demandes {{ demandes|length}} </h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-sm-4 col-xl mg-t-15 mg-sm-t-0">
+                <a href="javascript:visibilite('div_texte3');" data-indice='accepter'  class="datatables">
+                    <div class="card card-hover card-social-one" style="background-color: #e2a03f">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                <h1 class="card-value"></h1>
+                                <div class="chart-wrapper">
+                                    <i  class="  fa fa-user-plus  fa-4x tx-primary feather feather-help-circle" style="direction: ltr; position: absolute; right: 10px; top: 0px; width: 60px; height: 40px; "></i>
+                                </div>
+                            </div>
+                            <h5 class="card-title tx-teal">Demandes en cours {{ demandeaccepter|length}} </h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-sm-4 col-xl mg-t-15 mg-sm-t-0">
+                <a href="javascript:visibilite('div_texte4');" data-indice='enattend'  class="datatables">
+                    <div class="card card-hover card-social-one" style="background-color: #5c1ac3">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                <h1 class="card-value"></h1>
+                                <div class="chart-wrapper">
+                                    <i  class=" fas fa-user-clock  fa-4x tx-primary feather feather-help-circle" style="direction: ltr; position: absolute; right: 10px; top: 0px; width: 60px; height: 40px; "></i>
+                                </div>
+                            </div>
+                            <h5 class=" card-title tx-warning ">Demandes Terminer  {{ demandeterminer |length }}</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div id="div_texte1" >
+        <div class="row layout-top-spacing">
+            <div class="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
+                <div class="widget-content widget-content-area br-6">
+                    <div class="table-responsive mb-4 mt-4">
+                        <table id="alter_pagination" class="table table-hover" style="width:100%">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Numero Facture</th>
+                                <th>Date</th>
+                                <th>Montant</th>
+                                <th>Nom de demandeur</th>
+                                <th>Adress de demandeur</th>
+                                <th>Téléphone</th>
+                                <th>Statu</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for toutlesdemande in toutlesdemande %}
+
+                                <tr >
+
+                                    <td>{{ toutlesdemande.id }}</td>
+                                    <td> <a class="text-info" href="{{ path('detaildemande',{'id':toutlesdemande.id }) }}">   {{ toutlesdemande.Numero }} </a></td>
+                                    <td>  {{ toutlesdemande.CreatedAt|format_datetime(locale='fr') }}
+                                    </td>
+                                    <td>{{ toutlesdemande.Montant |number_format(3, '.', ',') }} TND</td>
+                                    <td>{{ toutlesdemande.users.firstName }} {{ toutlesdemande.users.lastName }}</td>
+                                    <td>{{ toutlesdemande.users.adress }} </td>
+                                    <td>{{ toutlesdemande.users.tel }} </td>
+                                    <td>
+                                        {% if (toutlesdemande.status==0) and  (toutlesdemande.terminer==0) %}
+                                            Demande
+                                        {% elseif  (toutlesdemande.status==1) and  (toutlesdemande.terminer==0) %}
+                                            En Cours
+                                        {% elseif  (toutlesdemande.status==1) and  (toutlesdemande.terminer==1) %}
+                                            Terminer
+                                        {% else %}
+                                        {% endif %}
+
+
+                                    </td>
+
+                                    <td>
+                                        {% if (toutlesdemande.status==0) and  (toutlesdemande.terminer==0) %}
+                                            <a class="btn btn-outline-danger" href="{{ path('demandeacceper',{'id':toutlesdemande.id }) }}"
+                                            >accepter</a>
+                                            <a href="{{ path('demande_delete',{'id':toutlesdemande.id }) }}"
+                                            ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></a>
+                                        {% elseif  (toutlesdemande.status==1) and  (toutlesdemande.terminer==0) %}
+                                            <a class="btn btn-outline-warning" href="{{ path('demandeterminer',{'id':toutlesdemande.id }) }}"
+                                            >Terminer</a>
+                                        {% elseif  (toutlesdemande.status==1) and  (toutlesdemande.terminer==1) %}
+                                            <span class="badge outline-badge-secondary"> Terminer </span>
+                                        {% else %}
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="div_texte2" style="display:none;">
+
+        <div class="row layout-top-spacing">
+            <div class="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
+                <div class="widget-content widget-content-area br-6">
+                    <div class="table-responsive mb-4 mt-4">
+                        <table id="demande" class="table table-hover" style="width:100%">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Numero Facture</th>
+                                <th>Date</th>
+                                <th>Montant</th>
+                                <th>Nom de demandeur</th>
+                                <th>Email de demandeur</th>
+                                <th>Téléphone</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                {% for demande in demandes %}
+                                <td>{{ demande.id }}</td>
+                                <td> <a class="text-info" href="{{ path('detaildemande',{'id':demande.id }) }}">   {{ demande.Numero }} </a></td>
+                                <td>  {{ demande.CreatedAt|format_datetime(locale='fr') }}
+                                </td>
+                                <td>{{ demande.Montant |number_format(3, '.', ',') }} TND</td>
+                                <td>{{ demande.users.firstName }} {{ demande.users.lastName }}</td>
+                                <td>{{ demande.users.adress }} </td>
+                                <td>{{ demande.users.tel }} </td>
+                                <td>
+                                    {% if (demande.status==0) and  (demande.terminer==0) %}
+                                        Demande
+                                    {% elseif  demande.status ==1 %}
+                                        En Cours
+                                    {% elseif demande.terminer ==1 %}
+                                        Terminer
+                                    {% else %}
+                                    {% endif %}
+
+
+                                </td>
+                                <td>
+                                    {% if (demande.status==0) and  (demande.terminer==0) %}
+                                        <a class="btn btn-outline-danger" href="{{ path('demandeacceper',{'id':demande.id }) }}"
+                                        >accepter</a>
+                                        <a href="{{ path('demande_delete',{'id':demande.id }) }}"
+                                        ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></a>
+                                    {% elseif  (demande.status==1) and  (demande.terminer==0) %}
+                                        <a class="btn btn-outline-warning" href="{{ path('demandeterminer',{'id':demande.id }) }}"
+                                        >Terminer</a>
+                                    {% elseif  (demande.status==1) and  (demande.terminer==1) %}
+                                        <span class="badge outline-badge-secondary"> Terminer </span>
+                                    {% else %}
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="div_texte3" style="display:none;">
+
+        <div class="row layout-top-spacing">
+            <div class="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
+                <div class="widget-content widget-content-area br-6">
+                    <div class="table-responsive mb-4 mt-4">
+                        <table id="demandeaccepter" class="table table-hover" style="width:100%">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Numero Facture</th>
+                                <th>Date</th>
+                                <th>Montant</th>
+                                <th>Nom de demandeur</th>
+                                <th>Adress de demandeur</th>
+                                <th>Téléphone</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                {% for demandeaccepter in demandeaccepter %}
+                                <td>{{ demandeaccepter.id }}</td>
+                                <td> <a class="text-info" href="{{ path('detaildemande',{'id':demandeaccepter.id }) }}">   {{ demandeaccepter.Numero }} </a></td>
+                                <td>  {{ demandeaccepter.CreatedAt|format_datetime(locale='fr') }}
+                                </td>
+                                <td>{{ demandeaccepter.Montant |number_format(3, '.', ',') }} TND</td>
+                                <td>{{ demandeaccepter.users.firstName }} {{ demandeaccepter.users.lastName }}</td>
+                                <td>{{ demandeaccepter.users.adress }} </td>
+                                <td>{{ demandeaccepter.users.tel }} </td>
+                                <td>
+                                    {% if (demandeaccepter.status==0) and  (demandeaccepter.terminer==0) %}
+                                        Demande
+                                    {% elseif  demandeaccepter.status ==1 %}
+                                        En Cours
+                                    {% elseif demandeaccepter.terminer ==1 %}
+                                        Terminer
+                                    {% else %}
+                                    {% endif %}
+
+
+                                </td>
+                                <td>
+                                    {% if (demandeaccepter.status==0) and  (demandeaccepter.terminer==0) %}
+                                        <a class="btn btn-outline-danger" href="{{ path('demandeacceper',{'id':demandeaccepter.id }) }}"
+                                        >accepter</a>
+                                        <a href="{{ path('demande_delete',{'id':demandeaccepter.id }) }}"
+                                        ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></a>
+                                    {% elseif  (demandeaccepter.status==1) and  (demandeaccepter.terminer==0) %}
+                                        <a class="btn btn-outline-warning" href="{{ path('demandeterminer',{'id':demandeaccepter.id }) }}"
+                                        >Terminer</a>
+                                    {% elseif  (demandeaccepter.status==1) and  (demandeaccepter.terminer==1) %}
+                                        <span class="badge outline-badge-secondary"> Terminer </span>
+                                    {% else %}
+
+                                    {% endif %}
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="div_texte4" style="display:none;">
+
+        <div class="row layout-top-spacing">
+            <div class="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
+                <div class="widget-content widget-content-area br-6">
+                    <div class="table-responsive mb-4 mt-4">
+                        <table id="demandeterminer" class="table table-hover" style="width:100%">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Numero Facture</th>
+                                <th>Date</th>
+                                <th>Montant</th>
+                                <th>Nom de demandeur</th>
+                                <th>Email de demandeur</th>
+                                <th>Téléphone</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                {% for demandeterminer in demandeterminer %}
+                                <td>{{ demandeterminer.id }}</td>
+                                <td> <a class="text-info" href="{{ path('detaildemande',{'id':demandeterminer.id }) }}">   {{ demandeterminer.Numero }} </a></td>
+                                <td>  {{ demandeterminer.CreatedAt|format_datetime(locale='fr') }}
+                                </td>
+                                <td>{{ demandeterminer.Montant |number_format(3, '.', ',') }} TND</td>
+                                <td>{{ demandeterminer.users.firstName }} {{ demandeterminer.users.lastName }}</td>
+                                <td>{{ demandeterminer.users.adress }} </td>
+                                <td>{{ demandeterminer.users.tel }} </td>
+
+                                <td>
+                                    Terminer
+                                </td>
+
+                                <td>
+                                    <span class="badge outline-badge-secondary"> Terminer </span>
+
+                                </td>
+
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+
+    <script>
+        var divPrecedent=document.getElementById('div_texte1');
+        function visibilite(divId)
+        {
+            divPrecedent.style.display='none';
+            divPrecedent=document.getElementById(divId);
+            divPrecedent.style.display='';
+        }
+    </script>
+
+
+
+    <script>
+        $(document).ready(function () {
+            $('#alter_pagination').DataTable({
+                "pagingType": "full_numbers",
+                "oLanguage": {
+                    "oPaginate": {
+                        "sFirst": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><polyline points="15 18 9 12 15 6"></polyline></svg>',
+                        "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+                        "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>',
+                        "sLast": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>'
+                    },
+                    "sInfo": "Showing page _PAGE_ of _PAGES_",
+                    "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+                    "sSearchPlaceholder": "SearchLunettes...",
+                    "sLengthMenu": "Results :  _MENU_",
+                },
+                "stripeClasses": [],
+                "lengthMenu": [7, 10, 20, 50],
+                "pageLength": 7,
+                "order": [[ 0, 'dsc' ]],
+                "columnDefs": [
+                    {
+                        "targets": [ 0 ],
+                        "visible": false
+                    }
+                ]
+            });
+        });
+
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#demandeaccepter').DataTable({
+                "pagingType": "full_numbers",
+                "oLanguage": {
+                    "oPaginate": {
+                        "sFirst": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><polyline points="15 18 9 12 15 6"></polyline></svg>',
+                        "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+                        "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>',
+                        "sLast": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>'
+                    },
+                    "sInfo": "Showing page _PAGE_ of _PAGES_",
+                    "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+                    "sSearchPlaceholder": "SearchLunettes...",
+                    "sLengthMenu": "Results :  _MENU_",
+                },
+                "stripeClasses": [],
+                "lengthMenu": [7, 10, 20, 50],
+                "pageLength": 7,
+                "order": [[ 0, 'dsc' ]],
+                "columnDefs": [
+                    {
+                        "targets": [ 0 ],
+                        "visible": false
+                    }
+                ]
+            });
+        });
+
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#demande').DataTable({
+                "pagingType": "full_numbers",
+                "oLanguage": {
+                    "oPaginate": {
+                        "sFirst": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><polyline points="15 18 9 12 15 6"></polyline></svg>',
+                        "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+                        "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>',
+                        "sLast": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>'
+                    },
+                    "sInfo": "Showing page _PAGE_ of _PAGES_",
+                    "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+                    "sSearchPlaceholder": "SearchLunettes...",
+                    "sLengthMenu": "Results :  _MENU_",
+                },
+                "stripeClasses": [],
+                "lengthMenu": [7, 10, 20, 50],
+                "pageLength": 7,
+                "order": [[ 0, 'dsc' ]],
+                "columnDefs": [
+                    {
+                        "targets": [ 0 ],
+                        "visible": false
+                    }
+                ]
+            });
+        });
+
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#demandeterminer').DataTable({
+                "pagingType": "full_numbers",
+                "oLanguage": {
+                    "oPaginate": {
+                        "sFirst": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><polyline points="15 18 9 12 15 6"></polyline></svg>',
+                        "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+                        "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>',
+                        "sLast": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>'
+                    },
+                    "sInfo": "Showing page _PAGE_ of _PAGES_",
+                    "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+                    "sSearchPlaceholder": "SearchLunettes...",
+                    "sLengthMenu": "Results :  _MENU_",
+                },
+                "stripeClasses": [],
+                "lengthMenu": [7, 10, 20, 50],
+                "pageLength": 7,
+                "order": [[ 0, 'dsc' ]],
+                "columnDefs": [
+                    {
+                        "targets": [ 0 ],
+                        "visible": false
+                    }
+                ]
+            });
+        });
+
+
+    </script>
+{% endblock %}

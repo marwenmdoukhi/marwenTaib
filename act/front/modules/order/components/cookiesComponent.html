@@ -1,0 +1,86 @@
+<p-dialog [(visible)]="displayCookiesModal" [responsive]="true" [positionTop]="50" styleClass="mydialog dialog-cookies"
+          [draggable]="false" modal="true" [style]="{width: '700px', top:0}"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+    <span class="Votre-dossier-dacte">Politique de cookies</span>
+    <hr />
+    <div>
+        <span class="Lorem-ipsum-dolor-si">Nous utilisons des cookies pour vous proposer une expérience utilisateur optimale. Parce que le respect de votre vie privée est essentiel pour nous, nous vous laissons le choix de les accepter tous ou de les paramétrer.</span>
+    </div>
+    <hr />
+    <div style="text-align:center" class="modal-buttons-footer">
+        <button form="information" type="submit" class="btn  save-button" style="margin-right:20px" data-dismiss="modal" (click)="saveCookies()">Non merci, uniquement les cookies techniques</button>
+        <button form="information" type="submit" class="btn  save-button" style="margin-right:20px" data-dismiss="modal" (click)="displayCookies=false;displayCookiesPrametres=true;">Personnaliser</button>
+        <button form="information" type="button" class="btn  next-button" data-dismiss="modal" aria-hidden="true" (click)="acctpePiwic=true;saveCookies()">Accepter tous les cookies</button>
+    </div>
+</p-dialog>
+
+<p-dialog [(visible)]="displayCookiesPrametres" [responsive]="true" [positionTop]="50"
+          [draggable]="false" modal="true" [style]="{width: '700px', top:0}"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+
+    <span class="Votre-dossier-dacte">Les paramètres des cookies</span>
+    <hr />
+    <div>
+        <span class="Lorem-ipsum-dolor-si">Les fonctionnalités du site d’<a
+                href="https://e-actesoussignatureprivee.avocat.fr/">e-actesoussignatureprivee.avocat.fr/</a> listées ci-dessous s’appuient sur des services proposés par des tiers.
+
+Si vous y donnez votre accord, ces tiers pourront déposer des cookies (traceurs) qui vous permettront de visualiser directement sur le site du contenu hébergé par ces tiers ou de partager nos contenus. Ces cookies enregistreront certaines informations vous concernant.
+
+Le détail des cookies qui pourraient être installés dans votre navigateur et des informations qu’ils retiennent figure ci-dessous. Vous pouvez accepter ou refuser les cookies en fonction de leurs usages et suivant vos préférences.
+
+Si vous n’êtes pas encore décidés, sachez que vous pourrez à tout moment, personnaliser le dépôt de cookies en vous rendant sur la page "Gestion des cookies" accessible en un clic sur le lien figurant en bas de page à gauche du site.</span><br />
+<!--        <span class="Lorem-ipsum-dolor-si">-->
+<!--            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.-->
+<!--        </span>-->
+        <br />
+
+    </div>
+    <div>
+        <div class="checkbox switcher" style="margin-bottom: 10px; margin-top: 30px;">
+            <label for="test2">
+                <input type="checkbox" [(ngModel)]="acctpePiwic" id="test2" value="">
+                <span style="background-color: #D4D6DA;"><small style="background-color: #3E79FF;"></small></span>
+                <span class="Texte">Cookies de mesure d'audience</span>
+            </label>
+        </div>
+        <span *ngIf="acctpePiwic==true" style="width: 44px;height: 24px;font-family: Palanquin,serif;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color: #0279ff;">Activés</span>
+        <span *ngIf="acctpePiwic==false" style="width: 44px;height: 24px;font-family: Palanquin,serif;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color: #0279ff;">Désactivés</span>
+        <br>
+        <span class="Lorem-ipsum-dolor-si">
+            Matomo (Piwik) Ce service peut déposer 7 cookies.
+Des cookies à des fins de mesure d'audience sont installés. Les informations de navigation stockées sont : l’identifiant de session, l’adresse des pages consultées, les dates et heures des visites pendant 13 mois maximum.
+        </span><br />
+        <span class="Lorem-ipsum-dolor-si">
+            Vous pouvez bloquer à tout moment les cookies de fonctionnement en allant sur l'onglet " Confidentialité"au niveau des paramètres de votre navigateur. Le cas échéant, l'application risque de ne pas fonctionner correctement.
+        </span>
+        <div class="checkbox switcher">
+            <label for="test1">
+                <input type="checkbox" id="test1" value="" checked [attr.disabled]="true">
+                <span style="opacity: 0.5;background-color: #EAEBED;"><small style="opacity: 1;background-color: #81BCFF;"></small></span>
+                <span class="Texte">Cookies techniques</span>
+            </label>
+        </div>
+        <span style="width: 44px;height: 24px;font-family: Palanquin,serif;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color: #0279ff;">Activés</span><br/>
+        <br>
+<!--        <span class="Lorem-ipsum-dolor-si">-->
+<!--            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.-->
+<!--        </span><br/>-->
+<!--        <span class="Lorem-ipsum-dolor-si">-->
+<!--            Vous pouvez bloquer à tout moment les cookies de fonctionnement en allant sur l'onglet " Confidentialité"au niveau des paramètres de votre navigateur. Le cas échéant, l'application risque de ne pas fonctionner correctement.-->
+<!--        </span>-->
+        <div class="checkbox switcher">
+            <label for="test3">
+                <input type="checkbox" id="test3" value="" checked [attr.disabled]="true">
+                <span style="opacity: 0.5;background-color: #EAEBED;"><small style="opacity: 1;background-color: #81BCFF;"></small></span>
+                <span class="Texte">Cookies PIWIK (MATOMO)</span>
+            </label>
+        </div>
+        <span style="width: 44px;height: 24px;font-family: Palanquin,serif;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color: #0279ff;">Activés</span><br/>
+        <br>
+    </div>
+    <hr />
+    <div style="text-align: right;">
+        <button form="information" type="submit" class="btn  save-button" style="margin-right:20px" data-dismiss="modal" (click)="displayCookiesPrametres=false;displayCookies=true">Annuler</button>
+        <button form="information" type="button" class="btn  next-button" data-dismiss="modal" aria-hidden="true" (click)="saveCookies()">Valider</button>
+    </div>
+</p-dialog>

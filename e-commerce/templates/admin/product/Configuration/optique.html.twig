@@ -1,0 +1,67 @@
+{% extends 'admin.html.twig' %}
+
+{% block title %}Configuration Produit Optique{% endblock %}
+
+{% block body %}
+    <div class="sub-header-container">
+        <header class="header navbar navbar-expand-sm">
+            <nav class="breadcrumb-two" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('product_index') }}" >Produit</a>
+                    </li>
+                    <li class="breadcrumb-item active ml-2"><a href="javascript:void(0);">{{product }}</a></li>
+                </ol>
+            </nav>
+        </header>
+    </div>
+    <h1>Configuration Produit Optique</h1>
+
+    <div class="mt-2">
+            {{ form_start(form) }}
+        <div class="row">
+            <div class="col-md-4">
+                <label>Style du Lunettes</label>
+                {{ form_widget(form.style) }}
+            </div>
+            <div class="col-md-4">
+                <label>Forme du Lunettes</label>
+                {{ form_widget(form.forme) }}
+            </div>
+            <div class="col-md-4">
+                <label>Cadres du Lunettes</label>
+                {{ form_widget(form.cadres) }}
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <label>Plaquettes De Nez</label>
+                {{ form_widget(form.plaquettesDeNez) }}
+            </div>
+            <div class="col-md-4">
+                <label>Matieres du Lunettes</label>
+                {{ form_widget(form.matieresDuLunette) }}
+            </div>
+            <div class="col-md-4">
+                <label>Matiere Du Branche</label>
+                {{ form_widget(form.matiereDuBranche) }}
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-4">
+                    <button class="btn btn-primary ">{{ button_label|default('Ajouter') }}</button>
+            </div>
+        </div>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}
+{% block javascripts %}
+
+
+<script>
+    var ss = $("#product_configuration_optique_style").select({
+        tags: true,
+    });
+</script>
+{% endblock %}

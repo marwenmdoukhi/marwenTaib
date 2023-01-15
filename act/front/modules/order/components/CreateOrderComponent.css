@@ -1,0 +1,53 @@
+﻿.overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 999; /* sidebar must have z-index > 999 */
+    background: white;
+    opacity: 0; /* or background set to rgba(255, 255, 255, 0); */
+}
+
+.sort {
+    width: 300px;
+    height: 40px;
+    font-size: 20px;
+    border-radius: 5px;
+    background-color: #7CFC00;
+    color: black;
+    position: absolute;
+    border: 1px solid black;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    padding: 8px;
+}
+
+.sort:active {
+    background-color: #008445;
+    color: white;
+}
+
+.gsap {
+    color: #7CFC00;
+}
+
+h4 {
+    color: gray;
+}
+
+.Rectangle-Copy-6 {
+    width: 882px;
+    height: 92px;
+    border-radius: 8px;
+    border: solid 1px var(--blue);
+    background-color: #ffffff;
+}
+
+.synthese{
+    width: 885px;
+    height: 65px;
+    border-radius: 8px;
+    border: solid 1px ;
+    background-color: #ffffff;
+}
+

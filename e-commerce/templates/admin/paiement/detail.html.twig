@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Facture</title>
+    <style type="text/css">
+        table {
+            width: 100%;
+            color: #000;
+            font-family: helvetica;
+            line-height: 5mm;
+            border-collapse: collapse;
+        }
+        h2 { margin: 0; padding: 0; }
+        p { margin: 5px; }
+        h4{font-size: 15px;}
+        h1{font-size: 20px;}
+        .border th {
+            border: 1px solid #0a0a0a;
+            color: #fff;
+            background: #0a0a0a;
+            padding: 5px;
+            font-weight: normal;
+            font-size: 14px;
+            text-align: center;
+        }
+        .border td {
+            border: 1px solid #000;
+            padding: 5px 10px;
+            text-align: center;
+        }
+        .no-border {
+            border-right: 1px solid #000;
+            border-left: none;
+            border-top: none;
+            border-bottom: none;
+        }
+        .space { padding-top: 250px; }
+        .margenleft{margin-left: 70px;}
+        .10p { width: 10%; } .15p { width: 15%; }
+        .25p { width: 25%; } .50p { width: 50%; }
+        .60p { width: 60%; } .75p { width: 75%; }
+        .40p { width: 40%; }
+    </style>
+</head>
+<body>
+
+<page backtop="10mm" backleft="10mm" backright="10mm" backbottom="10mm" >
+
+
+
+    <table style="vertical-align: top;">
+        <tr>
+            <td class="60p">
+                <h2> Fashion for men and women </h2>
+                <br>
+                <strong>Tel: 225 366/982</strong><br />
+                <strong>Email:</strong>Contact@fmw.com<br />
+            </td>
+            <td class="40p">
+                <h2>Destinataire</h2>
+                <br>
+                <strong>Nom Prenom:</strong> {{facture.users.firstName }} {{ facture.users.lastName }}<br />
+                <strong>Telephone:</strong> {{ facture.users.tel }}<br />
+                <strong>Email:</strong> {{ facture.users.email }}<br />
+                <strong>Adress:</strong> {{ facture.users.adress }}<br />
+
+            </td>
+        </tr>
+    </table>
+
+    <table style="margin-top: 50px;">
+        <tr>
+            <td class="75p"><h2>Facutre n°:{{ facture.numero }}</h2></td>
+            <td></td>
+        </tr>
+    </table>
+
+    <table style="margin-top: 30px;" class="border">
+        <thead>
+        <tr>
+            <th class="60p">Description</th>
+            <th class="10p">Quantité</th>
+            <th class="15p">Prix Unitaire</th>
+            <th class="15p">Montant</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for produit in facture.commandeArticles %}
+            <tr>
+                <td>{{ produit.Product.name }}</td>
+                <td>{{ produit.Quantite }}</td>
+                <td>{{ produit.Product.price |number_format(3, '.', ',') }} TN</td>
+                <td>{{ (produit.Product.price*produit.Quantite )  |number_format(3, '.', ',') }} TN</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td class="space"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td colspan="2" class="no-border"></td>
+            <td style="text-align: center;" rowspan="3"><strong>Total TTC :</strong></td>
+            <td>{{ facture.Montant |number_format(3, '.', ',') }} TND</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4>Tunis Le {{ facture.getDatedepaimenet  |format_date('none', ' EEEE  d MMMM Y', null, 'gregorian', 'fr') }}</h4>
+    signature
+
+    <page_footer>
+        <hr/>
+        <p>Tunis Le {{ facture.getDatedepaimenet  |format_date('none', ' EEEE  d MMMM Y', null, 'gregorian', 'fr') }}</p>
+        <p>fmw</p>
+        <p>Tel: 20 22665 872</p>
+        <p>Email: Contact@fmw.tn</p>
+    </page_footer>
+
+</page>
+</body>
+</html>

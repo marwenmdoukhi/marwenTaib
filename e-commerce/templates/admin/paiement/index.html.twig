@@ -1,0 +1,96 @@
+{% extends 'admin.html.twig' %}
+
+{% block title %}Paiement{% endblock %}
+
+{% block body %}
+
+    <div class="row layout-top-spacing">
+        <div class="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
+
+
+            <div class="widget-content widget-content-area br-6">
+                <div class="table-responsive mb-4 mt-4">
+                    <table id="demandeterminer" class="table table-hover" style="width:100%">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Numero Facture</th>
+                            <th>Montant</th>
+                            <th>Nom de demandeur</th>
+                            <th>Email de demandeur</th>
+                            <th>Téléphone</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            {% for demandeterminer in demandeterminer %}
+                            <td>{{ demandeterminer.id }}</td>
+                            <td> <a class="text-info" href="{{ path('detaildemande',{'id':demandeterminer.id }) }}">   {{ demandeterminer.Numero }} </a></td>
+                            <td>{{ demandeterminer.Montant }} TND</td>
+                            <td>{{ demandeterminer.users.firstName }} {{ demandeterminer.users.lastName }}</td>
+                            <td>{{ demandeterminer.users.adress }} </td>
+                            <td>{{ demandeterminer.users.tel }} </td>
+                            <td>
+                                Terminer
+                            </td>
+                            <td>
+                                {% if demandeterminer.payer == 0 %}
+                                <a target="_blank"  class="btn btn-outline-primary" href="{{ path('payer',{'id':demandeterminer.id }) }}"
+                                >Payer</a>
+                                    {% else %}
+                                        <a class="btn btn-outline-primary " target="_blank" href="{{ path('detailfacutre',{'id':demandeterminer.id }) }}"
+                                        >imprimer</a>
+                                {% endif %}
+
+
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+{% endblock %}
+{% block javascripts %}
+
+    <script>
+        $(document).ready(function () {
+            $('#demandeterminer').DataTable({
+                "pagingType": "full_numbers",
+                "oLanguage": {
+                    "oPaginate": {
+                        "sFirst": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><polyline points="15 18 9 12 15 6"></polyline></svg>',
+                        "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+                        "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>',
+                        "sLast": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>'
+                    },
+                    "sInfo": "Showing page _PAGE_ of _PAGES_",
+                    "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+                    "sSearchPlaceholder": "SearchLunettes...",
+                    "sLengthMenu": "Results :  _MENU_",
+                },
+                "stripeClasses": [],
+                "lengthMenu": [7, 10, 20, 50],
+                "pageLength": 7,
+                "order": [[ 0, 'dsc' ]],
+                "columnDefs": [
+                    {
+                        "targets": [ 0 ],
+                        "visible": false
+                    }
+                ]
+            });
+        });
+
+
+    </script>
+{% endblock %}

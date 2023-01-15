@@ -1,0 +1,35 @@
+
+{% extends 'admin.html.twig' %}
+
+{% block title %}New subcategories{% endblock %}
+
+
+{% block body %}
+
+    <div class="sub-header-container">
+        <header class="header navbar navbar-expand-sm">
+            <nav class="breadcrumb-two" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('subsubcategories_index') }}" > Sous Sous categories</a>
+                    </li>
+                    <li class="breadcrumb-item active ml-2"><a href="javascript:void(0);">Ajouter Sous Sous categories</a></li>
+                </ol>
+            </nav>
+
+        </header>
+    </div>
+    <h1>Ajouter Sous Sous categories</h1>
+
+
+    {{ include('admin/subsubcategories/_form.html.twig') }}
+
+
+
+{% endblock %}
+{% block javascripts %}
+    <script>
+        var ss = $("#sub_sub_categories_subCategories").select2({
+            tags: true,
+        });
+    </script>
+{% endblock %}

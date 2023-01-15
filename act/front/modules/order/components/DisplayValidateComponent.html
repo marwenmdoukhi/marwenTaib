@@ -1,0 +1,89 @@
+<p-toast position="top-right"></p-toast>
+<div [@slideInOut]>
+    <div class="row" style="max-width:100%;margin-left: 20px;margin-right: 3%;">
+        <span class="Acte-1-N1989">Acte N°</span> <span class="Acte-1-N1989" style="font-size: 18px !important;">{{currentActe.folderNumber}}</span>
+        <hr />
+    </div>
+    <div class="mt-30" *ngIf="listDocument.length != 0">
+        <div class="docs-list responsive-docs-list" *ngIf="listDocument.length!=0;" style="background-color: #ffffff;margin-left: 20px;margin-right: 20px;">
+            <div class="docs-list-header">
+                <img src="/logo/active-unfocused.png" alt="document" class="mr-10" />
+                <span>
+                    Mes documents
+                </span>
+                <span class="pull-right cursor-pointer doc-list-action-icons">
+                    <span [inlineSVG]="'/logo/download.svg'" (click)="downloadAllDocument()"></span>
+                </span>
+            </div>
+            <div class="docs-list-content">
+                <div *ngFor="let file of listDocument" class="docs-list-row">
+                    <div>
+                        <span class="docs-list-title truncate-txt wrap-mobile-txt">{{file.name}}.pdf</span>
+                    </div>
+                    <div>
+                        {{getFileSize(file.name) | number}} MO
+                    </div>
+                    <div class="doc-list-action-icons">
+                        <span [inlineSVG]="'/logo/oeil.svg'" (click)="viewPdf(file)"></span>
+                        <span>
+                            <a (click)="downloadPDF(file)" title={{file.name}} class="c-black">
+                                <span [inlineSVG]="'/logo/download.svg'"></span>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-left: 10px;max-width: 100%;margin-right: 20px;margin-top: 20px;">
+        <label class="pure-material-checkbox" style="margin-bottom: 23px;margin-left: 1%;">
+            <input type="checkbox" [(ngModel)]="acceptCondition">
+            <span class="Je-confirme-avoir-pr">Je confirme avoir pris connaissance des documents</span>
+            <div class="row">
+                <div class="Je-confirme-avoir-pr" style="margin-left: 45px;color: red" *ngIf="validatedClicked==true && !acceptCondition">Veuillez cocher la case</div>
+            </div>
+        </label>
+        <br *ngIf="vm.refuseActe" />
+        <div *ngIf="vm.refuseActe" class="Row" style="margin-bottom:23px;margin-left: 1%;">
+            <span class="Laissez-un-commentai">Laissez un commentaire *</span>
+        </div>
+        <div *ngIf="vm.refuseActe" class="Row" style="margin-bottom:30px;width: 99%;margin-left: 1%;">
+            <textarea [(ngModel)]="commentRefuseAct" placeholder="Votre message ici" id="w3mission" rows="4" cols="50" style=" width: 100%;height: 206px;"></textarea>
+        </div>
+
+        <div class="signature-action-button">
+            <button *ngIf="!vm.refuseActe" form="information" type="button" class="btn next-button" style="float:right;" data-target="#validateActe" data-toggle="modal" (click)="validateActe();">Accepter</button>
+            <button *ngIf="!vm.refuseActe" form="information" type="button" class="btn save-button" style="float:right;width: 260px !important;margin-bottom: 30px;" (click)="vm.refuseActe=true">Refuser et laisser un commentaire</button>
+            <button *ngIf="vm.refuseActe" type="button" class="btn save-button" style="margin-left: 20px;float:right;width: 141px !important;margin-bottom: 30px;" (click)="refuseAct();" data-target="#RefusActe" data-toggle="modal">Envoyer</button>
+            <button *ngIf="vm.refuseActe" form="information" type="button" class="btn next-button" style="float:right;width: 141px" (click)="displayCreateOrder=false;displayConsultOrder=false;vm.displayValidate=false;vm.refuseActe=false;vm.activateFilterClass=true">Annuler</button>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="validateActe" role="dialog" *ngIf="acceptCondition" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content" style="height: 300px;width: auto;">
+            <div class="modal-body Votre-dossier-dacte " style="text-align:center;height: 100px;margin-top: 100px;">
+                Validation effectuée avec succès
+            </div>
+            <div style="text-align:center">
+                <button form="information" type="submit" class="btn  next-button pure-material-button-contained" data-dismiss="modal" (click)="vm.displayValidate=false;vm.activateFilterClass=true">Retour</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="RefusActe" role="dialog" *ngIf="acceptCondition && commentRefuseAct && commentRefuseAct.length>0" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content" style="height: 300px;width: 700px;">
+            <div class="modal-body Votre-dossier-dacte " style="text-align:center;height: 100px;margin-left: 100px;margin-top: 100px;">
+                Votre refus a bien été pris en compte
+            </div>
+            <div style="text-align:center;margin-left: 5.5%;">
+                <button form="information" type="submit" data-dismiss="modal" class="btn  next-button pure-material-button-contained" (click)="vm.displayValidate=false;vm.activateFilterClass=true" style="margin-right:36px">Retour</button>
+            </div>
+        </div>
+    </div>
+</div>

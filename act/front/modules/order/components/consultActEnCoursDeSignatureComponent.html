@@ -1,0 +1,261 @@
+<p-toast position="top-right"></p-toast>
+<CreateSignataireComponent [vm]="vm" *ngIf="displayModalSignataire==true"></CreateSignataireComponent>
+<createAvocat [vm]="vm" *ngIf="displayModalAvocat==true"></createAvocat>
+<div class="consultAES container-fluid" [@slideInOut] *ngIf="!displayModalSignataire && !displayModalAvocat">
+    <div class="row" style="padding-bottom: 20px;">
+        <i class="glyphicon glyphicon-search" style="position: absolute;margin-top: 37px;margin-left: 15px;"></i>
+        <input class="rectangle" type="text" id="input"
+               pInputText
+               placeholder="Chercher un acte, un document, un contact"
+               (input)="tableFactures.filterGlobal($event.target.value, 'contains')"
+               style="height: 50px !important; padding-left: 35px; width: 100%">
+    </div>
+    <div style="margin-bottom: 10px;margin-top:36px">
+        <div style="margin-bottom: 30px;">
+            <span class="glyphicon glyphicon-chevron-left" style="cursor: pointer;width: 10px;height: 16px;margin-left:-2%" (click)="displayCreateOrder=false;displayConsultOrder=false;displaySendTovalidation=false;"></span>
+            <span *ngIf="!displaySendTovalidation" style="font-family: Palanquin,serif;font-size: 30px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25;margin-left: 1.4%;">Synthèse</span>
+            <span *ngIf="displaySendTovalidation" style="font-family: Palanquin,serif;
+        font-size: 30px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        color: #1c1e25;
+        margin-left: 1.4%;">Envoyer pour validation</span>
+
+
+            <div class="dropdown" style="margin-right: 1%;">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    Actions de l'acte
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li style="cursor:pointer" *ngIf="currentActe.status=='En Projet' || currentActe.status=='Abandonne'"><a (click)="vm.onDeleteActe(currentActe)">Supprimer l'acte</a></li>
+                    <li style="cursor:pointer" *ngIf="userConnected.roles[0]!='ROLE_COUNSEL' && (currentActe.status=='Cree' || currentActe.status=='En cours de validation' || currentActe.status=='En cours de signature' || currentActe.status=='Signature refusee' || currentActe.status=='Validation refusee')"><a data-target="#dismissActeModal" data-toggle="modal">Abandonner un acte</a></li>
+                    <li style="cursor:pointer" *ngIf="currentActe.status!='En Projet'"><a (click)="vm.downloadSynthese()">Télécharger la synthèse</a></li>
+                    <li style="cursor:pointer" *ngIf="currentActe.status=='En cours de validation'"><a (click)="sendMailRelance()">Relance de validation</a></li>
+                </ul>
+            </div>
+            <hr *ngIf="!displaySendTovalidation" class="b-crer-un-nouvel-acte">
+        </div>
+        <div class="row mask-synthese">
+            <div class="container-fluid">
+                <div class="Row Signataires" style="margin-left: 5px !important;width: 100%; margin-top: 22px">
+                    Informations
+                </div>
+
+                <div class="row">
+                    <table class="table table-bordered act-rectangle" style="margin-left: 27px; width: 96% ">
+                        <thead>
+                        <th id="th" style="text-align: center ;padding-top: 14px;border-right: 4px solid #dadada; color: #0279ff">Numéro de l'acte</th>
+                        <th id="th1"  style="text-align: center ; padding-top: 14px;border-right: 4px solid #dadada ; color: #0279ff">Nom de l'acte</th>
+                        <th id="th2"  style="text-align: center;padding-top: 14px;border-right: 4px solid #dadada ; color:  #0279ff">Nom du dossier</th>
+                        <th id="th3"  style="text-align: center ;padding-top: 14px;; color: #0279ff">
+                            Numéro interne du dossier
+                        </th>
+                        </thead>
+                        <tbody>
+                        <td style="text-align: center;border-right: 4px solid #dadada;">{{currentActe.folderNumber}}</td>
+                        <td style="text-align: center;border-right: 4px solid #dadada;">{{currentActe.name}}</td>
+                        <td style="text-align: center;border-right: 4px solid #dadada;">{{currentActe.folderName}}</td>
+                        <td style="text-align: center;">{{currentActe.internalNumber}}</td>
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+                <div class="row">
+                    <div style=" background-color:#ebedf4;height: 50px">
+                        <div style="width: 4px;height: 50px;background-color:#0279ff;float: left"></div>
+                        <div style="float: left;width: 99%;margin-top: 1%">
+                            <span style="padding-left: 3%;width: 300px;height: 38px;font-family: Palanquin,serif;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color: #1d1e26;">
+                                <span style="font-weight:bold ">Statut:</span> {{vm.getStatut(currentActe['status'])}}
+                            </span>
+                            <span *ngIf="currentActe.status=='En cours de validation' && currentActe.lastResentDate " style="color: #1d1e26;margin-left:5px">Date de dernière relance {{currentActe.lastResentDate}}</span>
+                            <span style="text-align: right;color: #1d1e26; float: right">Créé le {{vm.getRequestDate(currentActe)}}</span>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div *ngIf="displaySendTovalidation" class="Row Ajouter-les-validate" style="margin-left: 15px;margin-bottom: 22px;">
+                    Définir les validateurs : <br /> Ajouter les validateurs de l'acte parmi les Signataire(s) et les Avocat(s) validateur(s)
+                </div>
+                <div class="Row Signataires" style="margin-left: 3px;">
+                    Signataire(s)
+                </div>
+
+                <div class="row">
+
+                    <div *ngIf="(displaySendTovalidation || currentActe.status=='En cours de validation')&& readyOnlyForUser===true" class="Row Rectangle-Copy-6" style="cursor: pointer;margin: 0 auto;margin-left: 2%;margin-right: 2%;margin-bottom: 10px;" (click)="displayModalSignataire=true">
+                        <div style="display: inline-block;vertical-align: super;"> <img alt="" src="/logo/active.svg" class="active" style="margin-left: 5px;"></div>
+                        <div class="panel-body Ajouter-un-signatair" style="display: inline-table;margin-top: 8px;">
+                            Ajouter un signataire
+                        </div>
+                    </div>
+                    <div *ngFor="let item of listSignataire; index as i" class="Row" style="cursor: pointer;margin: 0 auto;margin-bottom: 15px;">
+                        <div class="row col-md-12 act-rectangle" style="margin-left: 2% ; margin-bottom: 10px; width: 96%">
+                            <div class="col-md-3" style="margin-top: 10px;display: inline-flex;">
+                                <label class="pure-material-checkbox" [ngStyle]="{'margin-left': displaySendTovalidation  ? '-25px' : '' }">
+                                    <input #inputElSig type="checkbox" [disabled]="disabledCheckBox(item)==true" [checked]="item.validator==true && item.mailSent==true && item.actId == currentActe.id " (change)="item.validator=inputElSig.checked">
+                                    <span></span>
+                                </label>
+                                <img alt="" style="margin-right: 5px;" src="/logo/moral.svg" class="active" [ngStyle]="{'margin-left': !displaySendTovalidation ? '-25px' : '' }">
+                                <span tooltip=" {{item.lastName.charAt(0).toUpperCase()+item.lastName.slice(1)}} {{item.name | uppercase}}" placement="top" show-delay="200" style=" white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 5%; width: 100%;">
+                                    <span class="capitalize-text">{{item.lastName}}</span> {{item.name | uppercase}}
+                                </span>
+                            </div>
+                            <div class="col-md-3" style="text-align: center">
+                                <p style="display: table-cell;padding: 20px;">{{item.codeCountry}} {{item.phoneNumber}}</p>
+                            </div>
+                            <div class="col-md-3" style="text-align: center">
+                                <p style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 5%; width: 100%;padding-top: 5%;" tooltip=" {{item.email}}" placement="top" show-delay="200"> {{item.email}} </p>
+                            </div>
+                            <div *ngIf="userConnected.roles[0]!='ROLE_COUNSEL'" class="col-md-3"
+                                 style="text-align: right;margin-top: 2%">
+                                <div class="header">
+                                    <div class="dropdown">
+                                        <ul class="dropbtn icons btn-right showLeft" (click)="showDropdown('myDropdown' + item.email)">
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id="myDropdown" class="dropdown-content" style="width: max-content;" [attr.id]="'myDropdown' + item.email">
+                                    <a [ngClass]="{adisabled: disabledCheckBox(item)==false}" (click)="showDropdown('myDropdown' + item.email);sendMailRelance(item.email)" style="float:left">Relancer pour validation</a>
+                                    <a [ngClass]="{adisabled: disabledResent(item)==false}" (click)="showDropdown('myDropdown' + item.email)" style="margin-bottom: -10px">Relancer pour signature</a>
+                                    <a [ngClass]="{adisabled: disabledCheckBox(item)==true}" (click)="showDropdown('myDropdown' + item.email);deleteSignataire(item)" style="float:left">Supprimer le signataire</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="Row Signataires" style="margin-left: 2%;" *ngIf="listAvocat.length != 0">
+                        Avocat(s) validateur(s)
+                    </div>
+                    <div *ngIf="(displaySendTovalidation || currentActe.status=='En cours de validation')&& readyOnlyForUser===true" class="Row Rectangle-Copy-6" style="cursor: pointer;margin: 0 auto;margin-left: 2%;margin-right: 2%;margin-bottom: 10px;" (click)="displaySearchAvocat=true">
+                        <div style="display: inline-block;vertical-align: super;"> <img src="/logo/active.svg" class="active" style="margin-left: 5px;"></div>
+                        <div class="panel-body Ajouter-un-signatair" style="display: inline-table;margin-top: 8px;">
+                            Ajouter un avocat validateur
+                        </div>
+                    </div>
+                    <div *ngFor="let item of listAvocat; let last = last; let index = index" class="Row"
+                         style="cursor: pointer;margin: 0 auto;margin-bottom: 15px;">
+                        <div class="row col-md-12 act-rectangle" style="margin-left: 2% ; width: 96%;" [ngStyle]="{'margin-bottom': last ? '2%' : '1%' }">
+                            <div class="col-md-3" style="margin-top: 10px;display: inline-flex;">
+                                <label class="pure-material-checkbox" *ngIf="displaySendTovalidation" [ngStyle]="{'margin-left': displaySendTovalidation ? '-25px' : '' }">
+                                    <input #inputElAv type="checkbox" [disabled]="disabledCheckBox(item)==true" [checked]="item.validator==true && item.mailSent==true && item.actId == currentActe.id " (change)="item.validator=inputElAv.checked">
+                                    <span></span>
+                                </label>
+                                <img alt="" src="/logo/moral.svg" style="margin-right: 5px;" class="active" [ngStyle]="{'margin-left': !displaySendTovalidation ? '-25px' : '' }">
+                                <span tooltip=" {{item.lastName.charAt(0).toUpperCase()+item.lastName.slice(1)}} {{item.name | uppercase}}" placement="top" show-delay="200" style=" white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 5%; width: 100%;">
+                                    <span class="capitalize-text">{{item.lastName}}</span> {{item.name | uppercase}}
+                                </span>
+                            </div>
+                            <div class="col-md-3" style="text-align: center">
+                                <p style="display: table-cell;padding: 20px;">{{item.codeCountry}} {{item.phoneNumber}}</p>
+                            </div>
+                            <div class="col-md-3" style="text-align: center">
+                                <p style="display: table-cell;white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 5%; width: 100%;padding-top: 5%;" tooltip=" {{item.email}}" placement="top" show-delay="200"> {{item.email}} </p>
+                            </div>
+                            <div *ngIf="userConnected.roles[0]!='ROLE_COUNSEL'" class="col-md-3" style="text-align: right;margin-top: 2%">
+                                <div class="header">
+                                    <div class="dropdown">
+                                        <ul class="dropbtn icons btn-right showLeft" (click)="showDropdown('myDropdown' + item.email)">
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="dropdown-content" style="width: max-content;" [attr.id]="'myDropdown' + item.email">
+                                    <a [ngClass]="{adisabled: disabledResent(item)==false}" (click)="showDropdown('myDropdown' + item.email);sendMailRelance(item.email)" style="float:left">Relancer pour validation</a>
+                                    <a [ngClass]="{adisabled: disabledResent(item)==false}" (click)="showDropdown('myDropdown' + item.email)" style="margin-bottom: -10px">Relancer pour signature</a>
+                                    <a [ngClass]="{adisabled: disabledCheckBox(item)==true}" (click)="showDropdown('myDropdown' + item.email);deleteAvocat(item)" style="float:left">Supprimer l'avocat</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+                <div class="row" *ngIf="listDocument.length != 0 && !displaySendTovalidation">
+                    <div class="Row Signataires" [ngStyle]="listAvocat.length != 0 && { 'margin-top': 'bold' }"
+                         style="margin-bottom:-10px;margin-left: 2%;">
+                        Document(s)
+                    </div>
+                    <br>
+                    <div class="Rectangle-Copy-7" style="margin-left: 2%;max-width: 100%;margin-right: 26px;" *ngIf="listDocument.length!=0;">
+                        <div style="margin-top: 10px;">
+                            <img alt="" src="/logo/active-unfocused.png" style="margin-right: 10px;margin-left: 10px;">
+                            <div class="Row Mes-documents"
+                                 style="display: contents;margin-top: 10px;margin-left: 30px;">
+                                Mes Document(s)
+                            </div>
+                            <hr />
+                        </div>
+                        <div *ngFor="let file of listDocument" class="Row list-group"
+                             style="text-align: center;margin-bottom:10px !important">
+                            <div>
+                                <span class="Mes-documents" [ngStyle]="{'display':listDocument.length ==1? 'contents' : '' }">
+                                    {{getFileSize(file.name) | number}} MO
+                                </span>
+                                <span class="Row Mo" style="float: left;margin-right: 80px;margin-left: 10px;">
+                                    <img alt="" src="/logo/move.png" style="margin-right: 10px;">
+                                    {{file.name}}.pdf
+                                </span>
+                                <span style="float: right;margin-right: 5px;">
+                                    <img alt="" src="/logo/oeil.svg" (click)="viewPdf(file)" style="cursor:pointer">
+                                    <a download href={{downloadPDF(file)}} title={{file.name}}>
+                                        <img alt="ImageName" src="/logo/download.svg">
+                                    </a>
+                                </span>
+                            </div>
+                            <hr *ngIf="listDocument.length>1" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="displaySendTovalidation" class="row" style="float:right;margin-top:33px;margin-right: -15px;margin-bottom:101px">
+        <button [disabled]="!canSendToValidation()" form="information" type="submit" class="btn  next-button" data-target="#modalSendToValidation" data-toggle="modal">Envoyer</button>
+    </div>
+</div>
+
+<div class="modal fade" id="modalSendToValidation" tabindex="-1" aria-labelledby="gridModalLabel" role="dialog" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="height: 300px;width: 700px;">
+            <button type="button" style="margin-right: 21px;margin-top: 11px;" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <div class="modal-body" style="text-align:center;height: 100px;margin-top: 10%;margin-bottom: 5%;">
+                <span class="Envoyer-pour-validat"> Votre acte sera envoyé pour validation</span><br />
+                <span class="Le-dossier-une-fois">
+                    L'acte, une fois validé par l'ensemble des validateurs, sera envoyé automatiquement aux Signataire(s).
+                </span>
+            </div>
+            <div style="text-align:center">
+                <button form="information" type="submit" class="btn  save-button" style="margin-right: 36px" data-dismiss="modal" aria-hidden="true">
+                    Annuler
+                </button>
+                <button form="information" type="button" class="btn  next-button" (click)="setContactToValidator()">Oui</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dismissActeModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content" style="height: 300px;width: 700px;">
+            <button type="button" style="margin-right: 21px;margin-top: 11px;" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <div class="modal-body Votre-dossier-dacte " style="text-align:center;height: 160px;margin-top: 50px;">
+                Êtes-vous sûr de vouloir abandonner l’acte? Cette action est irréversible. Toutefois, l'acte restera disponible pour consultation sur votre espace sauf si vous le supprimez.
+            </div>
+            <div style="text-align:center">
+                <button form="information" type="submit" class="btn  save-button" style="margin-right:36px" (click)="vm.dismissActe(currentActe)">Oui</button>
+                <button form="information" type="button" class="btn  next-button" data-dismiss="modal" aria-hidden="true">Non</button>
+            </div>
+        </div>
+    </div>
+</div>
+

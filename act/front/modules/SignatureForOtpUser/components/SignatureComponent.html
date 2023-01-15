@@ -1,0 +1,522 @@
+﻿<ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "ball-clip-rotate-pulse"><p style="color: white" > Loading... </p></ngx-spinner>
+
+<div class="meter" *ngIf="!fileToDisplay">
+    <span style="width:100%;"><span class="progress"></span></span>
+</div>
+
+<p-dialog [(visible)]="displayCGU && !displayCookiesModal" draggable="false" [responsive]="true" [positionTop]="0" modal="true"
+          [style]="{width: '50vw'}"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+    <div style="height: auto;">
+               <span class="Votre-dossier-dacte">Notice à destination des signataires</span>
+        <hr/>
+        <div class="modal-body">
+            <div class="row" style="margin-bottom: 1%">
+                <div style="color: gray">
+                    <span>Version {{env.version}} - </span>
+                    <span>Mise à jour le {{env.updateDate}}</span>
+                </div>
+                <div *ngIf="env.lastCgu!==null">
+                    <span style="color: gray">Dernier consentement enregistré le {{env.lastCgu}}</span>
+                </div>
+            </div>
+            <h3 class="western" align="center"><span style="font-family: 'Palanquin', serif;"><span style=";"><strong>Notice d&rsquo;utilisation de la plateforme &laquo;&nbsp;Acte sous signature priv&eacute;e&nbsp;&raquo; par les signataires</strong></span></span></h3>
+            <p class="western">&nbsp;</p>
+            <ol>
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";"><strong>Introduction &ndash; G&eacute;n&eacute;ralit&eacute;s sur le fonctionnement de la plateforme</strong></span></span></p>
+                </li>
+            </ol>
+            <p>&nbsp;</p>
+            <ol>
+                <ol>
+                    <li>
+                        <p><a name="_GoBack"></a><span style="font-family: 'Palanquin', serif;"><span style=";">Le Conseil National des Barreaux</span></span><span style="font-family: 'Palanquin', serif;"><span style=";"><strong>, </strong></span></span><span style="font-family: 'Palanquin', serif;"><span style=";">&eacute;tablissement d&rsquo;utilit&eacute; publique dot&eacute; de la personnalit&eacute; morale, institu&eacute; par l&rsquo;article 15 de la Loi n&deg;90-1259 du 31 d&eacute;cembre 1990, ins&eacute;r&eacute; &agrave; l&rsquo;article 21-1 de la Loi n&deg;71-1130 du 31 d&eacute;cembre 1971, dont le si&egrave;ge social est situ&eacute; 180, boulevard Haussmann, 75008 Paris (</span></span><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";">ci-apr&egrave;s d&eacute;nomm&eacute; le &laquo;&nbsp;</span></span></span><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";"><strong>CNB&nbsp;</strong></span></span></span><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";">&raquo;), a d&eacute;velopp&eacute; et exploite une plateforme intitul&eacute;e &laquo;&nbsp;Acte sous signature priv&eacute;e&nbsp;&raquo; (ci-apr&egrave;s la &laquo;</span></span></span><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";"><strong>&nbsp;Plateforme ASSP</strong></span></span></span><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";">&nbsp;&raquo; ou simplement la &laquo;&nbsp;</span></span></span><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";"><strong>Plateforme</strong></span></span></span><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";">&nbsp;&raquo;). </span></span></span></p>
+                    </li>
+                </ol>
+            </ol>
+            <p>&nbsp;</p>
+            <ol>
+                <ol start="2">
+                    <li>
+                        <p><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";">La Plateforme permet &agrave; un avocat inscrit &agrave; un tableau de l&rsquo;Ordre des avocats d&rsquo;un barreau fran&ccedil;ais de la M&eacute;tropole ou d&rsquo;Outre-Mer (ci-apr&egrave;s un &laquo;&nbsp;</span></span></span><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";"><strong>Avocat</strong></span></span></span><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";">&nbsp;&raquo;) de faire signer &eacute;lectroniquement &agrave; ses clients, &agrave; distance ou en pr&eacute;sentiel, des actes sous signature priv&eacute;e au sens des articles 1372 et suivants du Code civil. </span></span></span></p>
+                    </li>
+                </ol>
+            </ol>
+            <p>&nbsp;</p>
+            <ol>
+                <ol start="3">
+                    <li>
+                        <p><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";">La Plateforme ASSP fait intervenir plusieurs acteurs&nbsp;:</span></span></span></p>
+                    </li>
+                </ol>
+            </ol>
+            <ul>
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";"><strong>&laquo;&nbsp;Avocat Initiateur&nbsp;&raquo;&nbsp;</strong></span></span><span style="font-family: 'Palanquin', serif;"><span style=";">: </span></span><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";">il s&rsquo;agit d&rsquo;un Avocat qui prend l&rsquo;initiative de faire signer l&rsquo;Acte </span></span></span><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";"><em>via</em></span></span></span><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";"> la Plateforme</span></span></span></p>
+                </li>
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";"><strong>&laquo;&nbsp;Avocat Conseil&nbsp;&raquo;&nbsp;</strong></span></span><span style="font-family: 'Palanquin', serif;"><span style=";">: il s&rsquo;agit d&rsquo;un Avocat qui consulte et valide l&rsquo;Acte avant sa signature.</span></span></p>
+                </li>
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";"><strong>&laquo;&nbsp;Signataire(s)&nbsp;&raquo;&nbsp;</strong></span></span><span style="font-family: 'Palanquin', serif;"><span style=";">: il s&rsquo;agit du ou des signataires de l&rsquo;Acte, qui consulte, valide et signe l&rsquo;Acte </span></span><span style="font-family: 'Palanquin', serif;"><span style=";"><em>via</em></span></span><span style="font-family: 'Palanquin', serif;"><span style=";"> la Plateforme. Le Signataire n&rsquo;est pas n&eacute;cessairement assist&eacute; d&rsquo;un Avocat. Il peut s&rsquo;agir d&rsquo;une personne physique ou d&rsquo;une personne morale.</span></span></p>
+                </li>
+            </ul>
+            <p>&nbsp;</p>
+            <ol>
+                <ol start="4">
+                    <li>
+                        <p><span style="font-family: 'Palanquin', serif;"><span style=";">La Plateforme est un outil mis &agrave; disposition de l&rsquo;Avocat par le CNB, l&rsquo;Avocat d&eacute;cidant lui-m&ecirc;me d&rsquo;en faire b&eacute;n&eacute;ficier son client Signataire et le cocontractant de ce client. Par cons&eacute;quent&nbsp;: </span></span></p>
+                    </li>
+                </ol>
+            </ol>
+            <ul>
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";">Le Signataire n&rsquo;a acc&egrave;s &agrave; la Plateforme que par l&rsquo;action de l&rsquo;Avocat Initiateur et dans la limite des droits dont il dispose (consultation / validation / signature)&nbsp;; </span></span></p>
+                </li>
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";">En permettant cet acc&egrave;s &agrave; la Plateforme, l&rsquo;Avocat Initiateur ne devient pas pour autant l&rsquo;Avocat du Signataire qui n&rsquo;est pas son client&nbsp;; </span></span></p>
+                </li>
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";">En cas de difficult&eacute; li&eacute;e &agrave; l&rsquo;utilisation de la Plateforme, le Signataire s&rsquo;adressera &agrave; l&rsquo;Avocat Initiateur qui pourra contacter le support que le CNB met &agrave; sa seule disposition. </span></span></p>
+                </li>
+            </ul>
+            <p>&nbsp;</p>
+            <ol>
+                <ol start="5">
+                    <li>
+                        <p><span style="font-family: 'Palanquin', serif;"><span style=";">Dans la pr&eacute;sente notice, les termes de &laquo;&nbsp;Acte&nbsp;&raquo; et de &laquo;&nbsp;Signature Electronique&nbsp;&raquo; ont la signification donn&eacute;e ci-apr&egrave;s&nbsp;: </span></span></p>
+                    </li>
+                </ol>
+            </ol>
+            <ul>
+                <li>
+                    <p><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";">&laquo;&nbsp;</span></span></span><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";"><strong>Acte </strong></span></span></span><span style="color: #000000;"><span style="font-family: 'Palanquin', serif;"><span style=";">&raquo;&nbsp;: d&eacute;signe tout acte &eacute;crit sign&eacute; par les parties elles-m&ecirc;mes, sans contreseing ou intervention d&rsquo;un officier public, cette signature s&rsquo;op&eacute;rant par l&rsquo;interm&eacute;diaire de la Plateforme ASSP.</span></span></span></p>
+                </li>
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";">&laquo;&nbsp;</span></span><span style="font-family: 'Palanquin', serif;"><span style=";"><strong>Signature Electronique</strong></span></span><span style="font-family: 'Palanquin', serif;"><span style=";">&nbsp;&raquo;&nbsp;: d&eacute;signe la signature appos&eacute;e sur l&rsquo;Acte par les Signataires gr&acirc;ce &agrave; la Plateforme ASSP. Il s&rsquo;agit d&rsquo;une signature simple et non une signature qualifi&eacute;e au sens du r&egrave;glement</span></span><span style="font-family: 'Palanquin', serif;"><span style=";"> &laquo;&nbsp;eIDAS&nbsp;&raquo; n&deg;910/2014&nbsp;du 23 juillet 2014. </span></span></p>
+                </li>
+            </ul>
+            <p class="western">&nbsp;</p>
+            <ol start="2">
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";"><strong>Acc&egrave;s &agrave; la Plateforme ASSP</strong></span></span></p>
+                </li>
+            </ol>
+            <p>&nbsp;</p>
+            <ol>
+                <ol>
+                    <li>
+                        <p><span style="font-family: 'Palanquin', serif;"><span style=";">Conform&eacute;ment &agrave; l&rsquo;article 1.4, le Signataire n&rsquo;acc&egrave;de &agrave; la Plateforme que par une action de l&rsquo;Avocat Initiateur. Cette action g&eacute;n&egrave;re un lien URL adress&eacute; au Signataire. En cliquant sur ce lien, le Signataire g&eacute;n&egrave;re alors un code OTP lui permettant d&rsquo;acc&eacute;der &agrave; l&rsquo;interface &laquo;&nbsp;Signataires &raquo; de la Plateforme.</span></span></p>
+                    </li>
+                </ol>
+            </ol>
+            <p>&nbsp;</p>
+            <ol>
+                <ol start="2">
+                    <li>
+                        <p><span style="font-family: 'Palanquin', serif;"><span style=";">L&rsquo;acc&egrave;s par le Signataire n&eacute;cessite une connexion au r&eacute;seau Internet, un navigateur mis &agrave; jour ainsi qu&rsquo;un lecteur de fichier PDF.</span></span></p>
+                    </li>
+                    <li>
+                        <p><span style="font-family: 'Palanquin', serif;"><span style=";">L&rsquo;acc&egrave;s &agrave; la Plateforme ASSP est r&eacute;serv&eacute; &agrave; la seule signature de l&rsquo;Acte. La Plateforme n&rsquo;est pas un outil de n&eacute;gociation, phase qui a lieu ind&eacute;pendamment de l&rsquo;acc&egrave;s &agrave; la Plateforme ASSP.</span></span></p>
+                    </li>
+                </ol>
+            </ol>
+            <p class="western">&nbsp;</p>
+            <ol start="3">
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";"><strong>Utilisation de la Plateforme ASSP </strong></span></span></p>
+                </li>
+            </ol>
+            <p>&nbsp;</p>
+            <ol>
+                <ol>
+                    <li>
+                        <p><span style="font-family: 'Palanquin', serif;"><span style=";">Lorsqu&rsquo;il acc&egrave;de &agrave; la Plateforme selon les modalit&eacute;s de l&rsquo;article 2.1, le Signataire peut&nbsp;: </span></span></p>
+                    </li>
+                </ol>
+            </ol>
+            <ul>
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";">consulter l&rsquo;Acte charg&eacute; par l&rsquo;Avocat Initiateur&nbsp;;</span></span></p>
+                </li>
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";">valider l&rsquo;Acte en communiquant &agrave; l&rsquo;Avocat Initiateur son accord ou son refus concernant l&rsquo;Acte charg&eacute; sur la Plateforme, avant la Signature Electronique&nbsp;; </span></span></p>
+                </li>
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";">signer l&rsquo;Acte, les modalit&eacute;s et caract&eacute;ristiques de la Signature Electronique &eacute;tant communiqu&eacute;es au Signataire par l&rsquo;Avocat Initiateur. </span></span></p>
+                </li>
+            </ul>
+            <p>&nbsp;</p>
+            <ol>
+                <ol start="2">
+                    <li>
+                        <p><span style="font-family: 'Palanquin', serif;"><span style=";">Une fois l&rsquo;Acte sign&eacute;, le Signataire re&ccedil;oit un lien de t&eacute;l&eacute;chargement, valable trente (30) jours, de l&rsquo;Acte rev&ecirc;tu de la Signature Electronique. Le Signataire s&rsquo;engage &agrave; r&eacute;ception du lien, &agrave; t&eacute;l&eacute;charger l&rsquo;Acte et &agrave; le conserver sur un support externe.</span></span></p>
+                    </li>
+                </ol>
+            </ol>
+            <p>&nbsp;</p>
+            <ol>
+                <ol start="3">
+                    <li>
+                        <p><span style="font-family: 'Palanquin', serif;"><span style=";">Le Signataire est inform&eacute; que l&rsquo;Acte est conserv&eacute; en archivage par le CNB. Les modalit&eacute;s de la dur&eacute;e de cet archivage lui seront communiqu&eacute;es par l&rsquo;Avocat Initiateur. Il s&rsquo;agit d&rsquo;un archivage &agrave; valeur probante qui permet </span></span><span style="font-family: 'Palanquin', serif;"><span style=";">d&rsquo;assurer l&rsquo;authenticit&eacute;, l&rsquo;int&eacute;grit&eacute; et l&rsquo;intelligibilit&eacute; de l&rsquo;Acte sign&eacute; pendant toute sa dur&eacute;e de conservation.</span></span></p>
+                    </li>
+                </ol>
+            </ol>
+            <p>&nbsp;</p>
+            <ol>
+                <ol start="4">
+                    <li>
+                        <p><span style="font-family: 'Palanquin', serif;"><span style=";">Le Signataire ne doit pas&nbsp;: </span></span></p>
+                    </li>
+                </ol>
+            </ol>
+            <ul>
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";">utiliser la Plateforme </span></span><span style="font-family: 'Palanquin', serif;"><span style=";">&agrave; des fins illicites, notamment pour y publier des informations illicites, de quelque nature qu&rsquo;elles soient </span></span><span style="font-family: 'Palanquin', serif;"><span style=";">;</span></span></p>
+                </li>
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";">introduire, volontairement ou m&ecirc;me involontairement, de virus ou de fichier de quelque nature que ce soit perturbant le bon fonctionnement de la Plateforme ASSP. </span></span></p>
+                </li>
+            </ul>
+            <p class="western">&nbsp;</p>
+            <ol start="4">
+                <li>
+                    <p><span style="font-family: 'Palanquin', serif;"><span style=";"><strong>Protection des donn&eacute;es &agrave; caract&egrave;re personnel </strong></span></span></p>
+                </li>
+            </ol>
+            <p>&nbsp;</p>
+            <p class="western"><span style="font-family: 'Palanquin', serif;"><span style=";">Dans le cadre de l&rsquo;utilisation de la Plateforme par le Signataire, le CNB agit comme responsable de traitement des donn&eacute;es &agrave; caract&egrave;re personnel au sens du R&egrave;glement UE 2016/679 du 27 avril 2016 et de la Loi n&deg;78-17 du 6 janvier 1978 relative &agrave; l&rsquo;informatique, aux fichiers et aux libert&eacute;s. Les informations relatives au traitement des donn&eacute;es &agrave; caract&egrave;re personnel du Signataire figurent dans la politique de confidentialit&eacute;, pr&eacute;sent&eacute;e au Signataire au stade de sa connexion sur la Plateforme et disponible sur la Plateforme ASSP.</span></span></p>
+            <p class="western"><a name="_Toc304458194"></a><a name="_Ref328657270"></a><a name="_Toc342306946"></a><a name="_Toc265485604"></a> </p>
+            <p>&nbsp;</p>
+        </div>
+        <div class="modal-footer">
+            <a type="submit" class="btn next-button pull-right"
+               href="#" onclick="acceptCgu();" (click)="displayCGU=false;">
+                J'accepte
+            </a>
+            <a style="margin-right: 2%;background-color: white;border-color: gray;color: black" type="submit"
+               class="btn next-button pull-right"
+               href="#" (click)="displayRefuseCGU=true">
+                Je refuse
+            </a>
+        </div>
+
+    </div>
+</p-dialog>
+<p-dialog [(visible)]="displayRefuseCGU" draggable="false" [responsive]="true" [positionTop]="0" modal="true"
+          [style]="{width: '50vw'}"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+    <div style="height: auto;">
+        <span class="Votre-dossier-dacte"></span>
+        <hr>
+        <div class="modal-body" style="font-weight: bold">
+            <div>
+                Si vous refusez les conditions générales d'utilisation, vous ne pourrez pas accéder à
+                l'application.
+            </div>
+            <div>
+                Au clic sur "J'ai compris" vous serez automatiquement déconnecté
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a type="submit" class="btn next-button pull-right"
+               href="/logout">
+                J'ai compris
+            </a>
+            <a style="margin-right: 2%;background-color: white;border-color: gray;color: black" type="submit"
+               class="btn next-button pull-right"
+               href="#" (click)="displayRefuseCGU=false">
+                Retourner sur les CGU
+            </a>
+        </div>
+    </div>
+</p-dialog>
+<p-dialog [(visible)]="disabled" draggable="false" [responsive]="true" [positionTop]="0" modal="true"
+          [style]="{width: '50vw'}"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+    <div style="height: auto;">
+        <span class="Votre-dossier-dacte"></span>
+        <hr>
+        <div class="modal-body" style="font-weight: bold">
+            <div>
+                Vous avez effectué un nombre élevé de tentatives de connexion, votre accès est bloqué.
+                <br>
+                Nous avons informé l’initiateur de l’acte par e-mail.
+            </div>
+            <div>
+                Au clic sur "J'ai compris" vous serez automatiquement déconnecté
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a type="submit" class="btn next-button pull-right"
+               href="/logout">
+                J'ai compris
+            </a>
+        </div>
+    </div>
+</p-dialog>
+<p-dialog [(visible)]="displayOtpAuthentification && !isUserConnected" [responsive]="true" [positionTop]="0"
+          draggable="false" modal="true" [style]="{width: '50vw', top:0}" style="text-align:center"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+    <p-toast ></p-toast>
+    <span class="Votre-dossier-dacte">Authentification</span>
+    <p *ngIf="step1==false" class="Authentification-step2">Temps restant pour saisir le code reçu par SMS :</p>
+    <div class="validation-modal-content">
+        <p *ngIf="step1==true" style="margin-right: 83%;
+    font-weight: bold;
+    font-family: Palanquin,serif  !important;
+    font-size: 1.8rem;width: 23%">Etape 1 :</p>
+        <p style="display: inline-block;margin-top: 11px" *ngIf="timeLeft!=0 && hasSentCode==true" class="Timer">{{display}}</p>
+        <p style="display: contents;" *ngIf="timeLeft==0 && hasSentCode==true" class="Timer">00 : 00</p>
+        <div [hidden]="user">
+            <span *ngIf="step1==true" style="font-size: 2rem;text-align: center">Veuillez confirmer votre numéro de téléphone</span> <br />
+            <input *ngIf="step1==true" [attr.disabled]="true==true"
+                   style="margin-top: 2em;margin-bottom: 2em;height: 25px;width: 150px;text-align:center" type="text"
+                   [(ngModel)]="phoneNumberMasked" class="input">
+<!--             <div [ngStyle]="{'display':step1 === false ? 'none' : '' }" style="width: 304px;margin-bottom: 15px;margin-right:auto;margin-left: auto;"-->
+<!--                 id="recaptcha-container"></div>-->
+            <div *ngIf="captchaStep==true" style="width: 304px;margin-bottom: 15px;margin-right:auto;margin-left: auto;">
+                <re-captcha site_key="{{siteId}}" (captchaResponse)="handleCorrectCaptcha($event)"></re-captcha>
+            </div>
+            <button *ngIf="step1==true" style="margin-bottom: 15px;width: 234px" class="btn  next-button pure-material-button-contained" [disabled]="!clicked"
+                    (click)="sendLoginCode()">
+                Confirmer et envoyer le code
+            </button>
+            <br>
+            <p *ngIf="step1==true" style="display: contents;font-weight: bold">Si le numéro est incorrect - contactez votre avocat</p>
+
+            <div *ngIf="windowRef.confirmationResult">
+                <hr>
+                <p *ngIf="timeLeft!=0" style="margin-right: 83%;
+                        font-weight: bold;
+                        font-family: Palanquin,serif  !important;
+                        font-size: 1.8rem;width: 23%;margin-bottom: -2px">Etape 2 :</p>
+
+
+                <label *ngIf="timeLeft==0" for="code">Votre code SMS a expiré, veuillez rafraîchir la page pour demander l'envoi d'un nouveau code</label><br>
+                <label *ngIf="timeLeft!=0" for="code">Afin de vous authentifier, merci de saisir le code reçu par sms</label><br>
+                <input *ngIf="timeLeft!=0" style="margin-bottom: 15px; text-align:center" type="text" name="code"
+                       [(ngModel)]="verificationCode" class="input input-mob"><br />
+                <button *ngIf="timeLeft!=0" class="btn  next-button pure-material-button-contained" (click)="verifyLoginCode()" [disabled]="!verificationCode">
+                    Valider
+                </button>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+
+<div class="signature-cont" *ngIf="isUserConnected">
+    <div *ngIf="currentAct" class="row" style="max-width:100%;margin-left: 2%;">
+        <span class="Acte-1-N1989">Acte N°</span> <span class="Acte-1-N1989" style="font-size: 18px !important">
+            {{currentAct.folderNumber}}
+        </span>
+    </div>
+    <div class="Row signature-pdf-cont">
+
+        <div style="width:100%;">
+            <pdf-viewer [src]="fileToDisplay"
+                        style="width:100%;display:block;height: 612px;border: solid 1px #979797;"
+                        [render-text]="true" [original-size]="false" [show-all]="true"></pdf-viewer>
+        </div>
+    </div>
+    <div class="row" style="width: 100%;margin-left: 1%">
+        <label class="pure-material-checkbox" style="margin-bottom:23px;margin-top:1%;margin-left: 1%;">
+            <input type="checkbox" (click)="acceptCondition= true" [(ngModel)]="acceptCondition">
+            <span class="Je-confirme-avoir-pr">Je confirme avoir visualisé toutes les pages du document</span>
+            <div class="row">
+                <div class="Je-confirme-avoir-pr" style="margin-left: 45px;color: red" *ngIf="acceptCondition==false && clickedSigning==true">Veuillez cocher la case</div>
+            </div>
+        </label>
+        <br />
+        <div *ngIf="hideComment==false" class="Row" style="margin-bottom:23px;margin-left: 1%">
+            <span class="Laissez-un-commentai">Laissez un commentaire *</span>
+        </div>
+        <div *ngIf="hideComment==false" class="Row" style="margin-bottom:30px;margin-left: 1%;">
+            <textarea [(ngModel)]="userConnected.signatureComment" (keyup) = "onKey($event)" placeholder="Votre message ici" id="w3mission"
+                      rows="4" cols="50"
+                      style=" width: 99%;height: 206px;"></textarea>
+        </div>
+        <div class="signature-action-button oneline">
+         
+            <button *ngIf="!refuseSign" (click)="checkConditionForPad();clickedSigning=true" form="information" type="button"
+                    class="btn  next-button pure-material-button-contained"
+                    style="float: right;height: 37px !important;">
+                Signer
+            </button>
+            <button *ngIf="refuseSign" (click)="refuseSigner()" form="information" type="button" data-target="#refusSignature" data-toggle="modal"
+                    class="btn  next-button pure-material-button-contained"
+                    style="float: right;height: 37px!important; ">
+                Envoyer
+            </button>
+            <button *ngIf="refuseSign" form="information" type="button"
+                    class="btn  save-button pure-material-button-contained"
+                    style="float:right;margin-left: -3%;width: 160px !important;margin-bottom: 30px"
+                    (click)="refuseSign=false;hideComment=true;userConnected.signatureComment=null">
+                Annuler
+            </button>
+            <button *ngIf="hideComment" form="information" type="button"
+                    class="btn  save-button pure-material-button-contained"
+                    style="float:right;margin-left: -3%;width: 260px !important;margin-bottom: 30px;margin-right: 20px;"
+                    (click)="hideComment=false;refuseSign=true">
+                Refuser et laisser un commentaire
+            </button>
+
+        </div>
+    </div>
+</div>
+
+<p-dialog [(visible)]="displayDialogForOtpCode" [positionTop]="100" modal="true" closable="closable" [draggable]="false"
+          [style]="{width: '50vw'}" style="text-align: center;"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+    <a (click)="displayDialogForOtpCode = false" href="#" role="button" class="ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all">
+        <span style="display: block" class="pi pi-times"></span>
+    </a>
+
+    <div style="text-align:center;height: 200px;">
+        <span *ngIf="!wrongOtp" class="Votre-dossier-dacte">Veuillez saisir le code reçu par e-mail de la part de CertEurope. Pensez à regarder dans vos SPAMS.</span>
+        <span *ngIf="wrongOtp" class="Votre-dossier-dacte">Le code saisi est erroné il vous reste {{tries}} essai(s)</span>
+        <br />
+        <input type="text" pInputText [(ngModel)]="order.otp"
+               style="margin-top: 10%;height: 25px;width: 150px;text-align:center" />
+    </div>
+    <button (click)="exit = true" form="information" type="button"
+            class="btn  next-button1 pure-material-button-contained"
+            style="margin-right:0; margin-bottom: 10px;">
+        Annuler
+    </button>
+    <button (click)="validateOtp()" form="information" type="button" [disabled]="!order.otp"
+            class="btn  next-button1 pure-material-button-contained push-btn-small"
+            style="margin-right:0; margin-bottom: 10px;">
+        Signer électroniquement
+    </button>
+</p-dialog>
+
+<p-dialog [(visible)]="exit" position="center" modal="true"  [draggable]="false"
+          [style]="{width: '50vw'}" style="text-align: center;"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+    <div style="text-align:center;height: 150px;margin-top: 5%;">
+        <span class="Votre-dossier-dacte" style="font-size:25px !important">Êtes-vous sûr de vouloir annuler cette action ? <br> Si oui, les informations saisies ne seront pas sauvegardées et vous serez déconnectés</span>
+        <br />
+    </div>
+    <button (click)="quitter()" form="information" type="button" class="btn  next-button" style="margin-right:0;">
+        Oui
+    </button>
+    <button (click)="exit = false" form="information" type="button" class="btn  next-button" style="margin-right:0;">
+        Non
+    </button>
+</p-dialog>
+
+
+<p-dialog [(visible)]="displayResendOtp" position="center" modal="true" closable="closable" [draggable]="false"
+          [style]="{width: '50vw'}" style="text-align: center;"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+    <div style="text-align:center;height: 150px;margin-top: 5%;">
+        <span class="Votre-dossier-dacte" style="font-size:25px !important">Le nombre d'essais maximal est atteint. Vous devez rafraîchir la page pour avoir un nouveau code.</span>
+        <br />
+    </div>
+    <button (click)="refresh()" form="information" type="button" class="btn  next-button pure-material-button-contained" style="margin-right:0;">
+        Rafraîchir
+    </button>
+</p-dialog>
+
+<p-dialog [(visible)]="signingNow" [positionTop]="100" modal="true" closable="false" [draggable]="false"
+          [style]="{width: '50%' , height : '50%'}" style="text-align: center;" class="signing"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+    <div style="text-align:center">
+        <span  class="Votre-dossier-dacte">Un autre signataire est déjà en cours de signature sur cet acte.</span>
+        <br>
+        <span  class="Votre-dossier-dacte">Nous vous invitons à patienter quelques instants.</span>
+        <br />
+    </div>
+    <img style="width: 20%" src="/logo/Spinner.svg" alt="">
+
+</p-dialog>
+
+
+<p-dialog [(visible)]="creationOrderError" position="center" modal="true" [style]="{width: '50vw'}" [draggable]="false" style="text-align:center"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+    <div style="text-align:center;margin-top: 10%;margin-bottom: 50px;" class="responsive-modal">
+        <span class="Votre-dossier-dacte">Le service de signature est actuellement indisponible. Les actions réalisées ne seront pas sauvegardées. Merci de réessayer ultérieurement en vous reconnectant via le lien transmis par e-mail</span>
+        <br />
+    </div>
+    <button (click)="quitter()" form="information" type="button" class="btn  next-button pure-material-button-contained" style="margin-right:0;">
+        Quitter
+    </button>
+</p-dialog>
+
+
+
+<div class="modal fade" id="refusSignature" role="dialog" *ngIf="displayModalRefusSignature==true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content" style="height: 300px;">
+            <div style="text-align:center">
+                <div class="modal-body Votre-dossier-dacte " style="text-align:center;height: 100px;margin-top: 100px;">
+                    Votre refus a été enregistré avec succès
+                    <div style="text-align:center;margin-top: 10%;">
+                        <button form="information" type="submit" class="btn  next-button pure-material-button-contained" (click)="quitter()">Quitter</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<p-dialog [(visible)]="displayDialogForPad" position="center" modal="true" [draggable]="false" [style]="{width: '50vw'}" style="text-align:center"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+
+    <div style="height: 400px;margin: auto">
+
+        <span class="Votre-dossier-dacte">Vous pouvez ajouter votre griffe de signature (facultatif)</span>
+
+        <div id="mydiv" class="signature-element" >
+            <div id="mydivheader" style="padding-left: 50%;">
+                <img src="/logo/active.svg" alt="" style=" width: 15px;height: 15px;margin-left: -115px">
+                Ajouter ma signature
+            </div>
+            <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                <button #validActs (click)="filterActs($event) ; sigPad.on()" [ngClass]="[true==true ? 'nav-item' : '',  true==true ? 'nav-link' : '', signGriffe==true ? 'active-filter' : 'inactive-filter', 'big-pill-large']" id="valid" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false" style="width:auto;color: gray;font-size: 13px;outline: none"><span class="glyphicon glyphicon-pencil"></span> Tracer</button>
+                <button #consultActs (click)="filterActs($event) ; sigPad.off() " [ngClass]="[true==true ? 'nav-item' : '',  true==true ? 'nav-link' : '', signGriffe==false ? 'active-filter' : 'inactive-filter']" id="consult" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true" style="width:auto;color: gray;font-size: 13px;outline: none"><span class="glyphicon glyphicon-picture"></span> Image</button>
+            </div>
+            <label *ngIf="signGriffe==false" class="custom-file-upload" style="border: none">
+                <img src="/logo/image.svg" alt="">
+                <span style=" width: 33px;height: 22px;font-family: Palanquin,serif;font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;">Image</span>
+                <input type="file" (change)="addSignature($event)" />
+            </label>
+            <hr *ngIf="signGriffe==false" style="margin-top: -10px">
+            <div>
+                <button (click)="sigPad.clear();sigPad.on()"
+                        style="background: none;color: inherit;border: none;padding: 0;font: inherit;cursor: pointer;outline: inherit;width: 50px;height: 18px;font-family: Palanquin,serif;font-size: 10px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;float: right">
+                    <img alt="" style="float: right;margin-top: 5px;margin-right: 2%" src="/logo/cross.svg">
+                    <span style="width: 30px;height: 18px;font-family: Palanquin,serif;font-size: 10px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#51596d">Effacer</span>
+                </button>
+            </div>
+            <signature-pad [options]="signaturePadOptions" #sigPad>
+            </signature-pad>
+        </div>
+    </div>
+    <button (click)="close();sigPad.clear()" form="information" type="button"
+            class="btn  next-button1 pure-material-button-contained"
+            style="margin: 5px">
+        Annuler
+    </button>
+    <button (click)="lastCheckSigning()" form="information" type="button"
+            class="btn  next-button1 pure-material-button-contained" style="margin: 5px">
+        Signer électroniquement
+    </button>
+</p-dialog>
+
+
+<p-dialog [(visible)]="displayModalDocumentSigne" position="center" modal="true" [style]="{width: '50vw'}" style="text-align: center;"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+    <div style="text-align:center;height: 180px;margin-top: 10%;">
+        <span class="Votre-dossier-dacte">Votre signature électronique a été effectuée avec succès</span>
+        <br />
+        <button (click)="quitter()" form="information" type="button" class="btn  next-button pure-material-button-contained" style="margin-top: 10%;">
+            Quitter
+        </button>
+    </div>
+</p-dialog>
+

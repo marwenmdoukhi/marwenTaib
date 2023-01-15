@@ -1,0 +1,54 @@
+{% extends 'admin.html.twig' %}
+
+{% block title %}Configuration Produit Parfume{% endblock %}
+
+{% block body %}
+    <div class="sub-header-container">
+        <header class="header navbar navbar-expand-sm">
+            <nav class="breadcrumb-two" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('product_index') }}" >Produit</a>
+                    </li>
+                    <li class="breadcrumb-item active ml-2"><a href="javascript:void(0);">{{product }}</a></li>
+                </ol>
+            </nav>
+        </header>
+    </div>
+    <h1>Configuration Produit Parfume</h1>
+
+    <div class="mt-2">
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col-md-6">
+                <label>Volume</label>
+                {{ form_widget(form.volume) }}
+            </div>
+            <div class="col-md-6">
+                <label>Fragrance De Parfum</label>
+                {{ form_widget(form.fragranceDeParfum) }}
+            </div>
+            <div class="col-md-12">
+                <label>Type De Maquillage</label>
+                {{ form_widget(form.typeDeMaquillage    ) }}
+            </div>
+
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <button class="btn btn-primary ">{{ button_label|default('Ajouter') }}</button>
+            </div>
+        </div>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}
+{% block javascripts %}
+
+
+    <script>
+        var ss = $("#product_configuration_optique_style").select({
+            tags: true,
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,568 @@
+<div class="search-header" [@fadeInOut-3] *ngIf=" !vm.displayAllResult  && displaySearchAvocat">
+    <div class="search-input" [ngClass]="vm.inputReasearchBar ? 'search-focused' : ''">
+        <input type="text" id="input" [(ngModel)]="vm.inputReasearchBar"
+               pInputText (focus)="vm.displayDivForReasearchBar=true"
+               placeholder="Chercher un acte, un document, un contact"/>
+        <img alt="" src="/logo/search.svg"/>
+        <span *ngIf="vm.inputReasearchBar" class="glyphicon glyphicon-remove-sign"
+              (click)="vm.displayDivForReasearchBar=false;vm.inputReasearchBar=null"
+              style=" cursor:pointer; float: right; margin-top: -3%; margin-right: 1%;"></span>
+        <div *ngIf="vm.displayDivForReasearchBar" class="role-name-barre-recherche">
+            <div *ngFor="let c of (vm.allData | barPipe : vm.inputReasearchBar | slice:0:10)"
+                 (click)="changeComponent();vm.assignActeModel(c)" style="padding-left: 65px;">
+                <span *ngIf="c.nameActe" [inlineSVG]="'/logo/en-attente.svg'"
+                      style="margin-right: 2%; vertical-align: middle;"></span> <span *ngIf="c.nameActe"
+                                                                                      class="Affaire-Pauline-Grin">{{c.nameActe}}</span><span
+                    class="dfendeur" style="margin-left: 1%;" *ngIf="c.nameActe">acte</span>
+                <span *ngIf="c.contactName" [inlineSVG]="'/logo/yellow.svg'"
+                      style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.contactName"
+                                                                                     class="Affaire-Pauline-Grin">{{c.contactLastName | titlecase}} {{c.contactName | uppercase}}
+                contact</span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.contactName">contact</span>
+                <span *ngIf="c.documentName" [inlineSVG]="'/logo/document.svg'"
+                      style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.documentName"
+                                                                                     class="Affaire-Pauline-Grin">{{c.documentName}}
+                .pdf </span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.documentName">document</span>
+            </div>
+            <div *ngIf="vm.inputReasearchBar" class="role-name-barre-recherche"
+                 style="border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;border-top: 1px solid #dadada;">
+                <span class="Voir-tous-les-rsult"
+                      (click)="vm.displayAllResult=true;vm.displayDivForReasearchBar=false;displayModalAvocat=false;displaySearchAvocat=false;"
+                      style="cursor:pointer;margin-left: 55px">Voir tous les résultats pour « {{vm.inputReasearchBar}}
+                     »</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-content" [@fadeInOut-3] *ngIf=" !vm.displayAllResult && displaySearchAvocat"
+     [ngClass]="vm.inputReasearchBar ? 'overlay' : ''">
+    <div class="container-fluid">
+        <p-toast position="top-right"></p-toast>
+        <div class="row">
+            <div class="add-role-form">
+                <div class="add-role-header">
+                    <span (click)="displaySearchAvocat=false;"
+                          class="glyphicon glyphicon-chevron-left cursor-pointer"></span>
+                    <span>Ajouter un avocat</span>
+                </div>
+
+                <div class="add-role-item" style="background-image: none;">
+                    <div class="add-role-item-content">
+                        <h4 *ngIf="listeAvocats.length" style="text-decoration: underline">Liste des avocats
+                            sélectionnés :</h4>
+                        <div *ngIf="listeAvocats.length">
+                            <div *ngFor="let item of listeAvocats; index as i" class="responsive-contacts-row">
+                                <div class="hidden-xs large-contacts-row">
+                                    <div class="truncate-txt" style="width: 24%">
+                                        <img alt="" src="/logo/moral.svg">
+                                        <span tooltip="{{item.lastName.charAt(0).toUpperCase()+item.lastName.slice(1)}} {{item.name | uppercase}}"
+                                              placement="top" show-delay="200">
+                                                {{item.lastName.charAt(0).toUpperCase() + item.lastName.slice(1)}} {{item.name | uppercase}}
+                                            </span>
+                                    </div>
+                                    <p class="col-md-4">{{item.codeCountry}} {{ item.phoneNumber }}</p>
+                                    <p class="col-md-4" tooltip=" {{item.email}}" placement="top"
+                                       show-delay="200">{{ item.email }}</p>
+                                    <div class="doc-list-action-icons"
+                                         *ngIf="orderDetails.status!='En cours de signature' && orderDetails.status!='Signe'&& orderDetails.status!='En cours de validation'">
+                                            <span [inlineSVG]="'/logo/edit.svg'"
+                                                  (click)="avocatToModify(item);displayModalAvocat=true;displayModalSignataire=false;displaySearchAvocat=false;"></span>
+                                        <span [inlineSVG]="'/logo/delete.svg'" (click)="deleteAvocatPopup()"
+                                              [attr.data-target]="'#deleteAvocat'+item.id"
+                                              data-toggle="modal"></span>
+                                    </div>
+                                </div>
+                                <div class="visible-xs-block xs-contacts-row container-fluid">
+                                    <div class="row">
+
+                                        <div class="col-xs-5 truncate-txt"
+                                             tooltip=" {{item.lastName.charAt(0).toUpperCase()+item.lastName.slice(1)}} {{item.name | uppercase}}"
+                                             placement="top" show-delay="200">
+                                            {{item.lastName.charAt(0).toUpperCase() + item.lastName.slice(1)}} {{item.name | uppercase}}
+                                        </div>
+                                        <div class="col-xs-5 truncate-txt">
+                                            <span class="d-block">{{item.codeCountry}} {{ item.phoneNumber }}</span>
+                                            <span class="d-block" tooltip=" {{item.email}}" placement="top"
+                                                  show-delay="200">{{ item.email }}</span>
+                                        </div>
+
+                                        <div class="pull-right p-relative">
+                                            <img alt="" src="/logo/options.svg"
+                                                 (click)="showDropdown('dropdownAvocat2' + item.email)"
+                                                 class="cursor-pointer"/>
+                                            <div id="dropdownAvocat2" class="dropdown-content"
+                                                 style="cursor:pointer;margin-left: -66px"
+                                                 [attr.id]="'dropdownAvocat2' + item.email">
+                                                <a style="cursor:pointer;font-size: 12px;"
+                                                   (click)="avocatToModify(item);displayModalAvocat=true;displayModalSignataire=false;displaySearchAvocat=false;">Modifier</a>
+                                                <a style="cursor:pointer;font-size: 12px;"
+                                                   (click)="deleteAvocatPopup()"
+                                                   [attr.data-target]="'#deleteAvocat'+item.id"
+                                                   data-toggle="modal">Supprimer</a>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="modal fade" id="deleteAvocat{{item.id}}" role="dialog"
+                                     *ngIf="displayPopupForDeleteCouncel==true" data-backdrop="static"
+                                     data-keyboard="false" style="display: none;">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <button style="margin-right: 10px" type="button" class="close"
+                                                    data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <div style="text-align:center">
+                                                <div class="modal-body Votre-dossier-dacte "
+                                                     style="text-align:center;margin-left: 42px;margin-top: 20px;">
+                                                    Êtes-vous sûr de vouloir supprimer {{item.name}} ?
+                                                    <div style="text-align:center;margin-top: 10%;">
+                                                        <button form="information" type="submit"
+                                                                class="btn  next-button"
+                                                                (click)="deleteAvocat(item)"
+                                                                style="margin-right: 5%;">Oui
+                                                        </button>
+                                                        <button form="information" type="button"
+                                                                class="btn  save-button"
+                                                                (click)="displayCreateOrder=true;displayConsultOrder=false"
+                                                                data-dismiss="modal">Retour
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div style="margin-bottom: 3%;margin-top: 2%;" class="add-new-role"
+                                 (click)="showSearchField=true;searchResult=null">
+                                <img alt="" src="/logo/icon-color.png"/>
+                                <span class="add-new-role-title">Ajouter un autre avocat</span>
+                            </div>
+                        </div>
+                        <div class="" *ngIf="showSearchField || listeAvocats.length==0">
+                            <form autocomplete="off">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group mt-0">
+                                            <input
+                                                    type="text"
+                                                    autocomplete="off"
+                                                    [(ngModel)]="firstName"
+                                                    name="firstName"
+                                                    placeholder=""
+                                                    (keyup)="onKey($event)"
+                                                    #sname="ngModel"
+                                                    required="required"
+                                                    id="sname"
+                                                    pattern="[\-a-zA-ZàâáåæçéèêëîïíìôóòöœùûüúÿÀÂÆÁÇnÉÈÊËÎÏÌÍÔÖÓŒÙÛÜŸÚ\s]+"
+                                                    maxlength="50"
+                                            />
+
+                                            <label for="sname" class="control-label"
+                                                   style="margin-top: -5px">Nom*</label><em class="bar"></em>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <input
+                                                    autocomplete="off"
+                                                    type="text" id="slastName"
+                                                    name="slastName"
+                                                    [(ngModel)]="lastNameValue"
+                                                    #slastName="ngModel"
+                                                    required="required"
+                                                    pattern="[\-a-zA-ZàâáåæçéèêëîïíìôóòöœùûüúÿÀÂÆÁÇnÉÈÊËÎÏÌÍÔÖÓŒÙÛÜŸÚ\s]+"
+                                                    (keyup)="onkeyLastName($event);"
+                                                    maxlength="50"
+                                            />
+
+                                            <label for="slastName" class="control-label" style="margin-top: -5px">Prénom</label><em
+                                                class="bar"></em>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 right-btn">
+                                        <div class="form-group">
+                                            <button class="btn next-button"
+                                                    (click)="displayDivForAutoComplete=true;searchAvocat()">
+                                                Rechercher
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                        <div class="add-role-item-content" *ngIf="displayDivForAutoComplete==true && showSearchField">
+                            <div>
+                                <div class="search-table-header">
+                                    <span class="search-table-title">Résultat de la recherche</span>
+                                </div>
+                                <p-accordion styleClass="search-table-accordion" [multiple]="true" #accordion>
+                                    <p-accordionTab *ngFor="let c of searchResult;index as i"
+                                                    [disabled]="isAvocatSelected(c)"
+                                                    (click)="(c.emailEd==null || c.emailApp==null)?displayListEmail(false):null;((c.phoneNumberEd==null || c.phoneNumberApp==null) &&( c.codeCountry==null || c.codeCountryApp==null))?displayListEmail(false):null">
+                                        <p-header>
+                                            <div class="row">
+                                                <div class="col-md-4">{{c.name}} {{c.lastName}}</div>
+                                                <div class="col-md-6">{{c.email}}</div>
+                                            </div>
+
+                                        </p-header>
+
+
+                                        <form>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group mt-0">
+                                                        <input style="width: 100%"
+                                                               type="text"
+                                                               autocomplete="new-password"
+                                                               [ngClass]="{disabledDiv: true}"
+                                                               [value]="c.name"
+                                                               name="uname_{{i}}"
+                                                               placeholder=""
+                                                               required="required"
+                                                               id="uname_{{i}}"
+                                                               maxlength="50"
+                                                        />
+
+
+                                                        <label for="uname_{{i}}" class="control-label"
+                                                               style="margin-top: -5px">Nom*</label><em
+                                                            class="bar"></em>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <div class="form-group">
+                                                        <input style="width: 100%"
+                                                               autocomplete="new-password"
+                                                               type="text"
+                                                               id="alastName_{{i}}"
+                                                               name="alastName_{{i}}"
+                                                               [ngClass]="{disabledDiv: true}"
+                                                               [value]="c.lastName"
+                                                               required="required"
+                                                               maxlength="50"
+                                                        />
+
+                                                        <label for="alastName_{{i}}" class="control-label"
+                                                               style="margin-top: -5px">Prénom*</label><em
+                                                            class="bar"></em>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 right-btn hidden-xs">
+                                                    <div class="form-group">
+                                                        <button class="btn next-button"
+                                                                [disabled]="c.email===null || c.email==='' || validatedFormEmail || c.phoneNumber===null || c.phoneNumber===''"
+                                                                (click)="saveAvocat(c)">
+                                                            Ajouter
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4" (click)="displayListPhoneAuto=false">
+                                                    <div class="form-group">
+                                                        <input style="width: 100%"
+                                                               autocomplete="new-password"
+                                                               type="email"
+                                                               [(ngModel)]="c.email"
+                                                               name="aemail_{{i}}"
+                                                               id="aemail_{{i}}"
+                                                               #email="ngModel"
+                                                               pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w+)+$"
+                                                               (keyup)="email.errors?.pattern?validatedFormEmail=true:validatedFormEmail=false"
+                                                               (click)="fillEmailList(c);displayListEmail(true)"
+                                                        />
+                                                        <label for="aemail_{{i}}" class="control-label"
+                                                               style="margin-top: -5px">Adresse e-mail* <span
+                                                                *ngIf="c.emailEd!==null && c.emailApp!==null && c.counselEmail==null">(Cet avocat a deux emails)</span><span *ngIf="c.emailEd!==null && c.emailApp!==null && c.counselEmail!==null">(Cet avocat a trois emails)</span></label><em
+                                                            class="bar"></em>
+
+                                                    </div>
+                                                    <div (blur)="displayListEmailAuto=false"
+                                                         *ngIf="c.emailEd!==null && c.emailApp!==null && displayListEmailAuto==true"
+                                                         class="role-name-autocomplete">
+                                                        <div *ngFor="let e of emailList">
+                                                    <span (click)="c.email=e;displayListEmailAuto=false">
+                                                        <span *ngIf="e==c.emailEd">{{e}} (Annuaire)</span>
+                                                        <span *ngIf="e==c.counselEmail">{{e}} (Application)</span>
+                                                        <span *ngIf="e==c.emailApp">{{e}} (Renseigné par l’avocat lui-même)</span>
+                                                    </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <div style="display:flex;">
+                                                       <span style="display:inline;width: 100px;">
+                                                     <international-phone-number
+                                                             autocomplete='disabled'
+                                                             [allowedCountries]="allowedCountries()"
+                                                             [(ngModel)]="c.codeCountry"
+                                                             onkeydown="return event.keyCode === 9;"
+                                                             [defaultCountry]="c.codeCountry==null?getCountry():''"
+                                                             name="codeCountry_{{i}}" id="scodeCountry_{{i}}"
+                                                             #codeCountry_{{i}}="ngModel"
+                                                             [ngClass]="'phone-component'"
+                                                             (click)="displayListPhoneAuto=false">
+                                                </international-phone-number>
+                                                        </span>
+                                                        </div>
+                                                        <label for="scodeCountry_{{i}}" class="control-label"
+                                                               style="top: -1.5rem;">
+                                                            Indicatif*
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-5" (click)="displayListEmailAuto=false">
+                                                    <div class="form-group group-long-label">
+                                                        <input style="width: 100%"
+                                                               autocomplete="new-password"
+                                                               type="number"
+                                                               [(ngModel)]="c.phoneNumber"
+                                                               name="aphone_{{i}}"
+                                                               id="aphone_{{i}}"
+                                                               onPaste="return false"
+                                                               (click)="fillPhoneList(c);displayListPhone(true)"
+                                                        />
+
+                                                        <label for="aphone_{{i}}" class="control-label">Numéro de portable * <span
+                                                                *ngIf="c.phoneNumber!==null && c.phoneNumberEd!==null && c.codeCountry!==null && c.codeCountryApp!==null && c.counselPhone===null && c.counselCodeCountryApp===null">(Cet avocat a deux numéros)</span>
+                                                            <span
+                                                                    *ngIf="c.phoneNumber!==null && c.phoneNumberEd!==null && c.codeCountry!==null && c.codeCountryApp!==null && c.counselPhone!==null && c.counselCodeCountryApp!==null">(Cet avocat a trois numéros)</span></label><em
+                                                            class="bar"></em>
+
+                                                    </div>
+                                                    <div (blur)="displayListPhoneAuto=false"
+                                                         *ngIf="phoneList.length>=2 && displayListPhoneAuto==true && c.phoneNumber!==null && c.phoneNumberEd!==null && c.phoneNumberEd!==null && c.codeCountry!==null && c.codeCountryApp!==null"
+                                                         class="role-name-autocomplete group-long-label">
+                                                        <div *ngFor="let p of phoneList;let i=index">
+                                                   <span (click)="displayListPhoneAuto=false;">
+                                                        <span *ngIf="i==0" (click)="c.codeCountry=p.code;c.phoneNumber=p.num;modifiedAvocat=c">{{p.code}} {{p.num}}</span>
+                                                        <span *ngIf="i==1"  (click)="c.codeCountry=p.code;c.phoneNumber=p.num;modifiedAvocat=c">{{p.code}} {{p.num}}</span>
+                                                        <span *ngIf="i==2"  (click)="c.codeCountry=p.code;c.phoneNumber=p.num;modifiedAvocat=c">{{p.code}} {{p.num}}</span>
+                                                        <span *ngIf="p.num==c.phoneNumberEd" (click)="c.codeCountry=p.code;c.phoneNumber=p.num;modifiedAvocat=c">(Annuaire)</span>
+                                                        <span *ngIf="p.num==c.phoneNumberApp" (click)="c.codeCountry=p.code;c.phoneNumber=p.num;modifiedAvocat=c">(Renseigné par l’avocat lui-même)</span>
+                                                        <span *ngIf="p.num==c.counselPhone"
+                                                              (click)="c.codeCountry=p.code;c.phoneNumber=p.num;modifiedAvocat=c">(Application)</span>
+                                                    </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 right-btn visible-xs-block">
+                                                    <div class="form-group">
+                                                        <button class="btn next-button"
+                                                                [disabled]="c.email===null || c.email==='' || validatedFormEmail || c.phoneNumber===null || c.phoneNumber===''"
+                                                                (click)="saveAvocat(c);displayListPhoneAuto=false;displayListEmailAuto=false">
+                                                            Ajouter
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </form>
+
+                                    </p-accordionTab>
+
+                                </p-accordion>
+                                <div class="search-notice" *ngIf="searchResult?.length === 0">
+                                    <h4>Aucun élément ne correspond à votre recherche</h4>
+                                    <p>Vous pouvez ajouter un nouvel avocat validateur. Attention, la validation ne pourra être réalisée qu'au travers un code à usage unique</p>
+                                    <button class="btn next-button" (click)="showCreateAvocat=true;">
+                                        Créer un avocat validateur
+                                    </button>
+                                </div>
+                                <div class="search-notice" *ngIf="searchResult?.length > 0">
+                                    <p>Si l’avocat validateur souhaité n'apparaît pas, vous pouvez le créer (attention, la validation ne pourra se faire qu’au travers d’un code à usage unique)</p>
+                                    <button class="btn next-button" (click)="showCreateAvocat=true;">
+                                        Créer un avocat validateur
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="row" *ngIf="showCreateAvocat">
+            <div class="add-role-form" style="margin-top: 30px;">
+                <!-- start add -->
+                <div *ngFor="let item of addedAvocats; index as i" class="add-role-item"
+                     style="border-radius: 8px;background-image: none;">
+                    <div class="add-role-item-content">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group mt-0">
+                                        <input
+                                                type="text"
+                                                autocomplete="new-password"
+                                                [(ngModel)]="item.name"
+                                                name="name_{{i}}"
+                                                placeholder=""
+                                                (keyup)="item.id=null;onKey($event);name.errors?.pattern?validatedFormName=true:validatedFormName=false"
+                                                #name="ngModel"
+                                                required="required"
+                                                (focus)="displayListEmailAuto=false;displayListPhoneAuto=false"
+                                                id="name_{{i}}"
+                                                pattern="[\-a-zA-ZàâáåæçéèêëîïíìôóòöœùûüúÿÀÂÆÁÇnÉÈÊËÎÏÌÍÔÖÓŒÙÛÜŸÚ\s]+"
+                                                maxlength="50"
+                                        />
+                                        <label for="name_{{i}}" class="control-label" style="margin-top: -5px">Nom*</label><em class="bar"></em>
+                                        <div *ngIf="name.invalid && (name.dirty || name.touched)" class="invalid-form-feedback">
+                                            <p class="invalid-styles" *ngIf="name.errors?.required">Champ obligatoire non complété</p>
+                                            <p class="invalid-styles" *ngIf="name.errors?.pattern">Ceci n'est pas un nom valide</p>
+                                            <p class="invalid-styles" *ngIf="testchamp(item.name)">Seules les lettres sont autorisées (maximum 50 caractères)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <input autocomplete="new-password"
+                                               type="text"
+                                               id="lastName_{{i}}"
+                                               name="lastName_{{i}}"
+                                               (focus)="displayListEmailAuto=false;displayListPhoneAuto=false"
+                                               [(ngModel)]="item.lastName"
+                                               #lastName="ngModel"
+                                               required="required"
+                                               pattern="[\-a-zA-ZàâáåæçéèêëîïíìôóòöœùûüúÿÀÂÆÁÇnÉÈÊËÎÏÌÍÔÖÓŒÙÛÜŸÚ\s]+"
+                                               (keyup)="onkeyLastName($event);lastName.errors?.pattern?validatedFormLastName=true:validatedFormLastName=false"
+                                               maxlength="50"
+                                        />
+                                        <label for="lastName_{{i}}" class="control-label" style="margin-top: -5px">Prénom*</label><em class="bar"></em>
+                                        <div *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)" class="invalid-form-feedback">
+                                            <p class="invalid-styles" *ngIf="lastName.errors?.required">Champ obligatoire non complété</p>
+                                            <p class="invalid-styles" *ngIf="lastName.errors?.pattern">Ceci n'est pas un nom valide</p>
+                                            <p class="invalid-styles" *ngIf="testchamp(item.lastName)">Seules les lettres sont autorisées (maximum 50 caractères)</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <input autocomplete="new-password"
+                                               type="email"
+                                               [(ngModel)]="item.email"
+                                               (focus)="displayListPhoneAuto=false"
+                                               name="email_{{i}}"
+                                               id="email_{{i}}"
+                                               required="required"
+                                               #email="ngModel"
+                                               pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w+)+$"
+                                               (click)="emailList.length>=2?displayListEmail(true):displayListEmail(false);"
+                                               (keyup)="email.errors?.pattern?validatedFormEmail=true:validatedFormEmail=false"/>
+                                        <label for="email_{{i}}" class="control-label" style="margin-top: -5px">Adresse e-mail* </label><em class="bar"></em>
+                                        <div *ngIf="email.invalid && (email.dirty || email.touched)" class="invalid-form-feedback">
+                                            <p class="invalid-styles" *ngIf="email.errors?.required">Champ obligatoire non complété</p>
+                                            <p class="invalid-styles" *ngIf="email.errors?.pattern">Ceci n'est pas une adresse e-mail valide</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-2 codeCountrySize">
+                                    <div class="form-group">
+                                        <div style="display:flex;">
+                                            <span style="display:inline;width: 100px;margin-top: 5px;">
+                                                <international-phone-number
+                                                        autocomplete="new-password"
+                                                        [allowedCountries]="allowedCountries()"
+                                                        [(ngModel)]="item.codeCountry"
+                                                        onkeydown="return event.keyCode === 9;"
+                                                        [defaultCountry]="item.codeCountry==null?getCountry():''"
+                                                        name="codeCountry_{{i}}" id="codeCountry_{{i}}"
+                                                        #codeCountry="ngModel"
+                                                        [ngClass]="'phone-component'"
+                                                        (click)="displayListPhoneAuto=false">
+                                                </international-phone-number>
+                                            </span>
+                                        </div>
+                                        <label for="codeCountry_{{i}}" class="control-label" style="top: -1rem;">
+                                            Indicatif*
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 phoneSize">
+                                    <div class="form-group">
+                                        <div style="display:flex;">
+                                                <span class="inputphone">
+                                                <input #yourInput [(ngModel)]="item.phoneNumber"
+                                                       autocomplete="new-password"
+                                                       [maxlength]='23'
+                                                       [required]="true"
+                                                       class="form-control show"
+                                                       name="phoneNumber_{{i}}"
+                                                       id="phoneNumber_{{i}}"
+                                                       (change)="item.phoneNumber= removeBlankSpace(item.phoneNumber)"
+                                                       (keypress)="phoneNumberRestrict($event)"
+                                                       onPaste="return false"
+                                                       (keyup)="(testPhoneCase(item.phoneNumber)||testPhone(item.phoneNumber))?validatedFormPhone=true:validatedFormPhone=false"></span>
+                                        </div>
+                                        <label for="phoneNumber_{{i}}" class="control-label tel-xs"  style="top: -1rem;">Numéro de portable*</label>
+                                        <div class="invalid-form-feedback">
+                                            <p class="invalid-styles" *ngIf="testPhoneCase(item.phoneNumber)">Champ
+                                                obligatoire non complété</p>
+                                            <p class="invalid-styles" *ngIf="testPhone(item.phoneNumber)">Seules les
+                                                lettres sont autorisées (maximum 50 caractères)</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                    <div class="add-role-item-footer">
+                            <div class="form-group add-new-role">
+                                <button [disabled]="disabledAddAndModifyButton() || duplicant|| validatedFormName||validatedFormPhone||validatedFormLastName||validatedFormEmail" class="btn next-button" (click)="saveAvocat(item)">
+                                    Ajouter
+                                </button>
+                            </div>
+                        <div class="remove-rule cursor-pointer" (click)="deleteAddedAvocat(i)">
+                            <span class="remove-rule-title">Supprimer</span>
+                            <img alt="" src="/logo/delete.svg" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- end add-->
+
+
+                <div class="form-notice">
+                    <span>
+                        * Champs obligatoires
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="add-form-actions" *ngIf="listeAvocats.length">
+            <div>
+                <button  class="btn next-button" (click)="addAvocats()">Suivant</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+

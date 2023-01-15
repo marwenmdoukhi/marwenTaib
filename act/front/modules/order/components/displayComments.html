@@ -1,0 +1,139 @@
+<div class="search-header" [@fadeInOut-3] *ngIf="!vm.displayAllResult  && vm.displayComments">
+    <button class="btn burger-menu-btn visible-xs-block" (click)="vm.toggleSidebar()">
+        <img src="logo/burger.svg" />
+    </button>
+    <div class="search-input" [ngClass]="vm.inputReasearchBar ? 'search-focused' : ''">
+        <input type="text" id="input" [(ngModel)]="vm.inputReasearchBar"
+               pInputText (focus)="vm.displayDivForReasearchBar=true"
+               placeholder="Chercher un acte, un document, un contact" />
+        <img src="/logo/search.svg" />
+        <span *ngIf="vm.inputReasearchBar" class="glyphicon glyphicon-remove-sign" (click)="vm.displayDivForReasearchBar=false;vm.inputReasearchBar=null" style=" cursor:pointer; float: right; margin-top: -3%; margin-right: 1%;"></span>
+        <div *ngIf="vm.displayDivForReasearchBar" class="role-name-barre-recherche">
+            <div *ngFor="let c of (vm.allData | barPipe : vm.inputReasearchBar | slice:0:10)" (click)="changeComponent();vm.assignActeModel(c);" style="padding-left: 65px;">
+                <span *ngIf="c.nameActe" [inlineSVG]="'/logo/en-attente.svg'" style="margin-right: 2%; vertical-align: middle;"></span> <span *ngIf="c.nameActe" class="Affaire-Pauline-Grin">{{c.nameActe}}</span><span class="dfendeur" style="margin-left: 1%;" *ngIf="c.nameActe">acte</span>
+                <span *ngIf="c.contactName" [inlineSVG]="'/logo/yellow.svg'" style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.contactName" class="Affaire-Pauline-Grin">{{c.contactLastName | titlecase}} {{c.contactName | uppercase}} contact</span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.contactName">contact</span>
+                <span *ngIf="c.documentName" [inlineSVG]="'/logo/document.svg'" style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.documentName" class="Affaire-Pauline-Grin">{{c.documentName}}.pdf </span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.documentName">document</span>
+            </div>
+            <div *ngIf="vm.inputReasearchBar" class="role-name-barre-recherche" style="border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;border-top: 1px solid #dadada;">
+                <span class="Voir-tous-les-rsult" (click)="vm.displayAllResult=true;vm.displayDivForReasearchBar=false;" style="cursor:pointer;margin-left: 55px">Voir tous les résultats pour « {{vm.inputReasearchBar}} »</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-content" [@fadeInOut-3] *ngIf="!vm.displayAllResult  && vm.displayComments" [ngClass]="vm.inputReasearchBar ? 'overlay' : ''">
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="add-act-header">
+                <div>
+                    <span class="glyphicon glyphicon-chevron-left back-title-chevron"
+                          (click)="vm.displayComments=false"></span>
+
+                    <span class="add-act-title">Commentaires</span>
+
+                </div>
+
+
+            </div>
+            <hr />
+        </div>
+
+        <div>
+
+            <div class="row">
+                <div class="add-form-steps">
+
+                    <div class="add-form-content">
+                        <div class="">
+                            <span class="synth-section-title">Informations</span>
+                            <div class="synthese-info hidden-xs">
+                                <div>
+                                    <span class="info-title">Numéro de l'acte</span>
+                                    <span>{{currentActe.folderNumber}}</span>
+                                </div>
+                                <div>
+                                    <span class="info-title">Nom de l'acte</span>
+                                    <span>{{currentActe.name}}</span>
+                                </div>
+                                <div>
+                                    <span class="info-title">Nom du dossier</span>
+                                    <span>{{currentActe.folderName}}</span>
+                                </div>
+                                <div>
+                                    <span class="info-title">Numéro interne du dossier</span>
+                                    <span>{{currentActe.internalNumber}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="visible-xs-block responsive-info-section">
+                            <div class="row mb-10">
+                                <div class="col-xs-12">
+                                    <div class="info-title">N° de l'acte</div>
+                                    <div class="truncate-txt">{{currentActe.folderNumber}}</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-4 pr-5">
+                                    <div class="info-title">Nom de l'acte</div>
+                                    <div class="truncate-txt">{{currentActe.name}}</div>
+                                </div>
+                                <div class="col-xs-4 pr-5 pl-5 side-bordered">
+                                    <div class="info-title">Nom du dossier</div>
+                                    <div class="truncate-txt">{{currentActe.folderName}}</div>
+                                </div>
+                                <div class="col-xs-4 pl-5">
+                                    <div class="info-title">Numéro interne du dossier</div>
+                                    <div class="truncate-txt">{{currentActe.internalNumber}}</div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="comments-section">
+
+                            <div class="comment-container" *ngFor="let item of commentsValidationSignatory">
+                                <div class="comment-header">
+                                    <span><span class="capitalize-text">{{item.lastName}}</span> {{item.name | uppercase}}</span>
+                                    <span class="pull-right">Reçu le {{item.validatedAt}}</span>
+                                </div>
+
+                                <div class="comment-content">
+                                    <span>{{item.comment}}</span>
+                                </div>
+                            </div>
+
+                            <div class="comment-container" *ngFor="let item of commentsSignatureSignatory">
+                                <div class="comment-header">
+                                    <span><span class="capitalize-text">{{item.lastName}}</span> {{item.name | uppercase}}</span>
+                                    <span class="pull-right">Reçu le {{item.signedAt}}</span>
+                                </div>
+
+                                <div class="comment-content">
+                                    <span>{{item.signatureComment}}</span>
+                                </div>
+                            </div>
+
+                            <div class="comment-container" *ngFor="let item of commentsValidationAvocat">
+                                <div class="comment-header">
+                                    <span>{{item.lastName.charAt(0).toUpperCase()+item.lastName.slice(1)}} {{item.name | uppercase}}</span>
+                                    <span class="pull-right">Reçu le {{item.validatedAt}}</span>
+                                </div>
+
+                                <div class="comment-content">
+                                    <span>{{item.comment}}</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

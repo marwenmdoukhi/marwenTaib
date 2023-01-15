@@ -1,0 +1,8 @@
+{{ form_start(form) }}
+<div style="display: none" class="existemail alert alert-danger text-center">Adresse Mail déja inscrit </div>
+<div style="display: none" class="success existnomemail alert alert-success text-center ">Abonnement aux newsletters avec succès.</div>
+<div class="footer-submit-wrapper d-flex" >
+    {{ form_widget(form.email) }}
+    <button type="submit" class="btn btn-dark btn-sm">Subscribe</button>
+</div>
+{{ form_end(form) }}

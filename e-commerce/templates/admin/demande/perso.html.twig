@@ -1,0 +1,70 @@
+<table id="demandeterminer" class="table table-hover" style="width:100%">
+    <thead>
+    <tr>
+        <th>Type de Produit</th>
+        <th>Type de Personaliser</th>
+        <th>Img Personaliser</th>
+        {% if  (detaildemande.typeperso == "Horoscope")  %}
+        <th>Horoscope </th>
+        {% else %}
+        <th>Text Personaliser</th>
+        {% endif %}
+        <th>Motif</th>
+        <th>Telephone</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                {% if detaildemande.Product.produithome ==true  %}
+                    Looh  Home
+                {% else %}
+                    Looh Accessoires
+                {% endif %}
+            </td>
+            <td>
+                {{ detaildemande.Typeperso }}
+            </td>
+            <td>
+                {% if detaildemande.filename %}
+                    {% if (detaildemande.typeperso =="Logo et / ou texte")  or (detaildemande.typeperso =="Portrait et Texte")   or (detaildemande.typeperso =="Logo")   %}
+                         <a  target="_blank"  class="btn-danger btn" href="/public{{ vich_uploader_asset(detaildemande, 'imageFile')}}">Voir Image</a>
+                    {% endif %}
+                {% endif %}
+            </td>
+            <td>
+                {% if  (detaildemande.typeperso == "Horoscope")  %}
+                    <h4 class="m-text15 p-b-7 mb-2"> {{ detaildemande.Horoscope }}
+                    </h4>
+                {% else %}
+                    <h4 class="m-text15 p-b-7 mb-2">{{ detaildemande.text }}
+                    </h4>
+                {% endif %}
+            </td>
+            <td>
+                {% if  (detaildemande.motif ==null)  %}
+
+                {% elseif  (detaildemande.motif == "true")  %}
+
+                    Oui
+                    {% else %}
+                    Non
+                {% endif %}
+
+            </td>
+
+            <td>
+                {% if detaildemande.marques != null %}
+                    {{ detaildemande.marques }}
+                {% endif %}
+                :
+                {% if detaildemande.categoriestel != null %}
+                    {{ detaildemande.categoriestel }}
+                {% endif %}
+            </td>
+        </tr>
+
+    </tbody>
+</table>
+

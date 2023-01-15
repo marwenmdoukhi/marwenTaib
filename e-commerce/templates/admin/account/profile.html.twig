@@ -1,0 +1,56 @@
+{% extends 'admin.html.twig' %}
+
+{% block body %}
+    <br>
+    {{ form_start(form) }}
+
+    <div class="row">
+        <div class="col-md-2">
+            {{ form_row(form.firstName) }}
+
+        </div>
+        <div class="col-md-2">
+            {{ form_row(form.lastName) }}
+
+        </div>
+        <div class="col-md-2">
+            {{ form_row(form.tel) }}
+
+        </div>
+        <div class="col-md-3">
+            {{ form_row(form.email) }}
+
+        </div>
+        <div class="col-md-3">
+            {{ form_row(form.adress) }}
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="custom-file-container" data-upload-id="account_imageFile">
+                <label>Ajouter Images <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
+                <label class="custom-file-container__custom-file" >
+                    {{ form_widget(form.picture) }}
+                    <input type="hidden" name="MAX_FILE_SIZE" value="10485760" />
+                    <span class="custom-file-container__custom-file__custom-file-control"></span>
+                </label>
+                <div class="custom-file-container__image-preview"></div>
+            </div>
+
+        </div>
+
+    </div>
+    <button  class="btn btn-primary " type="submit">Modifier</button>
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+
+
+
+    <script>
+        var secondUpload = new FileUploadWithPreview('account_imageFile')
+    </script>
+{% endblock %}

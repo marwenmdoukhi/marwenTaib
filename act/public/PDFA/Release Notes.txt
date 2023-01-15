@@ -1,0 +1,18 @@
+Version 1.2 - 8/15/2017
+-----------------------
+Enhance to work from Explorer Send To context menu:
+- Strip file extension from parameters if provided.  Script assumes .pdf.
+- Change to the directory of the first file before processing.
+- Pause if file rename fails so user can see error in command window.
+Handle ampersands in file names (e.g. "AT&T")..
+Update path to point to Ghostscript 9.20.
+
+
+Version 1.1 - 05/03/2013
+------------------------
+- Update pdfa.cmd to handle spaces in file names.
+
+
+Version 1.0 - 04/15/2013
+------------------------
+- Initial release

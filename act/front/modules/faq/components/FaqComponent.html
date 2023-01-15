@@ -1,0 +1,163 @@
+<ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "ball-clip-rotate-pulse"><p style="color: white" > Loading... </p></ngx-spinner>
+<p-dialog *ngIf="userConnected && userConnected.ipaddress==null || settingsBtn == true"
+          [(visible)]="!displayCookiesModal && !displayCGU  && !displayPC && displayCX " draggable="false" [responsive]="true" [positionTop]="0" modal="true"
+          styleClass="widthModal"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+    <div class="modal-header" *ngIf="settingsBtn == false">
+        <h4 class="modal-title main-title">C’est votre première connexion, bienvenue !</h4>
+    </div>
+    <div class="modal-header" *ngIf="settingsBtn == true">
+        <h4 class="modal-title main-title">Bienvenue, merci de renseigner les informations suivantes afin de certifier votre identité.</h4>
+    </div>
+    <div class="modal-body">
+        <h4 *ngIf="settingsBtn == false" class="secondary-title">Merci de renseigner les informations suivantes afin de certifier votre
+            identité</h4>
+        <h5>Tous les champs marqués d’un astérisque (*) sont obligatoires</h5>
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input style="font-size: 14px;!important;" class="form-control disabledDiv" type="text" value="{{ userConnected.name }}">
+                    <label style="font-size: 11px;!important;" for="lastnameId" class="control-label">Nom*</label><i class="bar" style="width: 100%"></i>
+                </div>
+                <div class="form-group">
+                    <input style="font-size: 14px;!important;" id="lastnameId" class="form-control disabledDiv" type="text"
+                           value="{{ userConnected.lastName }}">
+                    <label style="font-size: 11px;!important;" for="lastnameId" class="control-label">Prenom*</label><i class="bar" style="width: 100%"></i>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input  style="font-size: 14px;!important;" id="emailId" class="form-control disabledDiv" type="email"
+                            value="{{ (userConnected.email!==userConnected.cnbId+'cnb@cnb.fr')&&(userConnected.email!==userConnected.cnbId+'@cnb.fr')?userConnected.email:null }}">
+                    <label style="font-size: 11px;!important;" for="emailId" class="control-label">Adresse e-mail*</label><i class="bar" style="width: 100%"></i>
+                </div>
+                <div class="form-group">
+                    <input style="font-size: 14px;!important;" id="phoneId" class="form-control disabledDiv" type="text"
+                           value="{{ userConnected.phoneNumber }}">
+                    <label style="font-size: 11px;!important;" for="phoneId" class="control-label">Téléphone*</label><i class="bar" style="width: 100%"></i>
+                </div>
+
+            </div>
+        </div>
+        <h5 class="var-secondary-title">Si les informations ci-dessus ne sont pas à jour, vous pouvez saisir
+            les champs suivants : </h5>
+
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group mt-10">
+                    <input [(ngModel)]="userConnected.emailApp" autocomplete="new-password" style="font-size: 14px;!important;" id="email" class="form-control" type="email"
+                           (keyup)="checkEmailCnb()" >
+                    <label style="font-size: 11px!important;margin-top: -5px" for="email" class="control-label">Adresse e-mail <i style="color: red" *ngIf="isCnbEmail">*</i> (Cette adresse mail
+                        sera utilisée pour vous envoyer des notifications)</label><i class="bar" style="width: 100%"></i>
+                    <div *ngIf="errorMsg"  class="invalid-styles" >Ceci n'est pas une adresse mail
+                        valide</div>
+                    <div *ngIf="hideMsg"  class="invalid-styles" >Ce champs est obligatoire. Merci de saisir votre email.</div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group mt-10">
+                    <international-phone-number autocomplete="new-password" style="font-size: 14px;width: 100%!important;"   [allowedCountries]="allowedCountries()" onPaste="return false" [(ngModel)]="userConnected.codeCountryApp"   [defaultCountry]="(userConnected.codeCountryApp==='' || userConnected.codeCountryApp===null) ?getCountry():''" id="codeCountrytel"></international-phone-number>
+                    <label id="label" style="font-size: 11px!important;color: gray;margin-top: -16px" for="codeCountrytel" class="control-label truncate-txt">Code pays</label><i
+                        class="bar" style="width: 100%"></i>
+                    <input autocomplete="new-password" style="font-size: 14px!important;width: 100%!important;visibility: hidden" id="codeCountry" class="form-control" type="tel"
+                           value="{{ userConnected.codeCountryApp }}" pattern="^[+][0-9]+$">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mt-10">
+                    <input autocomplete="new-password" style="font-size: 14px;!important;" id="phone" class="form-control" type="number" onPaste="return false" [(ngModel)]="userConnected.phoneNumberApp"
+                           pattern="[0-9]$" onkeyup="checkPhoneLength()" (keyup)="checkCnbMobile()">
+                    <label style="font-size: 11px;!important;margin-top: -3px" for="phone" class="control-label truncate-txt">Téléphone <i style="color: red" *ngIf="isCnbPhone">*</i> (Ce n° de téléphone sera
+                        utilisé pour vous envoyer des sms)</label><i class="bar" style="width: 100%"></i>
+                    <div *ngIf="errorPhoneMsg"  class="invalid-styles" >Ceci n'est pas un N de tel valide</div>
+                    <div *ngIf="hidePhoneMsg"  class="invalid-styles" >Ce champs est obligatoire. Merci de saisir votre numéro de téléphone.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a type="submit" [attr.disabled] = "disableBtn || disableBtnEmail ? '' : null "  class="btn next-button pull-right" id="confirm"
+           href="#" onclick="modifyUserEmailAndPhone();" (click)="displayCX=false">
+            Confirmer
+        </a>
+        <button *ngIf="settingsBtn" form="information" type="submit" class="btn  save-button" style="margin-right:20px" data-dismiss="modal" (click)="settingsBtn=false;annuler()">Annuler</button>
+
+    </div>
+</p-dialog>
+
+<div>
+    <div class="main-content" [hidden]=" false">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="my-acte-title">
+                    <span>Aide</span>
+                </div>
+                <hr style="margin-bottom:5rem" />
+            </div>
+            <div class="row">
+                <div class="headline">
+                    <div class="pull-left test-headline">Foire aux Questions (FAQ)</div>
+                    <div class="pull-right" style="margin-top:5px; margin-right: 12px">
+                        <img alt="" src="/logo/down.svg" data-toggle="collapse" data-target="#collapseDonnee" >
+                    </div>
+                </div>
+                <div class="collapse-info collapse" id="collapseDonnee">
+                    <div class="body-rectangle">
+                        <br>
+                       <p style="margin-left: 14px;margin-right: 14px;text-align: justify">
+                           {{ faq }}
+                           <br>
+                           <br>
+                           <a rel="noopener noreferrer" target="_blank" href=" https://assistance.cnb.avocat.fr/hc/fr/sections/360004043079-e-Actes-sous-signature-privée">Accéder à la Foire aux Questions </a>
+                       </p>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="headline">
+                    <div class="pull-left test-headline">Manuels utilisateurs</div>
+                    <div class="pull-right" style="margin-top:5px; margin-right: 12px">
+                        <img alt="" src="/logo/down.svg" data-toggle="collapse" data-target="#collapseLegal" >
+                    </div>
+                </div>
+                <div class="collapse-info collapse" id="collapseLegal">
+                    <div class="body-rectangle">
+                        <br>
+                       <p style="margin-left: 14px;margin-right: 14px;text-align: justify">
+                           {{manual}}
+                           <br>
+                           <br>
+                           <a rel="noopener noreferrer" target="_blank" href="https://manuels.cnb.avocat.fr/">Accéder aux manuels utilisateurs </a>
+                           <br>
+                           <br>
+                       </p>
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-12">-->
+<!--                                <div class="col-md-10">-->
+<!--                                    <span style="font-weight: bold">manuel.pdf</span>-->
+<!--                                </div>-->
+<!--                                <div class="col-md-1 float-right">-->
+<!--                                    <span style="cursor: pointer" [inlineSVG]="'/logo/oeil.svg'" (click)="viewPdf()"></span>-->
+<!--                                </div>-->
+<!--                                <div class="col-md-1 float-right">-->
+<!--                                    <a download href={{downloadPDF(file)}} title=test class="c-black">-->
+<!--                                        <span style="cursor: pointer" [inlineSVG]="'/logo/download.svg'"></span>-->
+<!--                                    </a>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <!--filters-->
+            <!--end filters-->
+            <!--<div *ngIf="!reloadComplete" class="loader"></div>-->
+        </div>
+    </div>
+</div>

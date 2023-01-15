@@ -1,0 +1,122 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique{% endblock %}
+
+{% block body %}
+    <div class="page-wrapper">
+        <main class="main banners-page">
+        </main>
+    </div>
+    <main class="main">
+        <div class="page-header" style="background-image:url({{ asset('image/banner/profil.png') }}) ;background-position: center;background-repeat: no-repeat;background-size: cover;">
+            <div class="container d-flex flex-column align-items-center ">
+                <br><br><br><br>
+                <div class=" appear-animation d-flex flex-column align-items-center justify-content-center text-center h-100 mt-5"
+                     data-appear-animation="fadeInLeftShorter" data-appear-animation-delay="350"
+                     data-appear-animation-duration="350">
+                    <h2 class="text-black font-weight-bold text-12-4 mb-3 appear-animation word-rotator font-weight-semi-bold clip is-full-width "
+                        data-appear-animation="blurIn" data-appear-animation-delay="500"
+                        data-plugin-options="{'minWindowWidth': 0}">
+                        <span>Bienvenue </span>
+                        <span class="word-rotator-words">
+                            <b class="is-visible text-uppercase"> {{ app.user.firstName }}</b>
+                            <b class=" text-uppercase">{{ app.user.firstName }} {{ app.user.lastName }}</b>
+                            <b class=" text-uppercase"> {{ app.user.lastName }} {{ app.user.firstName }} Chez Nous</b>
+                        </span>
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <div class="container account-container custom-account-container">
+            <div class="row">
+                <div class="sidebar widget widget-dashboard mb-lg-0 mb-3 col-lg-3 order-0">
+                    <h4 class="text-uppercase">Mon compte</h4>
+                    <ul class="nav nav-tabs list flex-column mb-0" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link " href="{{ path('account_profil') }}">Mes information</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link " href="{{ path('editerprofil') }}">Modifier Mes informations</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link " href="{{ path('user_password') }}">Modifier Mot de Passe</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link " href="{{ path('mescommande') }}">Mes demandes</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{{ path('historique') }}">Historique</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('account_logout') }}">Se déconnecter</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-9 order-lg-last order-1 tab-content">
+                    <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+                        <h3 class="account-sub-title d-md-block mt-0  ml-1"><i
+                                    class="icon-tag-line align-middle mr-3 pr-1"></i>Historique</h3>
+                        <div class="order-content">
+
+                            <div class="order-table-container text-center table-responsive">
+                                <table class="table table-order text-left">
+                                    <thead>
+                                    <tr>
+                                        <th class="order-id " style="color: #000">Numero Facture</th>
+                                        <th class="order-date" style="color: #000">Montant</th>
+                                        <th class="order-status" style="color: #000">Status</th>
+                                        <th class="order-price" style="color: #000">Payer</th>
+                                        <th class="order-action" style="color: #000">Detail</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for mescommande in mescommande %}
+                                        <tr>
+                                            <td>{{ mescommande.Numero }}</td>
+                                            <td>{{ mescommande.Montant |number_format(3, '.', ',') }} TD</td>
+                                            <td>
+                                                {% if (mescommande.status==0) and  (mescommande.terminer==0) %}
+                                                    En Attend
+                                                {% elseif  (mescommande.status==1) and  (mescommande.terminer==0) %}
+                                                    En Cours
+                                                {% elseif (mescommande.status==1) and  (mescommande.terminer==1) %}
+                                                    Terminer
+                                                {% else %}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if mescommande.payer == true %}Payer{% else %}non Payer{% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{{ path('detailcomnnde',{'id':mescommande.id}) }}"
+                                                   data-id="{{ mescommande.id }}"
+                                                   type="button" class=" mailComposeBtn  btn-primary btn btn-xs "
+                                                   data-toggle="modal" data-target="#openEditor">Detail </a>
+                                            <td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mb-5"></div>
+    </main>
+
+    <div class="modal fade" id="openEditor" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content lescruds">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

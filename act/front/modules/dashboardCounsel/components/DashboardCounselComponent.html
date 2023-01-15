@@ -1,0 +1,334 @@
+<ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "ball-clip-rotate-pulse"><p style="color: white" > Loading... </p></ngx-spinner>
+<div class="meter" *ngIf="counts &&counts.length===0">
+    <span style="width:100%;"><span class="progress"></span></span>
+</div>
+<allResult *ngIf="displayAllResult"></allResult>
+<p-dialog *ngIf="userConnected && settingsBtn == true"
+          [(visible)]="!displayCookiesModal && displayCX " draggable="false" [responsive]="true" [positionTop]="0" modal="true"
+          styleClass="widthModal"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+    <div class="modal-header" *ngIf="settingsBtn == false">
+        <h4 class="modal-title main-title">C’est votre première connexion, bienvenue !</h4>
+    </div>
+    <div class="modal-header" *ngIf="settingsBtn == true">
+        <h4 class="modal-title main-title">Bienvenue, merci de renseigner les informations suivantes afin de certifier votre identité.</h4>
+    </div>
+    <div class="modal-body">
+        <h4 *ngIf="settingsBtn == false" class="secondary-title">Merci de renseigner les informations suivantes afin de certifier votre
+            identité</h4>
+        <h5>Tous les champs marqués d’un astérisque (*) sont obligatoires</h5>
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input style="font-size: 14px;!important;" class="form-control disabledDiv" type="text" value="{{ userConnected.name }}">
+                    <label style="font-size: 11px;!important;" for="lastnameId" class="control-label">Nom*</label><i class="bar" style="width: 100%"></i>
+                </div>
+                <div class="form-group">
+                    <input style="font-size: 14px;!important;" id="lastnameId" class="form-control disabledDiv" type="text"
+                           value="{{ userConnected.lastName }}">
+                    <label style="font-size: 11px;!important;" for="lastnameId" class="control-label">Prenom*</label><i class="bar" style="width: 100%"></i>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input  style="font-size: 14px;!important;" id="emailId" class="form-control disabledDiv" type="email"
+                            value="{{ (userConnected.email!==userConnected.cnbId+'cnb@cnb.fr')&&(userConnected.email!==userConnected.cnbId+'@cnb.fr')?userConnected.email:null }}">
+                    <label style="font-size: 11px;!important;" for="emailId" class="control-label">Adresse e-mail*</label><i class="bar" style="width: 100%"></i>
+                </div>
+                <div class="form-group">
+                    <input style="font-size: 14px;!important;" id="phoneId" class="form-control disabledDiv" type="text"
+                           value="{{ userConnected.phoneNumber }}">
+                    <label style="font-size: 11px;!important;" for="phoneId" class="control-label">Téléphone*</label><i class="bar" style="width: 100%"></i>
+                </div>
+
+            </div>
+        </div>
+        <h5 class="var-secondary-title">Si les informations ci-dessus ne sont pas à jour, vous pouvez saisir
+            les champs suivants : </h5>
+
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group mt-10">
+                    <input [(ngModel)]="userConnected.emailApp" autocomplete="new-password" style="font-size: 14px;!important;" id="email" class="form-control" type="email"
+                           (keyup)="checkEmailCnb()" >
+                    <label style="font-size: 11px;!important;margin-top: -3px" for="email" class="control-label">Adresse e-mail <i style="color: red" *ngIf="isCnbEmail">*</i> (Cette adresse mail
+                        sera utilisée pour vous envoyer des notifications)</label><i class="bar" style="width: 100%"></i>
+                    <div *ngIf="errorMsg"  class="invalid-styles" >Ceci n'est pas une adresse mail
+                        valide</div>
+                    <div *ngIf="hideMsg"  class="invalid-styles" >Ce champs est obligatoire. Merci de saisir votre email.</div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group mt-10">
+                    <international-phone-number autocomplete="new-password" style="font-size: 14px;width: 100%!important;"   [allowedCountries]="allowedCountries()" [(ngModel)]="userConnected.codeCountryApp"   [defaultCountry]="(userConnected.codeCountryApp==='' || userConnected.codeCountryApp===null) ?getCountry():''" id="codeCountrytel"></international-phone-number>
+                    <label id="label" style="font-size: 11px;!important;color: gray;margin-top: -13px " for="codeCountrytel" class="control-label truncate-txt">Code pays</label><i
+                        class="bar" style="width: 100%"></i>
+                    <input autocomplete="new-password" style="font-size: 14px;!important;visibility: hidden" id="codeCountry" class="form-control" type="tel"
+                           value="{{ userConnected.codeCountryApp }}" pattern="^[+][0-9]+$">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mt-10">
+                    <input autocomplete="new-password" style="font-size: 14px;!important;" id="phone" class="form-control" type="number" onPaste="return false" [(ngModel)]="userConnected.phoneNumberApp"
+                           pattern="[0-9]$" onkeyup="checkPhoneLength()" (keyup)="checkCnbMobile()">
+                    <label style="font-size: 11px;!important;" for="phone" class="control-label truncate-txt">Téléphone <i style="color: red" *ngIf="isCnbPhone">*</i> (Ce n° de téléphone sera
+                        utilisé pour vous envoyer des sms)</label><i class="bar" style="width: 100%"></i>
+                    <div *ngIf="errorPhoneMsg"  class="invalid-styles" >Ceci n'est pas un N de tel valide</div>
+                    <div *ngIf="hidePhoneMsg"  class="invalid-styles" >Ce champs est obligatoire. Merci de saisir votre numéro de téléphone.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a type="submit" class="btn next-button pull-right" id="confirm"
+           href="#" onclick="modifyUserEmailAndPhone();" (click)="displayCX=false">
+            Confirmer
+        </a>
+        <button *ngIf="settingsBtn" form="information" type="submit" class="btn  save-button" style="margin-right:20px" data-dismiss="modal" (click)="settingsBtn=false;annuler()">Annuler</button>
+    </div>
+</p-dialog>
+
+<div *ngIf="counts && counts.length!==0 && !displayAllResult">
+    <div>
+        <div class="search-header">
+            <button class="btn burger-menu-btn visible-xs-block" (click)="toggleSidebar()">
+                <img alt="" src="logo/burger.svg"/>
+            </button>
+            <div class="search-input" [ngClass]="inputReasearchBar ? 'search-focused' : ''">
+                <input type="text" id="input" [(ngModel)]="inputReasearchBar"
+                       pInputText
+                       (focus)="displayDivForReasearchBar=true"
+
+                       placeholder="Chercher un acte, un document, un contact" />
+                <img alt="" src="/logo/search.svg" />
+                <span *ngIf="inputReasearchBar" class="glyphicon glyphicon-remove-sign" (click)="displayDivForReasearchBar=false;inputReasearchBar=null;displayAllResult=false" style="cursor:pointer;top: 19px;right: 13px;position: absolute;"></span>
+                <div *ngIf="displayDivForReasearchBar" class="role-name-barre-recherche">
+                    <div *ngFor="let c of (allData | barPipe : inputReasearchBar | slice:0:10)" (click)="assignActeModel(c)" style="padding-left: 65px;">
+                        <span *ngIf="c.nameActe" [inlineSVG]="'/logo/en-attente.svg'" style="margin-right: 2%; vertical-align: middle;"></span> <span *ngIf="c.nameActe" class="Affaire-Pauline-Grin">{{c.nameActe}}</span><span class="dfendeur" style="margin-left: 1%;" *ngIf="c.nameActe">acte</span>
+                        <span *ngIf="c.contactName" [inlineSVG]="'/logo/yellow.svg'" style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.contactName" class="Affaire-Pauline-Grin">{{c.contactLastName | titlecase}} {{c.contactName | uppercase}} contact</span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.contactName">contact</span>
+                        <span *ngIf="c.documentName" [inlineSVG]="'/logo/document.svg'" style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.documentName" class="Affaire-Pauline-Grin">{{c.documentName}}.pdf </span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.documentName">document</span>
+                    </div>
+                    <div *ngIf="inputReasearchBar" class="role-name-barre-recherche" style="border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;border-top: 1px solid #dadada;">
+                        <span class="Voir-tous-les-rsult" (click)="displayAllResult=true;displayDivForReasearchBar=false" style="cursor:pointer;margin-left: 55px;">Voir tous les résultats pour « {{inputReasearchBar}} »</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-content" [hidden]=" false" style="background-image: url('logo/dashboard.png'); background-repeat: no-repeat; background-size: cover ">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="Bonjour-Matre-Marti">
+                        <span>Bonjour maître {{userConnected.name | uppercase}}</span>
+                    </div>
+                    <div class="Ravi-de-vous-revoir">
+                        <span>Ravi de vous revoir</span>
+                    </div>
+                    <div style="height: 100px !important;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="main-content" [hidden]=" false">
+            <div class="container-fluid">
+                <div class="row" style="margin-top: 5.3%">
+                    <div style="background:#151326;height: 100px;width: 50%;float: left">
+                        <div class="blockDashboard" style="padding-left: 0;width: 20%">
+                            <div class="lineBlue" style="text-align: center;float: left">
+                                <div class="mediaFontDay" style="width: 54px;height: 73px;font-family: Palanquin,serif;font-size: 40px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.6;letter-spacing: normal;color: #ffffff;margin: auto">
+                                    {{day}}
+                                </div>
+                                <div class="mediaFontMonth" style="width: 54px;height: 29px;font-family: Palanquin,serif;font-size: 16px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 0;letter-spacing: normal;color: #ffffff;margin: auto">
+                                    {{month | slice:0:3}}
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="boardText">{{acts.length}}</div>
+                            <div class="smallBoardText">Acte(s) enregistré(s)</div>
+                        </div>
+
+                    </div>
+                    <div style="background:#25233b;height: 100px;text-align: center;width: 50%;float: left">
+                        <div class="boardText">{{ActForValidation.length}}</div>
+                        <div class="smallBoardText">Acte(s) à valider</div>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <div class="row" style="margin-top: 3%;margin-bottom: 1%">
+                    <div class="col-md-6">
+                        <div>
+                            <span style="margin-left:5%;width: 220px;height: 29px;font-family: Palanquin,serif;font-size: 16px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color: #1c1e25">Acte(s) à valider </span>
+                            <span style="cursor: pointer;float:right;width: 54px;height: 25px;font-family: Palanquin,serif;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;text-align: right;color: #0279ff;"
+                                  (click)="filterSeeAll()">Voir plus</span>
+                        </div>
+                        <div class="innerBlockDashboard"
+                             style="background-color: #ebedf4;padding: 0; border-radius: 8px;">
+                            <div *ngFor="let item of ActForValidation| slice:0:3;index as i">
+                                <div *ngIf="i===0"
+                                     style="cursor: pointer;height: 65px;object-fit: contain; border: solid 1px #dadada;background-color: #ffffff; border-radius: 8px;" (click)="goToSynthese(item);">
+                                    <div style="width: 40%;float: left;margin-left: 1.5%;margin-top: 1.5%;">
+                                        <span style="float: left" class="Oval-Copy"><img alt="" src="/logo/dossier.svg"
+                                                                                         class="active"
+                                                                                         style="margin-top:7px;vertical-align: super;width: 24px;height: 19px;object-fit: contain;"></span>
+                                        <div placement="top" show-delay="200" class="truncate-txt"
+                                             style="vertical-align: super;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color:#1c1e25;margin-left: 26%;">
+                                            {{item.name}}
+                                        </div>
+                                        <div style="font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color: #51596d;margin-left: 26%;">
+                                    <span *ngIf="item.folderNumber != null"
+                                          style="vertical-align: super;font-size: 12px;"> {{item.folderNumber}}</span>
+                                            <span *ngIf="item.folderNumber == null"
+                                                  style="vertical-align: super;">-</span>
+                                        </div>
+                                    </div>
+                                    <div style="width: 31%;float: left;margin-top: 1.5%;">
+                                        <div class="truncate-txt" placement="top" show-delay="200"
+                                             style="vertical-align: super;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color:#1c1e25">
+                                            {{item.folderName}}
+                                        </div>
+                                        <div style="font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color: #51596d">
+                                            {{item.internalNumber}}
+                                        </div>
+                                    </div>
+                                    <div style="float: left;margin-top: 1.5%;">
+                                        <div class="truncate-txt" placement="top" show-delay="200"
+                                             style="width: 57px;height: 24px;font-family: Palanquin,serif;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color:#1c1e25;">
+                                            Reçus le
+                                        </div>
+                                        <div style="font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color: #51596d">
+                                            {{item.receptionDate| slice:0:10}}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div *ngIf="i!==0"
+                                     style="cursor: pointer;height: 65px;object-fit: contain; border: solid 1px #dadada;background-color: #ffffff; border-radius: 8px;margin-top: 1.2%" (click)="goToSynthese(item);">
+                                    <div style="width: 40%;float: left;margin-left: 1.5%;margin-top: 1.5%;">
+                                        <span style="float: left" class="Oval-Copy"><img alt="" src="/logo/dossier.svg"
+                                                                                         class="active"
+                                                                                         style="margin-top:7px;vertical-align: super;width: 24px;height: 19px;object-fit: contain;"></span>
+                                        <div placement="top" show-delay="200" class="truncate-txt"
+                                             style="vertical-align: super;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color:#1c1e25;margin-left: 26%;">
+                                            {{item.name}}
+                                        </div>
+                                        <div style="font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color: #51596d;margin-left: 26%;">
+                                    <span *ngIf="item.folderNumber != null"
+                                          style="vertical-align: super;font-size: 12px;"> {{item.folderNumber}}</span>
+                                            <span *ngIf="item.folderNumber == null"
+                                                  style="vertical-align: super;">-</span>
+                                        </div>
+                                    </div>
+                                    <div style="width: 33%;float: left;margin-top: 1.5%;">
+                                        <div class="truncate-txt" placement="top" show-delay="200"
+                                             style="vertical-align: super;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color:#1c1e25">
+                                            {{item.folderName}}
+                                        </div>
+                                        <div style="font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color: #51596d">
+                                            {{item.internalNumber}}
+                                        </div>
+                                    </div>
+                                    <div style="float: left;margin-top: 1.5%;">
+                                        <div class="truncate-txt" placement="top" show-delay="200"
+                                             style="width: 53px;height: 24px;font-family: Palanquin,serif;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color:#1c1e25">
+                                            Reçus le
+                                        </div>
+                                        <div style="font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color: #51596d">
+                                            {{item.requestDate| slice:0:10}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div>
+                            <span style="margin-left:5%;width: 102px;height: 29px;font-family: Palanquin,serif;font-size: 16px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color: #1c1e25">Historique</span>
+                            <span style="float:right;width: 54px;height: 25px;font-family: Palanquin,serif;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;text-align: right;color: #0279ff;"></span>
+                        </div>
+                        <div class="innerBlockDashboard"
+                             style="background-color: #ebedf4;padding: 0; border-radius: 8px;">
+                            <div *ngFor="let item of history| slice:0:3;index as i">
+                                <div *ngIf="i===0"
+                                     style="cursor: pointer;height: 65px;object-fit: contain; border: solid 1px #dadada;background-color: #ffffff; border-radius: 8px;"  (click)="goToSynthese(item);">
+                                    <div style="width: 40%;float: left;margin-left: 1.5%;margin-top: 1.5%;">
+                                        <span style="float: left" class="Oval-Copy"><img alt="" src="/logo/dossier.svg"
+                                                                                         class="active"
+                                                                                         style="margin-top:7px;vertical-align: super;width: 24px;height: 19px;object-fit: contain;"></span>
+                                        <div placement="top" show-delay="200" class="truncate-txt"
+                                             style="vertical-align: super;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color:#1c1e25;margin-left: 26%;">
+                                            {{item.name}}
+                                        </div>
+                                        <div style="font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color: #51596d;margin-left: 26%;">
+                                    <span *ngIf="item.folderNumber != null"
+                                          style="vertical-align: super;font-size: 12px;"> {{item.folderNumber}}</span>
+                                            <span *ngIf="item.folderNumber == null"
+                                                  style="vertical-align: super;">-</span>
+                                        </div>
+                                    </div>
+                                    <div style="width: 33%;float: left;margin-top: 1.5%;">
+                                        <div class="truncate-txt" placement="top" show-delay="200"
+                                             style="vertical-align: super;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color:#1c1e25">
+                                            {{item.folderName}}
+                                        </div>
+                                        <div style="font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color: #51596d">
+                                            {{item.internalNumber}}
+                                        </div>
+                                    </div>
+                                    <div style="float: left;margin-top: 1.5%;">
+                                        <div class="truncate-txt" placement="top" show-delay="200"
+                                             style="width: 53px;height: 24px;font-family: Palanquin,serif;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color:#1c1e25">
+                                            {{item.action| slice:7}}
+                                        </div>
+                                        <div style="word-break:break-all;font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color: #51596d">
+                                            {{item.actionD| slice:0:10}}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div *ngIf="i!==0"
+                                     style="cursor: pointer;height: 65px;object-fit: contain; border: solid 1px #dadada;background-color: #ffffff; border-radius: 8px;margin-top: 1.2%" (click)="goToSynthese(item);">
+                                    <div style="width: 40%;float: left;margin-left: 1.5%;margin-top: 1.5%;" >
+                                        <span style="float: left" class="Oval-Copy"><img alt="" src="/logo/dossier.svg"
+                                                                                         class="active"
+                                                                                         style="margin-top:7px;vertical-align: super;width: 24px;height: 19px;object-fit: contain;"></span>
+                                        <div placement="top" show-delay="200" class="truncate-txt"
+                                             style="vertical-align: super;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color:#1c1e25;margin-left: 26%;">
+                                            {{item.name}}
+                                        </div>
+                                        <div style="font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color: #51596d;margin-left: 26%;">
+                                    <span *ngIf="item.folderNumber != null"
+                                          style="vertical-align: super;font-size: 12px;"> {{item.folderNumber}}</span>
+                                            <span *ngIf="item.folderNumber == null"
+                                                  style="vertical-align: super;">-</span>
+                                        </div>
+                                    </div>
+                                    <div style="width: 33%;float: left;margin-top: 1.5%;">
+                                        <div class="truncate-txt" placement="top" show-delay="200"
+                                             style="vertical-align: super;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color:#1c1e25">
+                                            {{item.folderName}}
+                                        </div>
+                                        <div style="font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color: #51596d">
+                                            {{item.internalNumber}}
+                                        </div>
+                                    </div>
+                                    <div style="float: left;margin-top: 1.5%;">
+                                        <div class="truncate-txt" placement="top" show-delay="200"
+                                             style="width: 53px;height: 24px;font-family: Palanquin,serif;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color:#1c1e25">
+                                            {{item.action| slice:7}}
+                                        </div>
+                                        <div style="font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color: #51596d">
+                                            {{item.actionD| slice:0:10}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,147 @@
+<div class="sidebar-wrapper position-static">
+    {{ form_start(form) }}
+
+    <div class="widget">
+        <h3 class="widget-title">
+            <a data-toggle="collapse" href="#widget-recherche" role="button" aria-expanded="true"
+               aria-controls="widget-recherche">Recherche Par Nom</a>
+        </h3>
+        <div class="collapse " id="widget-recherche">
+            <div class="widget-body">
+                <div class="input-group">
+                    {{ form_widget(form.q) }}
+                    <button type="submit" class="btn btn-primary btn-search ">
+                        <i class="fas fa-search m-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="widget-title">
+            <a data-toggle="collapse" href="#widget-refernce" role="button" aria-expanded="true"
+               aria-controls="widget-refernce">Recherche Par Référence</a>
+        </h3>
+        <div class="collapse " id="widget-refernce">
+            <div class="widget-body  " >
+                <div class="input-group">
+                    {{ form_widget(form.ref) }}
+                    <button type="submit" class="btn btn-primary btn-search">
+                        <i class="fas fa-search m-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <h3 class="widget-title">
+            <a data-toggle="collapse" href="#widget-body-3" role="button" aria-expanded="true"
+               aria-controls="widget-body-3">Marque</a>
+        </h3>
+
+        <div class="collapse" id="widget-body-3">
+            <div class="widget-body cat-list">
+                <ul class="cat-list">
+                    <li>
+                        {{ form_row(form.marque) }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 class="widget-title">
+            <a data-toggle="collapse" href="#widget-body-4" role="button" aria-expanded="true"
+               aria-controls="widget-body-4">Style</a>
+        </h3>
+        <div class="collapse " id="widget-body-4">
+            <div class="widget-body cat-list">
+                <ul class="cat-list">
+                    <li>
+                        {{ form_row(form.style) }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <h3 class="widget-title">
+            <a data-toggle="collapse" href="#widget-body-5" role="button" aria-expanded="true"
+               aria-controls="widget-body-5">Forme </a>
+        </h3>
+        <div class="collapse " id="widget-body-5">
+            <div class="widget-body cat-list">
+                <ul class="cat-list">
+                    <li>
+                        {{ form_row(form.formehorlogries) }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <h3 class="widget-title">
+            <a data-toggle="collapse" href="#widget-body-6" role="button" aria-expanded="true"
+               aria-controls="widget-body-6">Matier Du Bracelet</a>
+        </h3>
+        <div class="collapse" id="widget-body-6">
+            <div class="widget-body cat-list">
+                <ul class="cat-list">
+                    <li>
+                        {{ form_row(form.matierBracelet) }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 class="widget-title">
+            <a data-toggle="collapse" href="#widget-body-7" role="button" aria-expanded="true"
+               aria-controls="widget-body-7">Type du mouvement </a>
+        </h3>
+        <div class="collapse " id="widget-body-7">
+            <div class="widget-body cat-list">
+                <ul class="cat-list">
+                    <li>
+                        {{ form_row(form.typedeMouvmemnet) }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 class="widget-title">
+            <a data-toggle="collapse" href="#widget-body-8" role="button" aria-expanded="true"
+               aria-controls="widget-body-8">Promo </a>
+        </h3>
+        <div class="collapse " id="widget-body-8">
+            <div class="widget-body">
+                <ul class="cat-list">
+                    <li>
+                        {{ form_row(form.promo) }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 class="widget-title">
+            <a data-toggle="collapse" href="#widget-body-9" role="button" aria-expanded="true"
+               aria-controls="widget-body-9">Prix </a>
+        </h3>
+        <div class="collapse " id="widget-body-9">
+            <div class="widget-body">
+                <div class="filter-block ">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form_row(form.min)}}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(form.max)}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="price-slider-wrapper">
+                <div id="price-slider" data-min="{{min}}"  data-max="{{ max }}"></div>
+            </div>
+
+        </div>
+        <div class="filter-price-action d-flex align-items-center justify-content-between flex-wrap">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+    </div>
+    {{ form_end(form) }}
+
+
+</div>
+

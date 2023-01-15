@@ -1,0 +1,479 @@
+﻿<div class="main-content" [@fadeInOut-3]>
+    <p-toast position="top-right"></p-toast>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="add-role-form">
+                <div class="add-role-header">
+                    <span (click)="displayContactAdd=false;emptyContactToModify();modeModify=false"
+                        class="glyphicon glyphicon-chevron-left cursor-pointer"></span>
+                    <span
+                        *ngIf="consultContact==false">{{contactToModify && contactToModify.name ? "Modifer un contact" : "Ajouter un contact"}}</span>
+                </div>
+                <div>
+                    <div *ngFor="let item of listeSignataire; index as i;first as isFirst" class="add-role-item">
+                        <div class="add-role-item-content">
+                            <p-dropdown [options]="choicesNature" style="margin-bottom: 2%;" [ngModel]="getRoles(item)"
+                                (ngModelChange)="item.roles=$event;item.role=getRole(item)"
+                                [disabled]="(contactToModify && contactToModify.name) || consultContact"
+                                [filter]="false" class="form-control DivFiltre" [style]="{width: '200px'}"
+                                [autoWidth]="false">
+                            </p-dropdown>
+                            <form>
+                                <div class="row"
+                                    *ngIf="item.roles==='ROLE_ENTERPRISE' || item.roles==='ROLE_SIGNATORY'">
+                                    <div class="col-md-12">
+                                        <p-radioButton
+                                            [disabled]="(contactToModify && contactToModify.name)|| consultContact"
+                                            name="role_{{i}}" value="signatory" label="Personne physique" (onClick)="roleChangedToSignatory = true"
+                                            [(ngModel)]="item.role"></p-radioButton>
+                                        <div class="show-l-mobile"></div>
+                                        <p-radioButton
+                                            [disabled]="(contactToModify && contactToModify.name)|| consultContact"
+                                            name="role_{{i}}" value="enterprise" label="Personne morale" (onClick)="roleChangedToSignatory = false"
+                                            [(ngModel)]="item.role"></p-radioButton>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="item.role=='enterprise'">
+                                    <div class="col-md-4">
+                                        <div class=" form-group">
+                                            <input autocomplete="new-password" #enterpriseName="ngModel" type="text" class="input-width"
+                                                   [ngClass]="{disabledDiv: (item.roles==='ROLE_SIGNATORY' && !item.role )|| !item.roles}"
+                                                   [(ngModel)]="item.enterpriseName" name="enterpriseName_{{i}}"
+                                                   id="enterpriseName_{{i}}" required="required"
+                                                   (ngModelChange)="modifiedSignataire=item" />
+                                            <label for="enterpriseName_{{i}}" class="control-label">Nom de la société
+                                                *</label><em class="bar"></em>
+                                            <div *ngIf="enterpriseName.invalid && enterpriseName.touched"
+                                                 class="invalid-form-feedback">
+                                                <p class="invalid-styles" *ngIf="enterpriseName.errors?.required">
+                                                    Champ obligatoire non complété
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class=" form-group">
+                                            <input autocomplete="new-password" #siren="ngModel" type="text" class="input-width"
+                                                   [ngClass]="{disabledDiv: (item.roles==='ROLE_SIGNATORY' && !item.role )|| !item.roles }"
+                                                   [(ngModel)]="item.siren" name="siren_{{i}}"
+                                                   id="siren_{{i}}" required="required"
+                                                   (ngModelChange)="modifiedSignataire=item" />
+                                            <label for="siren_{{i}}" class="control-label">SIREN
+                                                *</label><em class="bar"></em>
+                                            <div *ngIf="siren.invalid && siren.touched"
+                                                 class="invalid-form-feedback">
+                                                <p class="invalid-styles" *ngIf="siren.errors?.required">
+                                                    Champ obligatoire non complété
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <input class="uppercase-text" type="text" autocomplete="new-password"
+                                                [ngClass]="{disabledDiv: !item.roles || (item.roles==='ROLE_SIGNATORY' && !item.role ) || (contactToModify && contactToModify.name) || consultContact}"
+                                                [ngModel]="item.name"
+                                                (ngModelChange)="item.name=$event;displayDivForAutoComplete=true"
+                                                name="name_{{i}}"
+                                                pattern="[\-a-zA-ZàâáåæçéèêëîïíìôóòöœùûüúÿÀÂÆÁÇnÉÈÊËÎÏÌÍÔÖÓŒÙÛÜŸÚ\s]+"
+                                                #name="ngModel" placeholder="" required="required" id="name_{{i}}"
+                                                (keyup)="name.errors?.pattern?validatedFormName=true:validatedFormName=false" />
+                                            <label for="name_{{i}}" class="control-label">Nom*</label><em
+                                                class="bar"></em>
+                                            <div *ngIf="name.invalid && (name.dirty || name.touched)"
+                                                class="invalid-form-feedback">
+                                                <p class="invalid-styles" *ngIf="name.errors?.required">Champ
+                                                    obligatoire non complété</p>
+                                                <p class="invalid-styles" *ngIf="name.errors?.pattern">Ceci n'est pas un
+                                                    nom valide</p>
+                                                <p class="invalid-styles" *ngIf="testchamp(item.name)">Seules les
+                                                    lettres sont autorisées (maximum 50 caractères)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <input autocomplete="new-password" type="text" id="lastName_{{i}}"
+                                                name="lastName_{{i}}"
+                                                [ngClass]="{disabledDiv: (contactToModify && contactToModify.name) || !item.roles || (item.roles==='ROLE_SIGNATORY' && !item.role ) || consultContact}"
+                                                [(ngModel)]="item.lastName" #lastName="ngModel" required="required"
+                                                pattern="[\-a-zA-ZàâáåæçéèêëîïíìôóòöœùûüúÿÀÂÆÁÇnÉÈÊËÎÏÌÍÔÖÓŒÙÛÜŸÚ\s]+"
+                                                (ngModelChange)="modifiedSignataire=item"
+                                                (keyup)="onkeyLastName($event);lastName.errors?.pattern?validatedFormLastName=true:validatedFormLastName=false" />
+                                            <label for="lastName_{{i}}" class="control-label">Prénom*</label><em
+                                                class="bar"></em>
+                                            <div *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)"
+                                                class="invalid-form-feedback">
+                                                <p class="invalid-styles" *ngIf="lastName.errors?.required">Champ
+                                                    obligatoire non complété</p>
+                                                <p class="invalid-styles" *ngIf="lastName.errors?.pattern">Ceci n'est
+                                                    pas un prénom valide</p>
+                                                <p class="invalid-styles" *ngIf="testchamp(item.lastName)">Seules les
+                                                    lettres sont autorisées (maximum 50 caractères)</p>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <input autocomplete="new-password"
+                                                [ngClass]="{disabledDiv: !item.roles || (item.roles==='ROLE_SIGNATORY' && !item.role )}"
+                                                type="email" [(ngModel)]="item.email" name="email_{{i}}"
+                                                id="email_{{i}}" required="required"
+                                                (ngModelChange)="modifiedSignataire=item" #email="ngModel"
+                                                pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w+)+$"
+                                                (keyup)="email.errors?.pattern?validatedFormEmail=true:validatedFormEmail=false"
+                                                style="width: 200px!important;" />
+                                            <label for="email_{{i}}" class="control-label">Adresse e-mail*</label><em
+                                                class="bar"></em>
+                                            <div *ngIf="email.invalid && (email.dirty || email.touched)"
+                                                class="invalid-form-feedback">
+                                                <p class="invalid-styles" *ngIf="email.errors?.required">Champ
+                                                    obligatoire non complété</p>
+                                                <p class="invalid-styles" *ngIf="email.errors?.pattern">Ceci n'est pas
+                                                    une adresse e-mail valide</p>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 codeCountrySize">
+                                        <div class="form-group">
+                                            <div style="display:flex;">
+                                                <span style="display:inline;width: 100px;margin-top: 5px;">
+                                                    <international-phone-number autocomplete="new-password"
+                                                        [ngClass]="' phone-component'"
+                                                        onkeydown="return event.keyCode === 9;"
+                                                        [allowedCountries]="allowedCountries()"
+                                                        [(ngModel)]="item.codeCountry"
+                                                        (ngModelChange)="focusOnchange();modifiedSignataire=item"
+                                                        [defaultCountry]="item.codeCountry==null?getCountry():''"
+                                                        name="codeCountry_{{i}}" id="codeCountry_{{i}}"
+                                                        #codeCountry="ngModel"></international-phone-number>
+                                                </span>
+                                            </div>
+                                            <label for="codeCountry_{{i}}" class="control-label" style="top: -1rem;">
+                                                Indicatif
+                                                *
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 phoneSize">
+                                        <div class="form-group">
+                                            <div style="display:flex;">
+                                                <span class="inputphone">
+                                                    <input autocomplete="new-password" #yourInput
+                                                        [(ngModel)]="item.phoneNumber"
+                                                        (ngModelChange)="modifiedSignataire=item" [maxlength]='23'
+                                                        [required]="true" class="form-control show"
+                                                        name="phoneNumber_{{i}}" id="phoneNumber_{{i}}"
+                                                        (click)="displayDivForAutoComplete=false;"
+                                                        (change)="item.phoneNumber = removeBlankSpace(item.phoneNumber)"
+                                                        (keypress)="phoneNumberRestrict($event)"
+                                                        (keyup)="(testPhoneCase(item.phoneNumber)||testPhone(item.phoneNumber))?validatedFormPhone=true:validatedFormPhone=false"
+                                                        onPaste="return false"
+                                                        >
+                                                </span>
+                                            </div>
+                                            <label for="phoneNumber_{{i}}" class="control-label"
+                                                style="top: -1rem;">Numéro de portable *</label>
+                                            <!--<i class="bar"></i>-->
+                                            <div class="invalid-form-feedback">
+                                                <p class="invalid-styles" *ngIf="testPhoneCase(item.phoneNumber)">Champ
+                                                    obligatoire non complété</p>
+                                                <p class="invalid-styles" *ngIf="testPhone(item.phoneNumber)">Seules les
+                                                    lettres sont autorisées (maximum 50 caractères)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="item.roles!=='ROLE_COUNSEL' && item.role!=='counsel'">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <select name="birthPlace_{{i}}"
+                                                [ngClass]="{disabledDiv: (item.roles==='ROLE_SIGNATORY' && !item.role )|| !item.roles || item.role==='signatory' && !item.role}"
+                                                [(ngModel)]="item.birthPlace" id="birthPlace_{{i}}"
+                                                (ngModelChange)="modifiedSignataire=item">
+                                                <option value="France">France</option>
+                                                <option value="Afghanistan">Afghanistan</option>
+                                                <option value="Afrique_du_Sud">Afrique du Sud</option>
+                                                <option value="Albanie">Albanie</option>
+                                                <option value="Algerie">Algérie</option>
+                                                <option value="Allemagne">Allemagne</option>
+                                                <option value="Andorre">Andorre</option>
+                                                <option value="Angola">Angola</option>
+                                                <option value="Antigua-et-Barbuda">Antigua-et-Barbuda</option>
+                                                <option value="Arabie_saoudite">Arabie saoudite</option>
+                                                <option value="Argentine">Argentine</option>
+                                                <option value="Armenie">Arménie</option>
+                                                <option value="Australie">Australie</option>
+                                                <option value="Autriche">Autriche</option>
+                                                <option value="Azerbaidjan">Azerbaïdjan</option>
+                                                <option value="Bahamas">Bahamas</option>
+                                                <option value="Bahrein">Bahreïn</option>
+                                                <option value="Bangladesh">Bangladesh</option>
+                                                <option value="Barbade">Barbade</option>
+                                                <option value="Belau">Belau</option>
+                                                <option value="Belgique">Belgique</option>
+                                                <option value="Belize">Belize</option>
+                                                <option value="Benin">Bénin</option>
+                                                <option value="Bhoutan">Bhoutan</option>
+                                                <option value="Bielorussie">Biélorussie</option>
+                                                <option value="Birmanie">Birmanie</option>
+                                                <option value="Bolivie">Bolivie</option>
+                                                <option value="Bosnie-Herzégovine">Bosnie-Herzégovine</option>
+                                                <option value="Botswana">Botswana</option>
+                                                <option value="Bresil">Brésil</option>
+                                                <option value="Brunei">Brunei</option>
+                                                <option value="Bulgarie">Bulgarie</option>
+                                                <option value="Burkina">Burkina</option>
+                                                <option value="Burundi">Burundi</option>
+                                                <option value="Cambodge">Cambodge</option>
+                                                <option value="Cameroun">Cameroun</option>
+                                                <option value="Canada">Canada</option>
+                                                <option value="Cap-Vert">Cap-Vert</option>
+                                                <option value="Chili">Chili</option>
+                                                <option value="Chine">Chine</option>
+                                                <option value="Chypre">Chypre</option>
+                                                <option value="Colombie">Colombie</option>
+                                                <option value="Comores">Comores</option>
+                                                <option value="Congo">Congo</option>
+                                                <option value="Cook">Cook</option>
+                                                <option value="Coree_du_Nord">Corée du Nord</option>
+                                                <option value="Coree_du_Sud">Corée du Sud</option>
+                                                <option value="Costa_Rica">Costa Rica</option>
+                                                <option value="Cote_Ivoire">Côte d'Ivoire</option>
+                                                <option value="Croatie">Croatie</option>
+                                                <option value="Cuba">Cuba</option>
+                                                <option value="Danemark">Danemark</option>
+                                                <option value="Djibouti">Djibouti</option>
+                                                <option value="Dominique">Dominique</option>
+                                                <option value="Egypte">Égypte</option>
+                                                <option value="Emirats_arabes_unis">Émirats arabes unis</option>
+                                                <option value="Equateur">Équateur</option>
+                                                <option value="Erythree">Érythrée</option>
+                                                <option value="Espagne">Espagne</option>
+                                                <option value="Estonie">Estonie</option>
+                                                <option value="Etats-Unis">États-Unis</option>
+                                                <option value="Ethiopie">Éthiopie</option>
+                                                <option value="Fidji">Fidji</option>
+                                                <option value="Finlande">Finlande</option>
+                                                <option value="Gabon">Gabon</option>
+                                                <option value="Gambie">Gambie</option>
+                                                <option value="Georgie">Géorgie</option>
+                                                <option value="Ghana">Ghana</option>
+                                                <option value="Grèce">Grèce</option>
+                                                <option value="Grenade">Grenade</option>
+                                                <option value="Guatemala">Guatemala</option>
+                                                <option value="Guinee">Guinée</option>
+                                                <option value="Guinee-Bissao">Guinée-Bissao</option>
+                                                <option value="Guinee_equatoriale">Guinée équatoriale</option>
+                                                <option value="Guyana">Guyana</option>
+                                                <option value="Haiti">Haïti</option>
+                                                <option value="Honduras">Honduras</option>
+                                                <option value="Hongrie">Hongrie</option>
+                                                <option value="Inde">Inde</option>
+                                                <option value="Indonesie">Indonésie</option>
+                                                <option value="Iran">Iran</option>
+                                                <option value="Iraq">Iraq</option>
+                                                <option value="Irlande">Irlande</option>
+                                                <option value="Islande">Islande</option>
+                                                <option value="Israël">Israël</option>
+                                                <option value="Italie">Italie</option>
+                                                <option value="Jamaique">Jamaïque</option>
+                                                <option value="Japon">Japon</option>
+                                                <option value="Jordanie">Jordanie</option>
+                                                <option value="Kazakhstan">Kazakhstan</option>
+                                                <option value="Kenya">Kenya</option>
+                                                <option value="Kirghizistan">Kirghizistan</option>
+                                                <option value="Kiribati">Kiribati</option>
+                                                <option value="Koweit">Koweït</option>
+                                                <option value="Laos">Laos</option>
+                                                <option value="Lesotho">Lesotho</option>
+                                                <option value="Lettonie">Lettonie</option>
+                                                <option value="Liban">Liban</option>
+                                                <option value="Liberia">Liberia</option>
+                                                <option value="Libye">Libye</option>
+                                                <option value="Liechtenstein">Liechtenstein</option>
+                                                <option value="Lituanie">Lituanie</option>
+                                                <option value="Luxembourg">Luxembourg</option>
+                                                <option value="Macedoine">Macédoine</option>
+                                                <option value="Madagascar">Madagascar</option>
+                                                <option value="Malaisie">Malaisie</option>
+                                                <option value="Malawi">Malawi</option>
+                                                <option value="Maldives">Maldives</option>
+                                                <option value="Mali">Mali</option>
+                                                <option value="Malte">Malte</option>
+                                                <option value="Maroc">Maroc</option>
+                                                <option value="Marshall">Marshall</option>
+                                                <option value="Maurice">Maurice</option>
+                                                <option value="Mauritanie">Mauritanie</option>
+                                                <option value="Mexique">Mexique</option>
+                                                <option value="Micronesie">Micronésie</option>
+                                                <option value="Moldavie">Moldavie</option>
+                                                <option value="Monaco">Monaco</option>
+                                                <option value="Mongolie">Mongolie</option>
+                                                <option value="Mozambique">Mozambique</option>
+                                                <option value="Namibie">Namibie</option>
+                                                <option value="Nauru">Nauru</option>
+                                                <option value="Nepal">Népal</option>
+                                                <option value="Nicaragua">Nicaragua</option>
+                                                <option value="Niger">Niger</option>
+                                                <option value="Nigeria">Nigeria</option>
+                                                <option value="Niue">Niue</option>
+                                                <option value="Norvège">Norvège</option>
+                                                <option value="Nouvelle-Zelande">Nouvelle-Zélande</option>
+                                                <option value="Oman">Oman</option>
+                                                <option value="Ouganda">Ouganda</option>
+                                                <option value="Ouzbekistan">Ouzbékistan</option>
+                                                <option value="Pakistan">Pakistan</option>
+                                                <option value="Panama">Panama</option>
+                                                <option value="Papouasie-Nouvelle_Guinee">
+                                                    Papouasie - Nouvelle Guinée
+                                                </option>
+                                                <option value="Paraguay">Paraguay</option>
+                                                <option value="Pays-Bas">Pays-Bas</option>
+                                                <option value="Perou">Pérou</option>
+                                                <option value="Philippines">Philippines</option>
+                                                <option value="Pologne">Pologne</option>
+                                                <option value="Portugal">Portugal</option>
+                                                <option value="Qatar">Qatar</option>
+                                                <option value="Republique_centrafricaine">
+                                                    République centrafricaine
+                                                </option>
+                                                <option value="Republique_dominicaine">République dominicaine</option>
+                                                <option value="Republique_tcheque">République tchèque</option>
+                                                <option value="Roumanie">Roumanie</option>
+                                                <option value="Royaume-Uni">Royaume-Uni</option>
+                                                <option value="Russie">Russie</option>
+                                                <option value="Rwanda">Rwanda</option>
+                                                <option value="Saint-Christophe-et-Nieves">
+                                                    Saint-Christophe-et-Niévès
+                                                </option>
+                                                <option value="Sainte-Lucie">Sainte-Lucie</option>
+                                                <option value="Saint-Marin">Saint-Marin</option>
+                                                <option value="Saint-Siège">Saint-Siège, ou leVatican</option>
+                                                <option value="Saint-Vincent-et-les_Grenadines">
+                                                    Saint-Vincent-et-les
+                                                    Grenadines
+                                                </option>
+                                                <option value="Salomon">Salomon</option>
+                                                <option value="Salvador">Salvador</option>
+                                                <option value="Samoa_occidentales">Samoa occidentales</option>
+                                                <option value="Sao_Tome-et-Principe">Sao Tomé-et-Principe</option>
+                                                <option value="Senegal">Sénégal</option>
+                                                <option value="Seychelles">Seychelles</option>
+                                                <option value="Sierra_Leone">Sierra Leone</option>
+                                                <option value="Singapour">Singapour</option>
+                                                <option value="Slovaquie">Slovaquie</option>
+                                                <option value="Slovenie">Slovénie</option>
+                                                <option value="Somalie">Somalie</option>
+                                                <option value="Soudan">Soudan</option>
+                                                <option value="Sri_Lanka">Sri Lanka</option>
+                                                <option value="Sued">Suède</option>
+                                                <option value="Suisse">Suisse</option>
+                                                <option value="Suriname">Suriname</option>
+                                                <option value="Swaziland">Swaziland</option>
+                                                <option value="Syrie">Syrie</option>
+                                                <option value="Tadjikistan">Tadjikistan</option>
+                                                <option value="Tanzanie">Tanzanie</option>
+                                                <option value="Tchad">Tchad</option>
+                                                <option value="Thailande">Thaïlande</option>
+                                                <option value="Togo">Togo</option>
+                                                <option value="Tonga">Tonga</option>
+                                                <option value="Trinite-et-Tobago">Trinité-et-Tobago</option>
+                                                <option value="Tunisie">Tunisie</option>
+                                                <option value="Turkmenistan">Turkménistan</option>
+                                                <option value="Turquie">Turquie</option>
+                                                <option value="Tuvalu">Tuvalu</option>
+                                                <option value="Ukraine">Ukraine</option>
+                                                <option value="Uruguay">Uruguay</option>
+                                                <option value="Vanuatu">Vanuatu</option>
+                                                <option value="Venezuela">Venezuela</option>
+                                                <option value="Viet_Nam">Viêt Nam</option>
+                                                <option value="Yemen">Yémen</option>
+                                                <option value="Yougoslavie">Yougoslavie</option>
+                                                <option value="Zaire">Zaïre</option>
+                                                <option value="Zambie">Zambie</option>
+                                                <option value="Zimbabwe">Zimbabwe</option>
+                                            </select>
+                                            <label for="birthPlace_{{i}}" class="control-label"
+                                                style="font-size: 14px">Lieu de naissance</label><em class="bar"></em>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+
+                                        <div class="form-group">
+                                            <label for="birthDate_{{i}}" class="control-label" style="
+    pointer-events: none;
+    z-index: 1;
+    color: #0279ff;
+    font-size: 14px;
+    font-weight: normal;
+    -webkit-transition: all 0.28s ease;
+    transition: all 0.28s ease;
+    top: -1rem;
+    border-radius: 8px;">Date de naissance</label>
+                                            <p-calendar [ngModel]="item.birthDate"
+                                                [ngClass]="{disabledDiv: (item.roles==='ROLE_SIGNATORY' && !item.role )|| !item.roles  || item.role==='signatory' && !item.role}"
+                                                dataType="string"
+                                                (ngModelChange)="item.birthDate = $event;modifiedSignataire=item"
+                                                #date=ngModel [locale]="fr" dateFormat="dd/mm/yy" name="birthDate_{{i}}"
+                                                id="birthDate_{{i}}" appendTo="body" icon="fa-pencil-square-o"
+                                                class="pCalender birth-calendar" hourFormat="24" yearNavigator="true"
+                                                monthNavigator="true" [selectOtherMonths]="true" yearRange="{{1900}}:{{currentYear()}}"
+                                                inputStyleClass="inputCalendar">
+                                            </p-calendar>
+
+                                            <div *ngIf="testDate(item.birthDate)" class="invalid-form-feedback">
+                                                <p class="invalid-styles">
+                                                    L'âge du signataire ne doit pas être inférieur à 18 ans.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </form>
+                        </div>
+                        <div class="add-role-item-footer" *ngIf="consultContact==false">
+                            <div class="add-new-role" (click)="createNewSignataire()"
+                                *ngIf="(!contactToModify || !contactToModify.name) && i == listeSignataire.length-1">
+                                <img alt="" src="/logo/icon-color.png" />
+                                <span class="add-new-role-title">Ajouter un autre contact</span>
+                            </div>
+                            <div class="remove-rule cursor-pointer" (click)="deleteSignataire(i)">
+                                <span class="remove-rule-title">Supprimer</span>
+                                <img alt="" src="/logo/delete.svg" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-notice" *ngIf="consultContact==false">
+                    <span>
+                        * Champs obligatoires
+                    </span>
+                </div>
+                <div class="add-role-actions" style="float: right;">
+                    <div>
+                        <button class="btn save-button" (click)="displayContactAdd=false">Annuler</button>
+                        <button
+                            [disabled]="!testSignatoryRoleSelected() || disabledAddAndModifyButton()|| validatedFormName||validatedFormPhone||validatedFormLastName||validatedFormEmail"
+                            *ngIf="!contactToModify || !contactToModify.name" class="btn next-button"
+                            (click)="saveContact()">Ajouter</button>
+                        <button
+                            [disabled]="!testSignatoryRoleSelected() || disabledAddAndModifyButton()|| validatedFormName||validatedFormPhone||validatedFormLastName||validatedFormEmail "
+                            *ngIf="contactToModify && contactToModify.name" class="btn next-button"
+                            (click)="modifyContact()">Modifier</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+{% block stylesheets %}
+    <link type="text/css" href="{{ asset('build/css/site.css') }}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+<body class="loaded">
+    <section>
+        <div class="container section">
+            <div class="row justify-content-center mt-5 py-4">
+                <div class="col-12 col-sm-auto text-center text-sm-left mt-5">
+                    <h1 class="font-weight-extra-bold text-color-dark negative-ls-3 text-10 mb-2 appear-animation animated fadeInUp appear-animation-visible" data-appear-animation="fadeInUp" data-appear-animation-delay="200" style="animation-delay: 200ms;"><em>500</em></h1>
+                    <h1 class="font-weight-extra-bold text-color-dark negative-ls-3 text-10 mb-2 appear-animation animated fadeInUp appear-animation-visible" data-appear-animation="fadeInUp" data-appear-animation-delay="200" style="animation-delay: 200ms;"><em>Ooops ... </em></h1>
+                    <h1 class="font-weight-extra-bold text-color-dark negative-ls-3 text-10 mb-2 appear-animation animated fadeInUp appear-animation-visible" data-appear-animation="fadeInUp" data-appear-animation-delay="200" style="animation-delay: 200ms;"><em>Erreur interne du serveur</em></h1>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-10 text-center">
+                    <a href="{{ path('home') }}" data-hash="" data-hash-offset="125" class="btn btn-primary btn-rounded btn-xl font-weight-semibold text-2 px-5 py-3 box-shadow-2 appear-animation animated fadeInUp appear-animation-visible" data-appear-animation="fadeInUp" data-appear-animation-delay="800" style="animation-delay: 800ms;">retour page d'accueil</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+{% endblock %}
+   {% block javascripts %}
+       <script src="{{ asset('build/js/site.js') }} " defer async></script>
+   {% endblock %}

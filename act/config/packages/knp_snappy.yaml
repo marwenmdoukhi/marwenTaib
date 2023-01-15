@@ -1,0 +1,7 @@
+knp_snappy:
+    pdf:
+        enabled:    true
+        binary:     '%kernel.project_dir%/bin/wkhtmltopdf'
+        options:
+            load-error-handling: 'skip'
+            load-media-error-handling: 'skip'

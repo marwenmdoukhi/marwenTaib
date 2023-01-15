@@ -1,0 +1,112 @@
+
+<div *ngIf="vm.displayAllResult">
+    <div class="search-header">
+        <div class="search-input" [ngClass]="vm.inputReasearchBar ? 'search-focused' : ''">
+            <input type="text" id="input" [(ngModel)]="vm.inputReasearchBar"
+                   pInputText
+                   placeholder="Chercher un acte, un document, un contact" />
+            <img alt="" src="/logo/search.svg" />
+            <span *ngIf="vm.inputReasearchBar" class="glyphicon glyphicon-remove-sign" (click)="vm.displayDivForReasearchBar=false;vm.inputReasearchBar=null;vm.displayAllResult=false" style=" cursor:pointer; top: 19px;right: 13px;position: absolute;"></span>
+            <div *ngIf="vm.displayDivForReasearchBar" class="role-name-barre-recherche">
+                <div *ngFor="let c of (AllData | barPipe : vm.inputReasearchBar | slice:0:10)" (click)="vm.assignActeModel(c);vm.displayAllResult=false" style="padding-left: 65px;">
+                    <span *ngIf="c.nameActe" [inlineSVG]="'/logo/en-attente.svg'" style="margin-right: 2%; vertical-align: middle;"></span> <span *ngIf="c.nameActe" class="Affaire-Pauline-Grin">{{c.nameActe}}</span><span class="dfendeur" style="margin-left: 1%;" *ngIf="c.nameActe">acte</span>
+                    <span *ngIf="c.contactName" [inlineSVG]="'/logo/yellow.svg'" style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.contactName" class="Affaire-Pauline-Grin">{{c.contactLastName | titlecase}} {{c.contactName | uppercase}} contact</span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.contactName">contact</span>
+                    <span *ngIf="c.documentName" [inlineSVG]="'/logo/document.svg'" style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.documentName" class="Affaire-Pauline-Grin">{{c.documentName}}.pdf </span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.documentName">document</span>
+                </div>
+                <div *ngIf="vm.inputReasearchBar" class="role-name-barre-recherche" style="border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;border-top: 1px solid #dadada;">
+                    <span class="Voir-tous-les-rsult" (click)="vm.displayAllResult=true;vm.displayDivForReasearchBar=false" style="cursor:pointer;margin-left: 55px;">{{text2()}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="main-content" >
+        <div class="container-fluid">
+            <div class="row" style="margin-bottom: 10px;">
+                <span class="glyphicon glyphicon-chevron-left back-title-chevron"
+                      style="margin-right: 4px;color: #51596d;"
+                      (click)="vm.displayDivForReasearchBar=false;vm.inputReasearchBar=null;vm.displayAllResult=false"></span>
+                <span style="vertical-align: middle;color: #51596d;font-size: 12px;">Retour</span>
+
+            </div>
+            <div class="row" style="margin-bottom: 30px !important;">
+                <span style="font-size: 30px;">{{vm.inputReasearchBar}} .  </span><span style="font-size:18px;vertical-align: sub;color: #51596d"> {{AllData.length}} {{text1}}(s)</span>
+            </div>
+            <div class="row">
+                <div>
+                    <div class="row" style="width: 225px;float: left; margin-right: 4%;margin-left:1px">
+                        <p-multiSelect #dropdown
+                                       autoWidth="false" [style]="{'width':'100%'}"
+                                       [options]="choicesNature"
+                                       [(ngModel)]="selectedType"
+                                       defaultLabel="Affiner la recherche"
+                                       [filter]="false"
+                                       (onChange)="filter($event.value)"
+                                       optionLabel="label">
+                        </p-multiSelect>
+                    </div>
+
+                    <div *ngFor="let element of selectedType" style="float: left;margin-right: 1%;">
+                        <div *ngIf="element && element.value=='0'" class="btn next-button" style="cursor:auto !important;">Actes <span class="glyphicon glyphicon-remove-sign" (click)="onReset(element.value,tableOrders)" style=" margin-left: 10px; margin-top: 2px; float: right;cursor:pointer"></span></div>
+                        <div *ngIf="element && element.value=='1'" class="btn next-button" style="cursor:auto !important">Document<span (click)="onReset(element.value,tableOrders)" class="glyphicon glyphicon-remove-sign" style=" margin-left: 10px; margin-top: 2px;float: right;cursor:pointer"></span></div>
+                        <div *ngIf="element && element.value=='2'" class="btn next-button" style="cursor:auto !important">Contact<span (click)="onReset(element.value,tableOrders)" class="glyphicon glyphicon-remove-sign" style=" margin-left: 10px; margin-top: 2px; float: right;cursor:pointer"></span></div>
+                    </div>
+                    <div *ngIf="selectedType.length>0" class="btn" style="cursor:pointer !important" (click)="onResetAll($event,tableOrders)">Annuler les filtres </div>
+                </div>
+            </div>
+            <div *ngIf="AllData.length==0" style="margin-top: 10%;" class="search-no-result hidden-xs">
+                <p style="border:1px solid #0000ff1f;text-align: center;">{{text3()}}</p>
+            </div>
+            <div *ngIf="AllData.length==0" style="margin-top: 10%;" class="search-no-result visible-xs">
+                <p style="border:1px solid #0000ff1f;text-align: center;">{{text3()}}</p>
+            </div>
+            <div style="clear: both"></div>
+            <div class="row" style="margin-top: 5%;">
+                <p-table #tableOrders [style]="{'margin-top':'20px','margin-bottom':'20px','float':'right','margin-top':'-6%'}"
+                         [value]="AllData"
+                         [rows]="25"
+                         selectionMode="single"
+                         compareSelectionBy="equals"
+                         [paginator]="true"
+                         [responsive]="true"
+                         (onFilter)="isEmpty($event)"
+                         styleClass="search-table"
+                         [globalFilterFields]="['name','lastName','phoneNumber','email']">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th id="th" *ngFor="let col of columns" class="ref" pSortableColumnDisabled="false"
+                                [ngStyle]="styleObject(col)">
+                                <p-sortIcon *ngIf="true === false" [field]="col.colkey"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-contact ;let-columns="columns">
+                        <tr class="RowMesActes border_bottom" style="height: 65px;font-family: Palanquin,serif;cursor:pointer" (click)="vm.assignActeModel(contact);vm.displayAllResult=false">
+                            <td>
+                                <img alt="" *ngIf="contact.type == '0'" src="/logo/en-attente.svg" class="active" style="object-fit: contain;float: left;height:44px;margin-right: 16px;margin-left: 23px;">
+                                <img alt="" *ngIf="contact.type == '1'" src="/logo/document.svg" class="active" style="object-fit: contain;float: left;height:44px;margin-right: 16px;margin-left: 23px;">
+                                <img alt="" *ngIf="contact.type == '2'" src="/logo/yellow.svg" class="active" style="object-fit: contain;float: left;height:44px;margin-right: 16px;margin-left: 23px;">
+                                <div [innerHTML]='contact.nameActe | highlight: vm.inputReasearchBar' *ngIf="contact.type == '0'" style="font-size: 14px; margin-top: 2%;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color: #1c1e25">
+                                </div>
+                                <div [innerHTML]='contact.documentName | highlight: vm.inputReasearchBar' *ngIf="contact.type == '1'" style="font-size: 14px; margin-top: 2%;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color: #1c1e25">
+                                </div>
+                                <div [innerHTML]='contact.contactName +" "+ contact.contactLastName | highlight: vm.inputReasearchBar' *ngIf="contact.type == '2'" style="font-size: 14px; margin-top: 2%;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color: #1c1e25">
+                                </div>
+                            </td>
+                            <td style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25">
+                                <div *ngIf="contact.type == '0'" style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color: #1c1e25">
+                                    Acte
+                                </div>
+                                <div *ngIf="contact.type == '1'" style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color: #1c1e25">
+                                    Document
+                                </div>
+                                <div *ngIf="contact.type == '2'" style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color: #1c1e25">
+                                    Contact
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>

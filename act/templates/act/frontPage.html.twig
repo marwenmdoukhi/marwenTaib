@@ -1,0 +1,177 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ base_dir ~ asset('css/proof2bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ base_dir ~ asset('css/proofbootstrap.min.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ base_dir ~ asset('css/prooffont-awesome.min.css') }}"/>
+    {#<link href='https://fonts.googleapis.com/css?family=Palanquin' rel='stylesheet'>#}
+    <style>
+        table {
+            width: 100%;
+        }
+
+        th {
+            height: 50px;
+        }
+
+        td {
+            height: 170px;
+            width: 35%;
+        }
+
+        .page {
+            page-break-after: always;
+        }
+
+    </style>
+</head>
+<body style="font-family: Palanquin">
+
+{% set size = listSignataire|length %}
+{% if size<=5 %}
+    <div>
+        <div>
+            <img style="width: 130px;height: 80px" src="{{ base_dir ~ asset('logo/logoCnbFrontPage.png') }}">
+            <img style="width: 200px;height: 80px;margin-left: 450px"
+                 src="{{ base_dir ~ asset('logo/certeaurope.jpg') }}">
+        </div>
+        <div style="margin-top: 30px;font-size: 20px">
+            <div>
+                <span style="font-weight: bold">Document signé :</span>
+                <span>{{ documents }}.pdf</span>
+            </div>
+            <div style="margin-top: 15px">
+                <span style="font-weight: bold">Nombre de pages du document :</span>
+                <span>{{ nbPages }}</span>
+                <span style="font-weight: bold;margin-left: 30px">Signatures : </span>
+                <span>{{ listSignataire|length }}</span>
+            </div>
+            <div>
+                <span style="font-weight: bold">Réf: {{ actFolderNumber }}</span>
+            </div>
+        </div>
+        <div style="float: right;margin-bottom: 45px;font-size: 20px">
+            <div style="font-weight: bold">Emetteur :</div>
+            <div style="text-transform:capitalize;">{{ user.lastName }} {{ user.name }}</div>
+            
+            <div>{{ email }}</div>
+{#            <div>Adresse IP {{ user.ipaddress|split(',')[0] }}</div>#}
+        </div>
+        <table class="table-bordered">
+            <thead>
+            <tr>
+                <th>Signé par</th>
+                <th>Signature</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for signataire in listSignataire|slice(0, 5) %}
+                <tr>
+                    <td>
+                        <div style="margin-left: 1%">
+                            <div>{{ signataire.lastName | capitalize }} {{ signataire.name |capitalize }}</div>
+{#                            <div>{{ actFolderNumber }}</div>#}
+{#                            <div>{{ signataire.codeCountry }}{{ signataire.phoneNumber }}</div>#}
+{#                            {% if signataire.siren %}#}
+{#                            <div>SIREN :{{ signataire.siren }}</div>#}
+{#                            {% endif %}#}
+{#                            {% if signataire.enterpriseName %}#}
+{#                                <div>Dénomination de la société : {{ signataire.enterpriseName}} </div>#}
+{#                            {% endif %}#}
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div><h4 style="font-weight: bold; bottom: 0;text-align: center;left: 0;">Document signé électroniquement, par l'application "e-Actes sous signature privée"</h4></div>
+
+    </div>
+{% endif %}
+{% if size>5 %}
+    <div class="page">
+        <div>
+            <img style="width: 200px;height: 90px" src="{{ base_dir ~ asset('logo/logoCnbFrontPage.png') }}">
+            <img style="width: 200px;height: 80px;margin-left: 450px"
+                 src="{{ base_dir ~ asset('logo/certeaurope.jpg') }}">
+        </div>
+        <div style="margin-top: 30px;font-size: 20px">
+            <div>
+                <span style="font-weight: bold">Documents signés :</span>
+                <span>{{ documents }}.pdf</span>
+            </div>
+            <div style="margin-top: 15px">
+                <span style="font-weight: bold">Nombre de pages du document :</span>
+                <span>{{ nbPages }}</span>
+                <span style="font-weight: bold;margin-left: 30px">Signatures : </span>
+                <span>{{ listSignataire|length }}</span>
+            </div>
+            <div>
+                <span style="font-weight: bold">Réf: {{ actFolderNumber }}</span>
+            </div>
+        </div>
+        <div style="float: right;margin-bottom: 45px;font-size: 20px">
+            <div style="font-weight: bold">Emetteur :</div>
+            <div>{{ user.lastName }} {{ user.name }}</div>
+            <div>{{ user.email }}</div>
+{#            <div>Adresse IP {{ user.ipaddress|split(',')[0] }}</div>#}
+        </div>
+        <table class="table-bordered">
+            <thead>
+            <tr>
+                <th>Signé par</th>
+                <th>Signature</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for signataire in listSignataire|slice(0, 5) %}
+                <tr>
+                    <td>
+                        <div style="margin-left: 1%">
+                            <div>{{ signataire.lastName | capitalize }} {{ signataire.name | capitalize }}</div>
+{#                            <div>{{ actFolderNumber }}</div>#}
+{#                            <div>{{ signataire.codeCountry }}{{ signataire.phoneNumber }}</div>#}
+{#                            {% if signataire.siren %}#}
+{#                                <div>SIREN :{{ signataire.siren }}</div>#}
+{#                            {% endif %}#}
+{#                            {% if signataire.enterpriseName %}#}
+{#                                <div>Dénomination de la société :  {{ signataire.enterpriseName}} </div>#}
+{#                            {% endif %}#}
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <table class="table-bordered">
+        <tbody>
+        {% for signataire in listSignataire|slice(5, size) %}
+            <tr>
+                <td style=" height: 210px;">
+                    <div style="margin-left: 1%">
+                        <div>{{ signataire.lastName | capitalize }} {{ signataire.name |capitalize }}</div>
+                        <div>{{ actFolderNumber }}</div>
+{#                        <div>{{ signataire.codeCountry }}{{ signataire.phoneNumber }}</div>#}
+{#                        {% if signataire.siren %}#}
+{#                            <div>SIREN :{{ signataire.siren }}</div>#}
+{#                        {% endif %}#}
+{#                        {% if signataire.enterpriseName %}#}
+{#                            <div>Dénomination de la société : {{ signataire.enterpriseName}} </div>#}
+{#                        {% endif %}#}
+                    </div>
+                </td>
+                <td></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div><h4 style="font-weight: bold; bottom: 0;text-align: center;left: 0;">Document signé électroniquement, par l'application "e-Actes sous signature privée"</h4></div>
+{% endif %}
+
+
+</body>
+</html>

@@ -1,0 +1,227 @@
+<div class="top-notice bg-dark text-white">
+    <div class="container">
+        <div class="row justify-content-center py-2">
+            <div class="col-12 col-md-12 text-center">
+              <span class="word-rotator rotate-1 text-white">
+                    <span class="word-rotator-words text-white">
+                        <b class="is-visible">les nouveautés  Fashion for men and women </b>
+                            {% for news in news %}
+                                <b>{{ news.titre }}</b>
+                            {% endfor %}
+                    </span>
+                </span>
+            </div>
+        </div>
+        <button  aria-hidden="true" title="Close (Esc)" type="button" class="mfp-close"></button>
+    </div>
+</div>
+<header id="header" class="header header-transparent "
+        data-plugin-options="{'stickyEnabled': true, 'stickyEffect': 'shrink', 'stickyEnableOnBoxed': true, 'stickyEnableOnMobile': true, 'stickyChangeLogo': true, 'stickyStartAt': 30, 'stickyHeaderContainerHeight': 70}">
+    <div class="header-middle sticky-header">
+        <div class="container">
+            <div class="header-left">
+                <button class="mobile-menu-toggler mr-2" type="button">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="{{ path('home') }}" class="logo">
+                    <img src="{{ asset('image/logo/1673115804189.png') }}" alt="Fashion for men and women">
+                </a>
+                <nav class="main-nav font2">
+                    <ul class="menu">
+                        <li>
+                            <a href="{{ path('home') }}">Acceuil</a>
+                        </li>
+                        {% for category in category %}
+                            <li {% if category.subCategories is empty %} class="category" {% endif %}>
+                                <a {% if category.subCategories is empty %} class="category" {% endif %}
+                                        href="{{ path('Boutique',{'slug':category.slug}) }}">   {{ category.name }}</a>
+                                <ul>
+                                    {% for subcat in category.subCategories %}
+
+                                        <li>
+                                            <a href="{{ path('subBoutique',{'name':subcat.category.slug,'slug':subcat.slug}) }}">{{ subcat.name }}</a>
+                                            <ul>
+                                                {% for subsubCat in subcat.subSubCategories %}
+                                                    <li>
+                                                        <a href="{{ path('subsubBoutique',{'boutique':category.slug,'slug':subsubCat.slug,'name':subcat.slug}) }}">{{ subsubCat.name }}</a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endfor %}
+                        <li>
+                            <a href="{{ path('boutiquesolde') }}">Promo</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('contact') }}">Contact</a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="mobile-menu-overlay"></div>
+                <div class="mobile-menu-container">
+                    <div class="mobile-menu-wrapper">
+                        <span class="mobile-menu-close"><i class="fa fa-times"></i></span>
+                        <nav class="mobile-nav">
+                            <ul class="mobile-menu">
+                                <li>
+                                    <a href="{{ path('home') }}">Acceuil</a>
+                                </li>
+                                {% for category in category %}
+                                    <li>
+                                        <a href="{{ path('Boutique',{'slug':category.slug}) }}">   {{ category.name }}</a>
+                                        <ul>
+                                            {% for subcat in category.subCategories %}
+                                                <li>
+                                                    <a href="{{ path('subBoutique',{'name':subcat.category.slug,'slug':subcat.slug}) }}">{{ subcat.name }}</a>
+                                                    <ul>
+                                                        {% for subsubCat in subcat.subSubCategories %}
+                                                            <li>
+                                                                <a href="{{ path('subsubBoutique',{'boutique':category.slug,'slug':subsubCat.slug,'name':subcat.slug}) }}">{{ subsubCat.name }}</a>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                                <li>
+                                    <a href="{{ path('boutiquesolde') }}">Promo</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('contact') }}">Contact</a>
+                                </li>
+
+
+                            </ul>
+                        </nav>
+                        <div class=" container">
+                            <div class="ml-3">
+                                <a href="https://m.me/fashionformenandwomen.official" class="social-icon social-facebook icon-facebook" title="facebook" target="_blank"></a>
+                                <a href="https://www.instagram.com/fashionformenandwomen.official/?hl=fr" class="social-icon social-instagram icon-instagram" target="_blank" title="instagram"></a>
+                                <a href="tel:25037969" class="social-icon social-twitter icon-phone-2"  target="_blank" title="25 037 969"></a>
+                                <a href="https://wa.me/21628151578" class="social-icon social-linkedin   social-gplus fab fa-whatsapp" target="_blank" title="whatsapp"></a>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-right">
+
+                <div class="header-row">
+                    <div class="header-nav-features ">
+                        <div class="header-nav-feature header-nav-features-search " style="bottom: 2px;">
+                            <div class="header-nav-features header-nav-features-no-border header-nav-features-lg-show-border order-1 order-lg-2">
+                                <div class="header-nav-feature header-nav-features-search d-inline-flex">
+                                    <a href="#" class="header-nav-features-toggle text-decoration-none"
+                                       data-focus="headerSearch">
+                                        <i class="icon-user-2 header-icon header-icon-user"></i>
+                                    </a>
+                                    <div class="header-nav-features-dropdown header-nav-features-dropdown-mobile-fixed"
+                                         id="headerTopSearchDropdown">
+                                        {{ render_esi(controller('App\\Controller\\Client\\loginAction')) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dropdown cart-dropdown">
+                    <a id="totalitem" href="#" class="dropdown-toggle dropdown-arrow cart-toggle" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                        <i class="icon-cart-thick"></i>
+                        <span class="cart-count badge-circle ">{{ (items|length) }}</span>
+                    </a>
+                    <div class="cart-overlay"></div>
+                    <div id="headerTopCartDropdown" class="dropdown-menu mobile-cart ">
+                        <a href="#" title="Close (Esc)" class="btn-close">×</a>
+                        <div class="dropdownmenu-wrapper custom-scrollbar">
+                            <div class="dropdown-cart-header">Panier</div>
+                            <div class="dropdown-cart-products">
+                                {% for item in items %}
+                                    <div class="product">
+                                        <div class="product-details">
+                                            <h4 class="product-title">
+                                                <a href="{{ path('product',{'slug': item.product.slug,'category':item.product.categories.slug,'id':item.product.id}) }}">{{ item.product.name }}</a>
+                                            </h4>
+                                            <span class="cart-product-info">
+                                                <span class="cart-product-qty"> {{ item.qte }}</span>
+                                                × {{ item.product.newprice |number_format(3, '.', ',') }}
+                                            </span>
+                                        </div>
+                                        <figure class="product-image-container">
+                                            <a href="{{ path('product',{'slug': item.product.slug,'category':item.product.categories.slug,'id':item.product.id}) }}" class="product-image">
+                                                <img src="{{ vich_uploader_asset( item.product, 'imageFile') }}"
+                                                     alt="{{ item.product.name }}" width="80" height="80">
+                                            </a>
+                                            <a href="{{ path('carte_remove',{'id':item.product.id}) }}"
+                                               data-id="{{ item.product.id }}" class="btn-remove remove"
+                                               title="Remove Product"><span>×</span></a>
+                                        </figure>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="dropdown-cart-total">
+                                <span>Total:</span>
+                                <span class="cart-total-price float-right">{{ (total )|number_format(3, '.', ',') }} DT</span>
+                            </div>
+                            {% if items|length >0 %}
+                                <div class="dropdown-cart-action">
+                                    <a href="{{ path('cart_index') }}"
+                                       class="btn btn-gray btn-block view-cart">Pannier</a>
+                                    <a href="{{ path('commande') }}" class="btn btn-dark btn-block">Commander</a>
+                                </div>
+                            {% else %}
+                                Votre panier est actuellement vide.
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="sticky-navbar">
+    <div class="sticky-info">
+        <a href="{{ path('home') }}">
+            <i class="icon-home"></i>Home
+        </a>
+    </div>
+    <div class="sticky-info">
+        <a href="{{ path('contact') }}" class="">
+            <i class="icon-bars"></i>Contact
+        </a>
+    </div>
+    <div class="sticky-info">
+        {% if app.user %}
+            <a href="{{ path('account_profil') }}" class="">
+                <i class="icon-user-2"></i>Account
+            </a>
+        {% else %}
+            <a href="{{ path('account_login') }}" class="">
+                <i class="icon-user-2"></i>Login
+            </a>
+        {% endif %}
+    </div>
+    <div class="sticky-info">
+        {% if app.user %}
+            <a href="{{ path('mescommande') }}" class=""><i class="icon-pulley"></i>Demandes</a>
+        {% else %}
+            <a href="#" class=""><i class="icon-pulley"></i>Demandes</a>
+        {% endif %}
+    </div>
+    <div class="sticky-info">
+        <a href="{{ path('cart_index') }}" class="">
+            <i class="icon-shopping-cart position-relative">
+                <span class="cart-count badge-circle">{{ (items|length) }}</span>
+            </i>Cart
+        </a>
+    </div>
+</div>

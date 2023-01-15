@@ -1,0 +1,29 @@
+{% block title %}
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" xmlns="http://www.w3.org/1999/html"/>
+{% endblock %}
+
+<div class="container mt-4">
+    <table class="table table-striped">
+
+        <tr>
+            <td>First name</td>
+            <td>{{ name}} </td>
+        </tr>
+        <tr>
+            <td>Phone</td>
+            <td>{{ phone }}</td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td>{{email }}</td>
+        </tr>
+        <tr>
+            <td>Sujet</td>
+            <td>{{sujet | nl2br }}</td>
+        </tr>
+        <tr>
+            <td>Message</td>
+            <td>{{message | nl2br }}</td>
+        </tr>
+    </table>
+</div>

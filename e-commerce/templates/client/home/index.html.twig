@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+{% block title %}Bienvenue Fashion for men and women{% endblock %}
+{% block body %}
+    <div class="page-wrapper">
+        <main class="main">
+            <div class="home-slider  owl-carousel owl-theme show-nav-hover nav-big ">
+                <div class="home-slide home-slide1 banner d-flex align-items-center">
+                    <img class="slide-bg page-header-background-lg  d-none d-sm-block " src="{{ asset('image/banner/bannerhome.webp') }} " alt="home banner Fashion for men and women ">
+                    <img  class="slide-bg page-header-background-lg d-block d-sm-none" src="{{ asset('image/home/slide.webp') }} " alt="home banner Fashion for men and women ">
+
+                    <div class="banner-layer appear-animate" data-animation-name="fadeInUpShorter">
+                        <h1>Bienvenue Chez</h1>
+                        <h1>Fashion for men and women</h1>
+                    </div>
+                </div>
+            </div>
+            <section class="container">
+                {{ render_esi("categoriesHome") }}
+            </section>
+            <div class="category-banner">
+                <img class="slide-bg" src="{{ asset('image/home/breadcrumb.webp') }}" alt="banner">
+                <div class="category-slide-content pt-1  text-center d-none d-sm-block" style="left: 35%">
+                    <div class="justify-content-center">
+                        <h1 class="m-b-3 text-white">Fashion for men and women</h1>
+                        <h3 class="word-rotator font-weight-semi-bold clip is-full-width  ml-0 text-white">
+                            <span>Promotion Tous les produits.</span>
+                            <span class="word-rotator-words">
+                                <b class="is-visible">50%</b>
+                                <b>40%</b>
+                                <b>40%</b>
+                            </span>
+                        </h3>
+                    </div>
+                </div>
+                <div class="category-slide-content pt-1  text-center d-block d-sm-none">
+                    <div class="justify-content-center text-center">
+                        <h2 class="m-b-3 text-white">Fashion for men and women</h2>
+                        <h3 class="word-rotator font-weight-semi-bold clip is-full-width  ml-0 text-white">
+                            <span>Promotion Tous les produits.</span>
+                            <span class="word-rotator-words">
+                                <b class="is-visible">50%</b>
+                                <b>40%</b>
+                                <b>40%</b>
+                            </span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+            <section class="container pb-3 mb-1">
+                {{ render_esi("PromoProductHome") }}
+            </section>
+
+            <section class="container pb-3 mb-1">
+                {{ render_esi("NewProductHome") }}
+            </section>
+            <section class="container pb-3 mb-1">
+                {{ render_esi("meilleurProductHome") }}
+            </section>
+            <hr class="container mt-2 mb-2">
+            <div class="row feature-boxes-container pt-2">
+                <div class="col-6 col-sm-4 col-md-3 col-xl-3 appear-animate" data-animation-name="fadeInRightShorter"
+                     data-animation-delay="300" data-animation-duration="1000">
+                    <div class="feature-box feature-box-simple text-center">
+                        <i class="icon-earphones-alt"></i>
+                        <div class="feature-box-content p-0">
+                            <h3 class="text-uppercase">Service client</h3>
+                            <h5>Besoin d'aide ?</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-sm-4 col-md-3 col-xl-3 appear-animate" data-animation-name="fadeInRightShorter"
+                     data-animation-delay="100" data-animation-duration="1000">
+                    <div class="feature-box feature-box-simple text-center">
+                        <i class="icon-tag-line"></i>
+                        <div class="feature-box-content p-0">
+                            <h3 class="text-uppercase">Garantie</h3>
+                            <h5>Facile et gratuit</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-sm-4 col-md-3 col-xl-3 appear-animate" data-animation-name="fadeInLeftShorter"
+                     data-animation-delay="100" data-animation-duration="1000">
+                    <div class="feature-box feature-box-simple text-center">
+                        <i class="icon-lifebuoy"></i>
+                        <div class="feature-box-content p-0">
+                            <h3 class="text-uppercase">Retours sans frais</h3>
+                            <h5>Sûr et rapide</h5>
+                        </div>
+                    </div><
+                </div>
+                <div class="col-6 col-sm-4 col-md-3 col-xl-3 appear-animate" data-animation-name="fadeInLeftShorter"
+                     data-animation-delay="300" data-animation-duration="1000">
+                    <div class="feature-box feature-box-simple text-center">
+                        <i class="icon-shipping"></i>
+                        <div class="feature-box-content p-0">
+                            <h3 class="text-uppercase">Livraison gratuite</h3>
+                            <h5>Touts les Articles</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </main>
+    </div>
+{% endblock %}

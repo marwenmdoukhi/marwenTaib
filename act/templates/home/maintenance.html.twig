@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Maintenance!{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    {% block stylesheets %}
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
+    {% endblock %}
+</head>
+<body>
+<!-- Side navigation -->
+
+    <div class="wrapper">
+    {#<div class="wrapper">#}
+        <!-- Sidebar -->
+        <nav id="sidebar">
+
+            <div class="sidebar-content">
+                <div class="logo">
+                    <img alt="logo" src="{{ asset("logo/logo.svg") }}">
+                </div>
+                <ul class="sidebar-menu">
+
+                </ul>
+            </div>
+
+        </nav>
+        <div class="main-panel bg-working-man">
+            <div class="main-content">
+                <div class="welcome-section">
+                    <h1 class="welcome-header">Maintenance</h1>
+                    <div class="rectangle-welcome"></div>
+                </div>
+
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    {#</div>#}
+
+    </div>
+
+
+
+
+{% block javascripts %}
+    <script src="{{ asset('css/jquery-1.12.0.min.js') }}"></script>
+    <!-- Bootstrap Js CDN -->
+    <script src="{{ asset('css/bootstrap.min.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $(".drop-down").click(function () {
+                $(".drop-down").toggleClass('selected-part');
+            });
+            $('.menu-button').click(function () {
+                $('.side-nav').animate({left: '-300px'}, 100)
+            });
+
+            $('.close-menu').click(function () {
+                $('.menu').animate({left: '-200px'}, 100)
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                $('#sidebarCollapse').toggleClass('button-position');
+            });
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,217 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}e-Actes sous signature privée{% endblock %}
+
+{% block body %}
+
+    <div class="dashboard-panel">
+        <dashboard>
+            <div class="spinner"></div>
+        </dashboard>
+    </div>
+    <div class="clearfix"></div>
+    <div class="modal custom-modal fade" id="edit" role="dialog" style="margin: auto">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title main-title">C’est votre première connexion, bienvenue !</h4>
+                </div>
+                <div class="modal-body">
+                    <h4 class="secondary-title">Merci de renseigner les informations suivantes afin de certifier votre
+                        identité</h4>
+                    <h5>Tous les champs marqués d’un astérisque (*) sont obligatoires</h5>
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+                                <input class="form-control disabledDiv" type="text" value="{{ user.lastName }}">
+                                <label for="lastnameId" class="control-label">Nom*</label><i class="bar"></i>
+                            </div>
+                            <div class="form-group">
+                                <input id="lastnameId" class="form-control disabledDiv" type="text"
+                                       value="{{ user.name }}">
+                                <label for="lastnameId" class="control-label">Prenom*</label><i class="bar"></i>
+
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+                                <input id="emailId" class="form-control disabledDiv" type="email"
+                                       value="{{ user.email }}">
+                                <label for="emailId" class="control-label">Adresse e-mail*</label><i class="bar"></i>
+                            </div>
+                            <div class="form-group">
+                                <input id="phoneId" class="form-control disabledDiv" type="text"
+                                       value="{{ user.phoneNumber }}">
+                                <label for="phoneId" class="control-label">Téléphone*</label><i class="bar"></i>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <h5 class="var-secondary-title">Si les informations ci-dessus ne sont pas à jour, vous pouvez saisir
+                        les champs suivants : </h5>
+
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group mt-10">
+                                <input id="email" class="form-control" type="email" value="{{ user.emailApp }}"
+                                       onkeyup="checkEmail()">
+                                <label for="email" class="control-label truncate-txt">Adresse e-mail (Cette adresse mail
+                                    sera utilisée pour vous envoyer des notifications)</label><i class="bar"></i>
+                                <p id="emailError" class="invalid-styles" hidden>Ceci n'est pas une adresse mail
+                                    valide</p>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group mt-10">
+                                <input id="codeCountry" class="form-control" type="tel"
+                                       value="{{ user.codeCountryApp }}" pattern="^[+][0-9]+$">
+                                <label for="codeCountry" class="control-label truncate-txt">Code pays</label><i
+                                        class="bar"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mt-10">
+                                <input id="phone" class="form-control" type="number" value="{{ user.phoneNumberApp }}"
+                                       pattern="[0-9]$" onkeyup="checkPhoneLength()">
+                                <label for="phone" class="control-label truncate-txt">Téléphone (Ce n° de téléphone sera
+                                    utilisé pour vous envoyer des sms)</label><i class="bar"></i>
+                                <p id="phoneError" class="invalid-styles" hidden>Ceci n'est pas un N de tel valide</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a type="submit" class="btn next-button pull-right" id="confirm"
+                       href="#" onclick="modifyUserEmailAndPhone();">
+                        Confirmer
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/flex-utils.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/forms.css') }}">
+    <script src="{{ asset('css/jquery.min.js') }}"></script>
+    <script src="{{ asset('css/bootstrap.min.js') }}"></script>
+    <style type="text/css">
+        a#CybotCookiebotDialogPoweredbyCybot {
+            display: none;
+        }
+        div#CybotCookiebotDialogPoweredByText {
+            display: none;
+        }
+    </style>
+
+{% endblock %}
+{% block javascripts %}
+    <script>
+        function checkPhoneLength() {
+            $(document).ready(function () {
+                let phone = $('#phone').val();
+                if (phone.length > 23) {
+                    $("#phone").keypress(function (e) {
+                        e.preventDefault();
+                    });
+                } else {
+                    $("#phone").unbind('keypress');
+                }
+            });
+        }
+
+        function modifyUserEmailAndPhone() {
+            $(document).ready(function () {
+                    let email = $('#email').val();
+                    let phone = $('#phone').val();
+                    let codeCountry = $('#codeCountry').val();
+
+                    if (email !== ""  || (phone !== '' && codeCountry !== "")) {
+                        $.ajax({
+                            url: "{{ path('api_basic_user_edit_email_phone') }}",
+                            type: 'POST',
+                            data: 'email=' + email + '&phone=' + encodeURIComponent(phone) + '&codeCountry=' + encodeURIComponent(codeCountry),
+                        });
+                    }
+
+                    $("#edit").modal('hide');
+                }
+            );
+        }
+
+        function acceptPc() {
+            $(document).ready(function () {
+                $.ajax({
+                        url: "{{ path('api_user_accept_pc') }}",
+                        type: 'POST',
+                        contentType : 'application/json',
+                }).done(function () {
+                        }
+                    );
+                }
+            );
+        }
+        function acceptCgu() {
+            $(document).ready(function () {
+                    $.ajax({
+                        url: "{{ path('api_user_accept_cgu') }}",
+                        contentType : 'application/json',
+                        type: 'POST',
+                    }).done(function () {
+                        }
+                    );
+                }
+            );
+        }
+    </script>
+    <!-- Matomo -->
+
+    <script type="text/javascript">
+
+        var _paq = window._paq || [];
+
+        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+
+        _paq.push(['trackPageView']);
+
+        _paq.push(['enableLinkTracking']);
+
+        (function() {
+
+            var u="//stats.avocat.fr/";
+
+            _paq.push(['setTrackerUrl', u+'matomo.php']);
+
+            _paq.push(['setSiteId', {{ envId }}]);
+
+            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+
+            g.type = 'text/javascript';
+            g.async = true;
+            g.defer = true;
+            g.src = u + 'matomo.js';
+            s.parentNode.insertBefore(g, s);
+
+        })();
+
+    </script>
+
+    <script type="text/javascript" language="javascript" src="{{ asset('dist/dashboard.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+{% endblock %}

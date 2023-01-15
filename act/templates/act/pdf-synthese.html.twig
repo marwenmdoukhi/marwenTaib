@@ -1,0 +1,238 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ base_dir ~ asset('css/proof2bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ base_dir ~ asset('css/proofbootstrap.min.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ base_dir ~ asset('css/prooffont-awesome.min.css') }}"/>
+    {#<link href='https://fonts.googleapis.com/css?family=Palanquin' rel='stylesheet'>#}
+    <style>
+        .maj:first-letter {
+            text-transform: capitalize
+        }
+        body {
+            font-family: Palanquin
+        }
+
+        .title-txt {
+            font-size: 16px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div style="width: 100%;height: 97px;background-color:#ebedf4">
+    <div style=" width: 39%;height: 97px;background-color:#25203e;float: left">
+        <img style=" width: 100%;height: 97px;background-color:#25203e;"
+             src="{{ base_dir ~ asset('logo/lodopdf.png') }}">
+    </div>
+    <div style="width: 69%;height: 97px;background-color:#ebedf4;">
+        <div style=" padding-left: 35px;font-family: Palanquin;font-size: 23px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;text-align: center;color:#1c1e25">
+            Fiche Synthèse
+        </div>
+        <div style="padding-left: 35px;font-family: Palanquin;font-size: 16px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;text-align: center;color: #a0a0a0">
+            Exporté le {{ exportDate }}</div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div style="margin-bottom: 10px;margin-top:36px">
+        <div class="row mask-synthese">
+            <div class="container-fluid">
+                <div class="Row Signataires"
+                     style="font-family: Palanquin;font-size: 24px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;margin-left: 4px;float: left">
+                    Informations
+                </div>
+                <div style="font-family: Palanquin;font-size: 14px;font-weight: 700;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;text-align: right;color:#a0a0a0;margin-left: 200px">
+                    {% if currentAct|length!=0 %}
+                        Statut :
+                        {% if currentAct.status=='Validation refusee' %}
+                            <span style="color:#51596d;font-weight: bolder;">Validation refusée</span>
+                        {% elseif currentAct.status=='Signee' %}
+                            <span style="color:#51596d;font-weight: bolder;">Signé</span>
+                        {% elseif currentAct.status=='Signature refusee' %}
+                            <span style="color:#51596d;font-weight: bolder;">Signature refusée</span>
+                        {% elseif currentAct.status=='Cree' %}
+                            <span style="color:#51596d;font-weight: bolder;">Créé</span>
+                        {% else %}
+                            <span style="color:#51596d;font-weight: bolder;">{{ currentAct.status }}</span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                <div class="Row Signataires" style="margin-top: 17px">
+                    <table style="margin-left: 2% ; width: 96%;border-radius:6px;-moz-border-radius:6px;border:solid #dadada 1px;border-collapse:separate">
+                        <thead style="font-family: Palanquin;font-size: 12px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.75;letter-spacing: normal;">
+                        <th style="text-align: center;padding-left: 4px;padding-top: 12px;border-right: 1px solid #dadada; color: #0279ff" class="title-txt">
+                            Numéro de l'acte
+                        </th>
+                        <th style="text-align: center ;padding-left: 4px; padding-top: 12px;border-right: 1px solid #dadada ; color: #0279ff" class="title-txt">
+                            Nom de l'acte
+                        </th>
+                        <th style="text-align: center;padding-left: 4px;padding-top: 12px;border-right: 1px solid #dadada ; color:  #0279ff" class="title-txt">
+                            Nom du dossier
+                        </th>
+                        <th style="text-align: center ;padding-left: 4px;padding-top: 12px;; color: #0279ff" class="title-txt">
+                            Numéro interne du dossier
+                        </th>
+                        </thead>
+                        <tbody>
+                        {% if currentAct|length!=0 %}
+                            <td style="text-align: center;padding-left: 4px;border-right: 1px solid #dadada;padding-bottom: 1%;padding-top: 6px">{{ currentAct.folderNumber }}</td>
+                            <td style="text-align: center;padding-left: 4px;border-right: 1px solid #dadada;padding-bottom: 1%;padding-top: 6px">{{ currentAct.name }}</td>
+                            <td style="text-align: center;padding-left: 4px;border-right: 1px solid #dadada;padding-bottom: 1%;padding-top: 6px">{{ currentAct.folderName }}</td>
+                            <td style="text-align: center;padding-left: 4px;padding-bottom: 1%;padding-top: 6px">{{ currentAct.internalNumber }}</td>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+                {% if listSignataire|length!=0 %}
+                <div class="Row Signataires"
+                     style="font-family: Palanquin;font-size: 24px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;margin-left: 3px;margin-top: 66px">
+                    Signataires
+                </div>
+
+                <div class="row" style="margin-top: 2%">
+                    {% for signataire in listSignataire %}
+                        <div class="Row" style="margin: 0 auto;margin-bottom: 0px">
+                            <div class="row col-md-12"
+                                 style="margin-left: 2%;margin-bottom: 0px; width: 96%;height: 65px;border-radius: 8px;border: solid #ccc 1px;background-color: #ffffff;">
+                                <span class="maj" style="display: block;float: left;padding-top: 20px;width: 20%">
+                                  {{ signataire.lastName }}
+                                </span>
+                                <span style="display: block;float: left;padding-top: 20px;margin-left:1%;width: 30%">
+
+                                    {{ signataire.name }}
+                                </span>
+                                <span class="col-md-2"
+                                      style="display: block;float: left;padding-top: 20px;">
+                                        {% if signataire.validator == true %}
+                                            Validateur
+                                        {% endif %}
+                                    </span>
+                                <span class="col-md-2"
+                                      style="display: block;float: left;padding-top: 20px;">
+                                        {% if signataire.actValidated == true %}
+                                            <span style="color:green">Validé le</span> {{ signataire.validatedAt }}
+                                            {% elseif signataire.actValidated == false and signataire.comment!=null %}
+                                            <span style="color:red">Refusé le</span> {{ signataire.validatedAt }}
+                                        {% endif %}
+                                    </span>
+                                <span class="col-md-2" style="display: block;float: left;padding-top: 20px;">
+                                        {% if signataire.signedAt != null %}
+                                            <span style="color:green">signé le</span> {{ signataire.signedAt }}
+                                             {% elseif signataire.signedAt != null and signataire.signatureComment != null %}
+                                            <span style="color:red">Refusé le</span> {{ signataire.signedAt }}
+                                        {% endif %}
+                                    </span>
+
+                            </div>
+                        </div>
+                        <div class="Row" style="margin: 0 auto;margin-bottom: 15px">
+                            <div class="row col-md-12"
+                                 style="margin-left: 2%;margin-bottom: 10px; width: 96%;height: 65px;border-radius: 8px;border: solid #ccc 1px;background-color: #ffffff;">
+                                <span class="col-md-4"
+                                      style="display: block;float: left;padding-top: 20px;margin-left: 0%;width: 20%">
+                                    <span>{{ signataire.codeCountry }}</span> <span>{{ signataire.phoneNumber }}</span>
+                                    </span>
+                                <span class="col-md-4"
+                                      style="display: block;padding-top: 20px;float: left;margin-left: 10%;width: 23%">
+                                    {{ signataire.email }}
+                                </span>
+
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+                <br>
+                {% if listAvocat|length!=0 %}
+                <div class="row">
+                    <div class="Row Signataires"
+                         style="font-family: Palanquin;font-size: 24px;font-weight: bolder;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;margin-left: 2%">
+                        Avocat(s) validateur
+                    </div>
+                    <div class="Row" style="margin: 0 auto;margin-bottom: 15px;margin-top: 2%">
+                        {% for avocat in listAvocat %}
+                            <div class="row col-md-12"
+                                 style="margin-left: 2% ; width: 96%;height: 65px;border-radius: 8px;border: solid #ccc 1px;background-color: #ffffff;vertical-align: middle;">
+                                <span class="col-md-3 maj"
+                                      style="display: block;padding-top:20px;float: left;width: 20%;">
+                                    {{ avocat.lastName }}
+                                </span>
+                                <span class="col-md-3"
+                                      style="display: block;padding-top:20px;margin-left:3%;float: left;width: 30%">
+                                   {{ avocat.name }}
+                                </span>
+                                <span class="col-md-2"
+                                      style="display: block;float: left;padding-top: 20px;">
+                                        {% if avocat.validator == true %}
+                                            Validateur
+                                        {% endif %}
+                                    </span>
+                                <span class="col-md-2"
+                                      style="display: block;float: left;padding-top: 20px;">
+                                        {% if avocat.actValidated == true %}
+                                            <span style="color:green">Validé le</span> {{ avocat.validatedAt }}
+                                        {% elseif avocat.actValidated==false and avocat.actValidated != null %}
+                                            <span style="color:red">Refusé le</span> {{ avocat.validatedAt }}
+                                        {% endif %}
+                                    </span>
+
+                            </div>
+                            <div class="row col-md-12"
+                                 style="margin-left: 2% ;margin-bottom: 20px; width: 96%;height: 65px;border-radius: 8px;border: solid #ccc 1px;background-color: #ffffff;vertical-align: middle;">
+                                <span class="col-md-3"
+                                      style="display: block;float: left;padding-top: 20px;margin-left: 0%;width: 20%">
+                                       <span>{{ avocat.codeCountry }}</span> <span>{{ avocat.phoneNumber }}</span>
+                                </span>
+                                <span class="col-md-4"
+                                      style="display: block;padding-top: 20px;float: left;margin-left: 10%;width: 23%">
+                                        {{ avocat.email }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        {% else %}
+                            <div class="row">
+                                <div class="Row Signataires"
+                                     style="font-family: Palanquin;font-size: 24px;font-weight: bolder;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;margin-left: 2%">
+                                    Avocat(s) validateur
+                                </div>
+                                <br>
+                                <p style="margin-left: 2%">Aucun avocat validateur désigné pour l’acte</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <br>
+                </div>
+                <div class="row">
+                    <div class="Row Signataires"
+                         style="font-family: Palanquin;font-size: 24px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;margin-left: 2%;margin-top: 66px">
+                        Documents
+                    </div>
+                    <br>
+                    <div class="Rectangle-Copy-7" style="margin: 0 auto;max-width: 100%;margin-right: 26px;">
+                        {% if listDocument|length!=0 %}
+                            {% for document in listDocument %}
+                                <div class="row col-md-12">
+                                    <div class=" list-group"
+                                         style="margin-left: 2%;height: 65px;border-radius: 8px;border: solid #ccc 1px;background-color: #ffffff;">
+                                        <div class=" Mo col-md-8"
+                                             style="margin-left: 2%;display: block;padding-top: 20px">
+                                            {{ document.name }}.PDFA
+                                        </div>
+                                        <div class="col-md-4" style="float: right;margin-top: -20px;margin-right:20%;width: 90px">
+                                            {{ ((document.size/1024)/1024) |number_format(2) }} Mo
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

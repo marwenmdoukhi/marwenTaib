@@ -1,0 +1,156 @@
+{% extends 'base.html.twig' %}
+{% block title %}Mon panier {% endblock %}
+{% block stylesheets %}
+{{ parent() }}
+    <link rel="stylesheet" href="{{ asset('front/style.min.css') }}">
+{% endblock %}
+{% block body %}
+    <div class="page-wrapper">
+        <main class="main banners-page">
+            <div class=" show-nav-hover slide-animate">
+                <div class="banner banner1">
+                    <figure>
+                        <img width="1500" height="580"
+                             src="{{ asset('image/banner/bannerpannier.jpg') }}"
+                             style="background:#d8dce5;min-height:36rem;" alt="boutique Fashion for men and women"/>
+                    </figure>
+                    <div class="container align-items-center d-flex">
+                        <div class="banner-layer text-center">
+                            <h4 class="banner-subtitle appear-animate text-black" data-animation-name="fadeInUpShorter"
+                                data-animation-delay="200">Votre Pannier</h4>
+                            <h2 style="font-size:2.5em !important;" class="banner-title appear-animate"
+                                data-animation-name="fadeInUpShorter"
+                                data-animation-delay="400">
+                                {% if app.user %}
+                                    {{ app.user.firstName }} {{ app.user.lastName }}
+                                {% endif %}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <main class="main">
+        <div class="container">
+            <ul class="checkout-progress-bar d-flex justify-content-center flex-wrap">
+                <li class="active">
+                    <a href="{{ path('cart_index') }}">Carte des Produits</a>
+                </li>
+                <li>
+                    <a href="#">Confirmation</a>
+                </li>
+            </ul>
+
+            <div class="row shop ">
+                <div class="col-lg-8">
+                    <div class="cart-table-container">
+                        <table class="table table-cart ">
+                            <thead>
+                            <tr>
+                                <th class="thumbnail-col"></th>
+                                <th class="product-col">Product</th>
+                                <th class="price-col">Prix</th>
+                                <th class="qty-col">Quantité</th>
+                                <th class="text-right">Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in items %}
+                                <tr class="product-row">
+                                    <td>
+                                        <figure class="product-image-container">
+                                            <a href="{{ path('product',{'slug':item.product.slug, 'category': item.product.categories.slug,'id':item.product.id}) }}"
+                                               class="product-image viewModel">
+                                                <img src="{{ vich_uploader_asset( item.product, 'imageFile') }}"
+                                                     alt="{{ item.product.name }}">
+                                            </a>
+                                            <a href="{{ path('carte_remove',{'id':item.product.id}) }}"
+                                               data-id="{{ item.product.id }}"
+                                               class="btn-remove icon-cancel removepanier" title="Remove Product"></a>
+                                        </figure>
+                                    </td>
+                                    <td class="product-col">
+                                        <h6>{{ item.product.name }}</h6>
+                                    </td>
+                                    <td>{{ item.product.newprice |number_format(3, '.', ',') }} DT</td>
+                                    <td class="product-quantity">
+                                        <div class="quantity float-none m-0">
+                                            <a href="{{ path('decrease_to_cart', { 'id' : item.product.id }) }}" class="minus text-color-hover-light bg-color-hover-primary border-color-hover-primary">
+                                                <span style="position: relative;top: 12px;">-</span>
+                                            </a>
+                                            <input type="text" class="input-text qty text" title="Qty" value="{{ item.qte }}" name="quantity" min="1" step="1">
+                                            <a href="{{ path('cart_add', { 'id' : item.product.id }) }}" class="plus text-color-hover-light bg-color-hover-primary border-color-hover-primary"><span
+                                                        style="position: relative;top: 12px;">+</span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">
+                                        <span class="subtotal-price">{{ (item.product.newprice*item.qte) |number_format(3, '.', ',') }} DT</span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="5" class="clearfix">
+                                    <div class="float-left">
+                                        <div class="cart-discount">
+                                            {# <form action="#"> #}
+                                            {# <div class="input-group"> #}
+                                            {# <input type="text" class="form-control form-control-sm" #}
+                                            {# placeholder="Coupon Code" required> #}
+                                            {# <div class="input-group-append"> #}
+                                            {# <button class="btn btn-sm" type="submit">Apply #}
+                                            {# Coupon</button> #}
+                                            {# </div> #}
+                                            {# </div> #}
+                                            {# </form> #}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="cart-summary">
+                        <h3>Cart</h3>
+                        <table class="table table-totals">
+                            <tbody>
+                            <tr>
+                                <td>Total</td>
+                                <td>{{ (total )|number_format(3, '.', ',') }} DT</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="text-left">
+                                    <h4>Expédition</h4>
+                                    <div class="form-group form-group-custom-control">
+                                        <div class="custom-control custom-radio">
+                                            <input id="gratuit" type="radio" class="custom-control-input" name="radio"
+                                                   checked>
+                                            <label for="gratuit" class="custom-control-label">Gratuit</label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td>Total</td>
+                                <td>{{ (total )|number_format(3, '.', ',') }} DT</td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                        <div class="checkout-methods">
+                            <a href="{{ path('commande') }}" class="btn btn-block btn-dark">Passer à la caisse
+                                <i class="fa fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mb-6"></div>
+    </main
+{% endblock %}

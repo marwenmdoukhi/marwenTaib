@@ -1,0 +1,133 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ base_dir ~ asset('css/proof2bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ base_dir ~ asset('css/proofbootstrap.min.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ base_dir ~ asset('css/prooffont-awesome.min.css') }}"/>
+    {#<link href='https://fonts.googleapis.com/css?family=Palanquin' rel='stylesheet'>#}
+    <style>
+        table {
+            width: 100%;
+        }
+
+        th {
+            text-align: center;
+        }
+    </style>
+</head>
+<body style="font-family: Palanquin">
+{% set size = proof|length %}
+{% if size<=60 %}
+    <div>
+        <div>
+            <img style="width: 200px;height: 80px" src="{{ base_dir ~ asset('logo/logoCnbFrontPage.png') }}">
+            <img style="width: 200px;height: 80px;margin-left: 450px"
+                 src="{{ base_dir ~ asset('logo/certeaurope.jpg') }}">
+        </div>
+    </div>
+    <h2 style="text-align: center;font-weight: bolder">Dossier de preuve</h2>
+    <br>
+    <h4 style="font-weight: bold">Identifiant du document:       {{ proof[0].act.name }}-signé-{{proof[0].act.signingDate|date("Ymd")  }}</h4>
+    <br>
+    <h4 style="font-weight: bold">{{ proof[0].act.folderNumber }}</h4>
+    <br>
+    <table class="table-bordered" style="text-align: center;border-color: black">
+        <thead>
+        <tr>
+            <th rowspan="2">Signataire</th>
+            <th rowspan="2">Action réalisée</th>
+            <th rowspan="2">Date et heure</th>
+            <th colspan="2">Evenement</th>
+        </tr>
+        <tr>
+            <th scope="col">Descriptif</th>
+            <th scope="col">Valeur</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for p in proof|slice(0,60) %}
+            <tr>
+                <td style="text-transform:capitalize;">{{ p.contact.lastName }} {{ p.contact.name }}</td>
+                <td>{{ p.event }}</td>
+                <td>{{ p.date|date("d/m/Y H:i:s", false) }}</td>
+                {% if p.event=="Authentification au service" %}
+                    <td>Numéro de téléphone</td>
+                    <td>{{ p.contact.codeCountry }}{{ p.contact.phoneNumber }}</td>
+                {% else %}
+                    <td>Adresse IP</td>
+                    <td>{{ p.ipAddress|split(',')[0] }}</td>
+                {% endif %}
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+{% if size>60 %}
+    <div>
+        <div>
+            <img style="width: 200px;height: 80px" src="{{ base_dir ~ asset('logo/logoCnbFrontPage.png') }}">
+            <img style="width: 200px;height: 80px;margin-left: 450px"
+                 src="{{ base_dir ~ asset('logo/certeaurope.jpg') }}">
+        </div>
+    </div>
+    <h2 style="text-align: center;font-weight: bolder">Dossier de preuve</h2>
+    <br>
+    <h4 style="font-weight: bold">Identifiant du document:       {{ proof[0].act.name }}-signé-{{proof[0].act.signingDate|date("Ymd")  }}</h4>
+    <br>
+    <h4 style="font-weight: bold">{{ proof[0].act.folderNumber }}</h4>
+    <br>
+    <table class="table-bordered" style="text-align: center;border-color: black">
+        <thead>
+        <tr>
+            <th rowspan="2">Signataire</th>
+            <th rowspan="2">Action réalisée</th>
+            <th rowspan="2">Date et heure</th>
+            <th colspan="2">Evenement</th>
+        </tr>
+        <tr>
+            <th scope="col">Descriptif</th>
+            <th scope="col">Valeur</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for p in proof|slice(0,60) %}
+            <tr>
+                <td style="text-transform:capitalize;">{{ p.contact.lastName }} {{ p.contact.name }}</td>
+                <td>{{ p.event }}</td>
+                <td>{{ p.date|date("d/m/Y H:i:s", false) }}</td>
+                {% if p.event=="Authentification au service" %}
+                    <td>Numéro de téléphone</td>
+                    <td>{{ p.contact.codeCountry }}{{ p.contact.phoneNumber }}</td>
+                {% else %}
+                    <td>Adresse IP</td>
+                    <td>{{ p.ipAddress|split(',')[0] }}</td>
+                {% endif %}
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <table class="table-bordered" style="text-align: center;border-color: black">
+        <tbody>
+        {% for p in proof|slice(60,size) %}
+            <tr>
+                <td style="text-transform:capitalize;">{{ p.contact.lastName }} {{ p.contact.name }}</td>
+                <td>{{ p.event }}</td>
+                <td>{{ p.date|date("d/m/Y H:i:s", false) }}</td>
+                {% if p.event=="Authentification au service" %}
+                    <td>Numéro de téléphone</td>
+                    <td>{{ p.contact.codeCountry }}{{ p.contact.phoneNumber }}</td>
+                {% else %}
+                    <td>Adresse IP</td>
+                    <td>{{ p.ipAddress|split(',')[0] }}</td>
+                {% endif %}
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+</body>
+</html>

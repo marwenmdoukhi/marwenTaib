@@ -1,0 +1,681 @@
+﻿<CreateSignataireComponent [vm]="vm" *ngIf="displayModalSignataire"></CreateSignataireComponent>
+<createAvocat [vm]="vm" *ngIf="displayModalAvocat"></createAvocat>
+<consultActComponent [vm]="vm" *ngIf="displaySendTovalidation"></consultActComponent>
+<displaySendToSignature [vm]="vm" *ngIf="vm.displaySentToSignature"></displaySendToSignature>
+<consultActArchive [vm]="vm" *ngIf="vm.displayArchive==true"></consultActArchive>
+<searchAvocat [vm]="vm" *ngIf="displaySearchAvocat"></searchAvocat>
+
+<ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "ball-clip-rotate-pulse"><p style="color: black" > Veuillez patienter... </p></ngx-spinner>
+<div *ngIf="showSpinner==true" class="cover-spin"></div>
+
+<div class="search-header" [@slideInOut] *ngIf="displayCreateOrder  && !vm.displayAllResult && !displayModalSignataire && !displayModalAvocat && !vm.displayArchive && !displaySearchAvocat">
+    <button class="btn burger-menu-btn visible-xs-block" (click)="vm.toggleSidebar()">
+        <img alt="" src="logo/burger.svg" />
+    </button>
+    <div class="search-input" [ngClass]="vm.inputReasearchBar ? 'search-focused' : ''">
+        <input type="text" id="input" [(ngModel)]="vm.inputReasearchBar"
+               pInputText (focus)="vm.displayDivForReasearchBar=true"
+
+               placeholder="Chercher un acte, un document, un contact" />
+        <img alt="" src="/logo/search.svg" />
+        <span *ngIf="vm.inputReasearchBar" class="glyphicon glyphicon-remove-sign" (click)="vm.displayDivForReasearchBar=false;vm.inputReasearchBar=null" style=" cursor:pointer; float: right; margin-top: -3%; margin-right: 1%;"></span>
+        <div *ngIf="vm.displayDivForReasearchBar" class="role-name-barre-recherche">
+            <div *ngFor="let c of (vm.allData | barPipe : vm.inputReasearchBar | slice:0:10)" (click)="vm.assignActeModel(c);" style="padding-left: 65px;">
+                <span *ngIf="c.nameActe" [inlineSVG]="'/logo/en-attente.svg'" style="margin-right: 2%; vertical-align: middle;"></span> <span *ngIf="c.nameActe" class="Affaire-Pauline-Grin">{{c.nameActe}}</span><span class="dfendeur" style="margin-left: 1%;" *ngIf="c.nameActe">acte</span>
+                <span *ngIf="c.contactName" [inlineSVG]="'/logo/yellow.svg'" style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.contactName" class="Affaire-Pauline-Grin">{{c.contactLastName | titlecase}} {{c.contactName | uppercase}} contact</span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.contactName">contact</span>
+                <span *ngIf="c.documentName" [inlineSVG]="'/logo/document.svg'" style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.documentName" class="Affaire-Pauline-Grin">{{c.documentName}}.pdf </span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.documentName">document</span>
+            </div>
+            <div *ngIf="vm.inputReasearchBar" class="role-name-barre-recherche" style="border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;border-top: 1px solid #dadada;">
+                <span class="Voir-tous-les-rsult" (click)="vm.displayAllResult=true;vm.displayDivForReasearchBar=false;" style="cursor:pointer;margin-left: 55px">Voir tous les résultats pour « {{vm.inputReasearchBar}} »</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-content" [@slideInOut] *ngIf="displayCreateOrder  && !vm.displayAllResult && !displayModalSignataire && !displayModalAvocat && !vm.displayArchive && !displaySearchAvocat" [ngClass]="vm.inputReasearchBar ? 'overlay' : ''">
+    <div class="container-fluid">
+        <div class="row add-act-header-container" *ngIf="!displayModalSignataire && !displayModalAvocat">
+            <div class="add-act-header">
+                <div>
+                    <span class="glyphicon glyphicon-chevron-left back-title-chevron"
+                          (click)="displayCreateOrder=false;displayConsultOrder=false;vm.displaySentToSignature=false"></span>
+                    <span class="add-act-title">Créer un nouvel acte</span>
+                </div>
+
+
+                <div class="dropdown" style="margin-right: 1%;" *ngIf="activeIndex==3">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                        Actions de l'acte
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li style="cursor:pointer" *ngIf="(orderDetails.status=='En Projet' || orderDetails.status=='Abandonne') && readyOnlyForUser==true"><a data-target="#deleteActeModal" data-toggle="modal">Supprimer l'acte</a></li>
+                        <li style="cursor:pointer"  *ngIf="orderDetails.status=='Cree' && readyOnlyForUser==true"><a data-target="#dismissActeModal" data-toggle="modal">Abandonner un acte</a></li>
+                        <li style="cursor:pointer" *ngIf="orderDetails.status!='En Projet'"><a (click)="vm.downloadSynthese()">Télécharger la synthèse</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr />
+        </div>
+        <div [ngSwitch]="activeIndex" *ngIf="!displayModalSignataire && !displayModalAvocat">
+            <div class="row">
+                <p-steps [model]="items" [(activeIndex)]="activeIndex" [readonly]="orderDetails.status=='En Projet' || vm.modeCreateOrModify==false || vm.modeCreateOrModify==false "></p-steps>
+            </div>
+            <div *ngSwitchCase="0">
+                <div class="row">
+                    <div class="add-form-steps step1">
+                        <div class="add-form-header">
+                            <span>Étape 1/4 : Informations de l'acte</span>
+                        </div>
+                        <div class="add-form-content">
+                            <form id="information">
+                                <div class="form-group mt-0">
+                                    <input type="text" [(ngModel)]="orderDetails.name" (ngModelChange)="savedAct=true" name="name" #name="ngModel" maxlength="50" (keyup) = "onKey($event)" (keypress)="keyPressAlphanumeric($event)" required />
+                                    <label for="input" class="control-label">Nom de l'acte*</label><em class="bar"></em>
+                                    <div *ngIf="name.invalid && (name.dirty || name.touched)">
+                                        <p class="invalid-styles" *ngIf="name.errors.required"> Champ obligatoire non complété</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" [(ngModel)]="orderDetails.folderName" name="folderName" (ngModelChange)="savedAct=true" #folderName="ngModel" maxlength="50" (keyup) = "onKey($event)" required />
+                                    <label for="input" class="control-label">Nom du dossier*</label><em class="bar"></em>
+                                    <span class="la-cration-de-ce-no">la création de ce nouvel acte impliquera la création du dossier AKKA200114</span>
+                                    <div *ngIf="folderName.invalid && (folderName.dirty || folderName.touched)">
+                                        <p class="invalid-styles" *ngIf="folderName.errors.required"> Champ obligatoire non complété</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" [(ngModel)]="orderDetails.internalNumber" (ngModelChange)="savedAct=true" name="internalNumber" maxlength="50" />
+                                    <label for="input" class="control-label">Numéro interne du dossier</label><em class="bar"></em>
+                                </div>
+                                <div class="form-group">
+                                    <input type="date" [(ngModel)]="orderDetails.expirationDate" (ngModelChange)="savedAct=true" name="expirationDate" #expirationDate="ngModel" min="{{todayDate | date:'yyyy-MM-dd'}}" (keyup) = "onKey($event)" required onkeydown="return false"/>
+                                    <label for="input" class="control-label">Date limite de signature*</label><em class="bar"></em>
+                                    <div *ngIf="expirationDate.invalid && (expirationDate.dirty || expirationDate.touched)">
+                                        <p class="invalid-styles" *ngIf="expirationDate.errors.required"> Champ obligatoire non complété</p>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-notice-compact">
+                    <span>
+                        * champs obligatoires
+                    </span>
+                </div>
+                <div class="row add-form-actions">
+                    <button form="information" [disabled]="name.invalid || folderName.invalid || expirationDate.invalid" type="button" class="btn next-button" (click)="savingActProcess()">Suivant</button>
+                </div>
+            </div>
+
+            <div *ngSwitchCase="1">
+                <div class="row">
+                    <div class="add-form-steps step2">
+                        <div class="add-form-header">
+                            <span>Étape 2/4 : Ajouter les documents</span>
+                        </div>
+                        <div class="add-form-content">
+                            <div (dragover)="false"
+                                 (dragend)="false"
+                                 (drop)="handleDrop($event)"
+                                 class="doc-upload-container">
+                                <label id="dropzone" for="file-input" [ngClass]="['doc-upload', lengthListDocument ? 'animate-doc-upload' : '']">
+                                    <div class="doc-upload-image">
+                                        <img src="/logo/addDocument.svg" alt=""/>
+                                        <input id="file-input" type="file" (change)="onAddDocument($event)" multiple
+                                               accept="image/*,.pdf"/>
+                                    </div>
+                                    <div class="doc-upload-titles">
+                                        <span class="doc-upload-title">Ajouter un ou plusieurs documents /!\ Formats acceptés : .pdf / .jpeg / .jpg / .png / .bmp</span>
+                                        <span class="doc-upload-subtitle">Glissez votre fichier ou téléchargez-le</span>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="doc-upload-container">
+                                <div class="form-upload-disclaimer"><p>Les documents déposés ci-dessus seront automatiquement fusionnés dans le même ordre que celui affiché sur cet écran.</p>
+                                    <p> &#9888; Les noms des documents déposés ne doivent pas contenir de caractères spéciaux (é, ~, - , etc.)</p>
+                                    <p> &#9888; La taille de l’ensemble des documents uploadés ne doit pas dépasser 40 Mo</p>
+                                    <p> &#9888; Le nombre total de signatures apposées sur le document final doit être inférieur à 30.</p>
+                                </div>
+                            </div>
+                            <div *ngIf="notValidpdf" class="doc-upload-container">
+                                <div class="reject-section error-upload-disclaimer">
+                                    <button (click)="notValidpdf=false" type="button" class="btn close" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                    <p>Votre document PDF est endommagé
+                                    et ne
+                                    pourra pas être signé. Merci de le réparer ou de le générer à nouveau au format PDF
+                                    puis de le recharger sur la plateforme.</p>
+                                    <p> Veuillez <a target="_blank" rel="noopener noreferrer"
+                                                    href="https://assistance.cnb.avocat.fr/hc/fr/articles/360017339280">
+                                        cliquer ici</a> pour obtenir plus d'information sur la FAQ</p></div>
+                            </div>
+                            <div class="docs-list" *ngIf="listDocument.length!=0;">
+                                <div class="docs-list-header">
+                                    <img src="/logo/active-unfocused.png" alt="document" class="mr-10"/>
+                                    <span>
+                                        Mes Document(s)
+                                    </span>
+                                    <span class="pull-right cursor-pointer doc-list-action-icons">
+                                        <span [inlineSVG]="'/logo/download.svg'" (click)="downloadAllDocument()"></span>
+                                    </span>
+                                </div>
+                                <div class="docs-list-content">
+                                    <div *ngFor="let file of listDocument ;let i=index;" class="docs-list-row">
+                                        <div class="truncate-txt">
+                                            <span [style.pointer-events]="i==0?'none':'auto'" [style.opacity]="i==0?0.5:1" style="cursor : pointer" *ngIf="listDocument.length>1" [inlineSVG]="'/logo/up.svg'" (click)="upDocumentPosition(file)"></span>
+                                            <span style="cursor : pointer" *ngIf="listDocument.length>1" [inlineSVG]="'/logo/down-file.svg'" (click)="downDocumentPosition(file)"></span>
+                                            <span class="docs-list-title">{{file.name}}.pdf</span>
+                                        </div>
+                                        <div class="file-size pl-10">
+                                            {{getFileSize(file.name) | number}} MO
+                                        </div>
+                                        <div class="doc-list-action-icons">
+
+                                            <span [inlineSVG]="'/logo/oeil.svg'" (click)="viewPdf(file)"></span>
+                                            <span>
+                                                <a  (click)=downloadPDF(file) title={{file.name}} class="c-black">
+                                                    <span [inlineSVG]="'/logo/download.svg'"></span>
+                                                </a>
+                                            </span>
+                                            <span [inlineSVG]="'/logo/delete.svg'" (click)="deleteDocument(file)"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row add-form-actions">
+                    <button type="button" form="information" class="btn next-button" (click)="documentSavingProcess()">Suivant</button>
+                </div>
+            </div>
+
+            <div *ngSwitchCase="2">
+                <div class="row">
+                    <div class="add-form-steps step3">
+                        <div class="add-form-header">
+                            <span>Étape 3/4 : Ajouter les contacts</span>
+                        </div>
+                        <div class="add-form-content">
+                            <div class="">
+                                <span class="form-title">Signataire(s)</span>
+                                <div class="create-folder-section" (click)="displayModalSignataire=true;displayModalAvocat=false;displaySearchAvocat=false;">
+                                    <img src="/logo/active.svg" class="active" alt="add folder" />
+                                    <span>Ajouter un signataire</span>
+                                </div>
+
+                                <div *ngFor="let item of listeSignataire; index as i" class="responsive-contacts-row">
+                                    <div class="hidden-xs large-contacts-row">
+                                        <div class="truncate-txt" style="width: 24%">
+                                            <img alt="" src="/logo/moral.svg">
+                                            <span tooltip=" {{item.lastName.charAt(0).toUpperCase()+item.lastName.slice(1)}} {{item.name | uppercase}}" placement="top" show-delay="200">
+                                                 <span class="capitalize-text">{{item.lastName}}</span>  {{item.name | uppercase}}
+                                            </span>
+                                        </div>
+                                        <p class="col-md-4">{{item.codeCountry}} {{ item.phoneNumber }}</p>
+                                        <p class="col-md-4" tooltip=" {{item.email}}" placement="top" show-delay="200">{{ item.email }}</p>
+                                        <div class="doc-list-action-icons">
+                                            <span [inlineSVG]="'/logo/edit.svg'" (click)="signataireToModify(item);displayModalSignataire=true"></span>
+                                            <span [inlineSVG]="'/logo/delete.svg'" (click)="deleteSignataire(item)"></span>
+                                        </div>
+                                    </div>
+                                    <div class="visible-xs-block xs-contacts-row container-fluid">
+                                        <div class="row">
+                                            <div class="col-xs-5 truncate-txt" tooltip=" {{item.lastName}} {{item.name | uppercase}}" placement="top" show-delay="200">
+                                                <span class="capitalize-text">{{item.lastName}}</span>  {{item.name | uppercase}}
+                                            </div>
+                                            <div class="col-xs-5 truncate-txt">
+                                                <span class="d-block">{{item.codeCountry}} {{ item.phoneNumber }}</span>
+                                                <span class="d-block" tooltip=" {{item.email}}" placement="top" show-delay="200">{{ item.email }}</span>
+                                            </div>
+
+                                            <div class="pull-right p-relative">
+                                                <img alt="" src="/logo/options.svg" (click)="showDropdown('dropdownSignataire' + item.id)" class="cursor-pointer" />
+                                                <div id="dropdownSignataire" class="dropdown-content" style="cursor:pointer;margin-left: -66px" [attr.id]="'dropdownSignataire' + item.id">
+                                                    <a style="cursor:pointer;font-size: 12px;" (click)="signataireToModify(item);displayModalSignataire=true">Modifier </a>
+                                                    <a style="cursor:pointer;font-size: 12px;" (click)="deleteSignataire(item)">Supprimer</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-30">
+                                <span class="form-title">Avocat(s) validateur(s)</span>
+                                <div class="create-folder-section" (click)="displayModalAvocat=false;displayModalSignataire=false;displaySearchAvocat=true;">
+                                    <img src="/logo/active.svg" class="active" alt="add folder" />
+                                    <span>Ajouter un avocat validateur</span>
+                                </div>
+
+                                <div *ngFor="let item of listAvocat; index as i" class="responsive-contacts-row">
+                                    <div class="hidden-xs large-contacts-row">
+                                        <div class="truncate-txt" style="width: 24%">
+                                            <img alt="" src="/logo/moral.svg">
+                                            <span tooltip="{{item.lastName}} {{item.name | uppercase}}" placement="top" show-delay="200">
+                                                 <span class="capitalize-text">{{item.lastName}}</span>  {{item.name | uppercase}}
+                                            </span>
+                                        </div>
+                                        <p class="col-md-4">{{item.codeCountry}} {{ item.phoneNumber }}</p>
+                                        <p class="col-md-4" tooltip="{{item.email}}" placement="top" show-delay="200">{{ item.email }}</p>
+                                        <div class="doc-list-action-icons">
+                                            <span [inlineSVG]="'/logo/edit.svg'" (click)="avocatToModify(item);displayModalAvocat=true;displayModalSignataire=false;displaySearchAvocat=false;"></span>
+                                            <span [inlineSVG]="'/logo/delete.svg'" (click)="deleteAvocat(item)"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="visible-xs-block xs-contacts-row container-fluid">
+                                        <div class="row">
+
+                                            <div class="col-xs-5 truncate-txt" tooltip=" {{item.lastName.charAt(0).toUpperCase()+item.lastName.slice(1)}} {{item.name | uppercase}}" placement="top" show-delay="200">
+                                                {{item.lastName.charAt(0).toUpperCase()+item.lastName.slice(1)}} {{item.name | uppercase}}
+                                            </div>
+                                            <div class="col-xs-5 truncate-txt">
+                                                <span class="d-block">{{item.codeCountry}} {{ item.phoneNumber }}</span>
+                                                <span class="d-block" tooltip=" {{item.email}}" placement="top" show-delay="200">{{ item.email }}</span>
+                                            </div>
+
+                                            <div class="pull-right p-relative">
+                                                <img alt="" src="/logo/options.svg" (click)="showDropdown('dropdownAvocat' + item.email)" class="cursor-pointer" />
+                                                <div id="dropdownAvocat" class="dropdown-content" style="cursor:pointer;margin-left: -66px" [attr.id]="'dropdownAvocat' + item.email">
+                                                    <a style="cursor:pointer;font-size: 12px;" (click)="avocatToModify(item);displayModalAvocat=true;displayModalSignataire=false;displaySearchAvocat=false;">Modifier</a>
+                                                    <a style="cursor:pointer;font-size: 12px;" (click)="deleteAvocat(item)">Supprimer</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row add-form-actions">
+                    <button form="information" type="submit" class="btn next-button" (click)="verifyContacts()">Suivant</button>
+                </div>
+            </div>
+
+            <div *ngSwitchCase="3">
+                <div class="row">
+                    <div class="add-form-steps step4">
+                        <div class="add-form-header">
+                            <span>Étape 4/4 : Synthèse</span>
+                        </div>
+                        <div class="add-form-content">
+                            <div class="">
+                                <span class="synth-section-title">Informations</span>
+                                <span [inlineSVG]="'/logo/edit.svg'" class="custom-icon pull-right"
+                                      *ngIf="orderDetails.status!='En cours de signature' && orderDetails.status!='Signe' && orderDetails.status!='En cours de validation' && readyOnlyForUser===true"
+                                      (click)="activeIndex=0"></span>
+
+                                <div class="synthese-info hidden-xs">
+                                    <div>
+                                        <span class="info-title">Nom de l'acte</span>
+                                        <span tooltip="{{orderDetails.name}}" placement="top"
+                                              show-delay="200">{{orderDetails.name}}</span>
+                                    </div>
+                                    <div>
+                                        <span class="info-title">Nom du dossier</span>
+                                        <span tooltip="{{orderDetails.folderName}}" placement="top"
+                                              show-delay="200">{{orderDetails.folderName}}</span>
+                                    </div>
+                                    <div>
+                                        <span class="info-title"><span class="hidden-xs">Numéro interne</span><span class="visible-xs-block">N° int.</span> du dossier</span>
+                                        <span tooltip="{{orderDetails.internalNumber}}" placement="top" show-delay="200">{{orderDetails.internalNumber}}</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="visible-xs-block responsive-info-section">
+                                <div class="row">
+                                    <div class="col-xs-4 pr-5">
+                                        <div class="info-title">Nom de l'acte</div>
+                                        <div tooltip="{{orderDetails.name}}" placement="top" show-delay="200" class="truncate-txt">{{orderDetails.name}}</div>
+                                    </div>
+                                    <div class="col-xs-4 pr-5 pl-5 side-bordered">
+                                        <div class="info-title">Nom du dossier</div>
+                                        <div tooltip="{{orderDetails.folderName}}" placement="top" show-delay="200" class="truncate-txt">{{orderDetails.folderName}}</div>
+                                    </div>
+                                    <div class="col-xs-4 pl-5">
+                                        <div class="info-title">Numéro interne du dossier</div>
+                                        <div tooltip="{{orderDetails.internalNumber}}" placement="top" show-delay="200" class="truncate-txt">{{orderDetails.internalNumber}}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="mt-30"
+                                 *ngIf="listeSignataire.length > 0 ||  (listeSignataire.length == 0 && (orderDetails.status!='En cours de signature' && orderDetails.status!='Signe' && orderDetails.status!='En cours de validation'))">
+                                <span class="synth-section-title">Signataire(s)</span>
+                                <div class="create-folder-section border-grey"
+                                     (click)="displayModalSignataire=true;displayModalAvocat=false;displaySearchAvocat=false;"
+                                     *ngIf="orderDetails.status!='En cours de signature' && orderDetails.status!='Signe' && orderDetails.status!='En cours de validation' && readyOnlyForUser===true">
+                                    <img src="/logo/active.svg" class="active" alt="add folder"/>
+                                    <span>Ajouter un signataire</span>
+                                </div>
+
+                                <div *ngFor="let item of listeSignataire; index as i" class="responsive-contacts-row">
+                                    <div class="hidden-xs large-contacts-row">
+                                        <div class="truncate-txt" style="width: 24%">
+                                            <img alt="" src="/logo/moral.svg">
+                                            <span tooltip="{{item.lastName}} {{item.name | uppercase}}"
+                                                  placement="top" show-delay="200">
+                                                <span class="capitalize-text">{{item.lastName}}</span> {{item.name | uppercase}}
+                                            </span>
+                                        </div>
+                                        <p class="col-md-4">{{item.codeCountry}} {{ item.phoneNumber }}</p>
+                                        <p class="col-md-4" tooltip="{{item.email}}" placement="top" show-delay="200">{{ item.email }}</p>
+                                        <div class="doc-list-action-icons" *ngIf="orderDetails.status!='En cours de signature' && orderDetails.status!='Signe' && orderDetails.status!='En cours de validation'">
+                                            <span [inlineSVG]="'/logo/edit.svg'" (click)="signataireToModify(item);displayModalSignataire=true" *ngIf="orderDetails.status!='En cours de signature' && orderDetails.status!='Signe'&& orderDetails.status!='En cours de validation' && readyOnlyForUser===true"></span>
+                                            <span [inlineSVG]="'/logo/delete.svg'" (click)="deleteSignatairePopup()" [attr.data-target]="'#deleteSign'+item.id" data-toggle="modal" *ngIf="orderDetails.status!='En cours de signature' && orderDetails.status!='Signe'&& orderDetails.status!='En cours de validation' && readyOnlyForUser===true"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="visible-xs-block xs-contacts-row container-fluid">
+                                        <div class="row">
+
+                                            <div class="col-xs-5 truncate-txt" tooltip=" {{item.lastName}} {{item.name | uppercase}}" placement="top" show-delay="200">
+                                                <span class="capitalize-text">{{item.lastName}}</span>  {{item.name | uppercase}}
+                                            </div>
+                                            <div class="col-xs-5 truncate-txt">
+                                                <span class="d-block">{{item.codeCountry}} {{ item.phoneNumber }}</span>
+                                                <span class="d-block" tooltip=" {{item.email}}" placement="top" show-delay="200">{{ item.email }}</span>
+                                            </div>
+
+                                            <div class="pull-right p-relative">
+                                                <img alt="" src="/logo/options.svg" (click)="showDropdown('dropdownSignataire2' + item.id)" class="cursor-pointer" />
+                                                <div id="dropdownSignataire2" class="dropdown-content" style="cursor:pointer;margin-left: -66px" [attr.id]="'dropdownSignataire2' + item.id">
+                                                    <a style="cursor:pointer;font-size: 12px;" (click)="signataireToModify(item);displayModalSignataire=true">Modifier</a>
+                                                    <a style="cursor:pointer;font-size: 12px;" (click)="deleteSignatairePopup()" [attr.data-target]="'#deleteSign'+item.id" data-toggle="modal">Supprimer</a>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="modal fade" id="deleteSign{{item.id}}" role="dialog" *ngIf="displayPopupForDeleteSignatory==true" data-backdrop="static" data-keyboard="false"  style="display: none;">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <button style="margin-right: 10px" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <div style="text-align:center">
+                                                    <div class="modal-body Votre-dossier-dacte " style="text-align:center;margin-left: 42px;margin-top: 100px;">
+                                                        Êtes-vous sûr de vouloir supprimer {{item.name}} ?
+                                                        <div style="text-align:center;margin-top: 10%;">
+                                                            <button form="information" type="submit" class="btn  next-button" (click)="deleteSignataire(item)" style="margin-right: 5%;">Oui</button>
+                                                            <button  form="information" type="button" class="btn  save-button" (click)="displayCreateOrder=true;displayConsultOrder=false" data-dismiss="modal">Retour</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-30"
+                                 *ngIf="listeAvocat.length > 0 ||  (listeAvocat.length == 0 && (orderDetails.status!='En cours de signature' && orderDetails.status!='Signe'&& orderDetails.status!='En cours de validation'))">
+                                <span class="synth-section-title">Avocat(s) validateur(s)</span>
+                                <div class="create-folder-section border-grey "
+                                     (click)="displaySearchAvocat=false;displayModalSignataire=false;displaySearchAvocat=true;"
+                                     *ngIf="orderDetails.status!='En cours de signature' && orderDetails.status!='Signe'&& orderDetails.status!='En cours de validation' && readyOnlyForUser===true">
+                                    <img src="/logo/active.svg" class="active" alt="add folder"/>
+                                    <span>Ajouter un avocat validateur</span>
+                                </div>
+
+                                <div *ngFor="let item of listAvocat; index as i" class="responsive-contacts-row">
+                                    <div class="hidden-xs large-contacts-row">
+
+                                        <div class="truncate-txt" style="width: 24%">
+                                            <img alt="" src="/logo/moral.svg">
+                                            <span tooltip="{{item.lastName.charAt(0).toUpperCase()+item.lastName.slice(1)}} {{item.name | uppercase}}"
+                                                  placement="top" show-delay="200">
+                                                {{item.lastName.charAt(0).toUpperCase()+item.lastName.slice(1)}} {{item.name | uppercase}}
+                                            </span>
+                                        </div>
+                                        <p class="col-md-4">{{item.codeCountry}} {{ item.phoneNumber }}</p>
+                                        <p class="col-md-4" tooltip=" {{item.email}}" placement="top" show-delay="200">{{ item.email }}</p>
+                                        <div class="doc-list-action-icons" *ngIf="orderDetails.status!='En cours de signature' && orderDetails.status!='Signe'&& orderDetails.status!='En cours de validation' && readyOnlyForUser===true">
+                                            <span [inlineSVG]="'/logo/edit.svg'" (click)="avocatToModify(item);displayModalAvocat=true;displayModalSignataire=false;displaySearchAvocat=false;"></span>
+                                            <span [inlineSVG]="'/logo/delete.svg'" (click)="deleteAvocatPopup()" [attr.data-target]="'#deleteAvocat'+item.id" data-toggle="modal"></span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="visible-xs-block xs-contacts-row container-fluid">
+                                        <div class="row">
+
+                                            <div class="col-xs-5 truncate-txt" tooltip=" {{item.lastName.charAt(0).toUpperCase()+item.lastName.slice(1)}} {{item.name | uppercase}}" placement="top" show-delay="200">
+                                                {{item.lastName.charAt(0).toUpperCase()+item.lastName.slice(1)}} {{item.name | uppercase}}
+                                            </div>
+                                            <div class="col-xs-5 truncate-txt">
+                                                <span class="d-block">{{item.codeCountry}} {{ item.phoneNumber }}</span>
+                                                <span class="d-block" tooltip=" {{item.email}}" placement="top" show-delay="200">{{ item.email }}</span>
+                                            </div>
+
+                                            <div class="pull-right p-relative">
+                                                <img alt="" src="/logo/options.svg" (click)="showDropdown('dropdownAvocat2' + item.email)" class="cursor-pointer" />
+                                                <div id="dropdownAvocat2" class="dropdown-content" style="cursor:pointer;margin-left: -66px" [attr.id]="'dropdownAvocat2' + item.email">
+                                                    <a style="cursor:pointer;font-size: 12px;" (click)="avocatToModify(item);displayModalAvocat=true;displayModalSignataire=false;displaySearchAvocat=false;">Modifier</a>
+                                                    <a style="cursor:pointer;font-size: 12px;" (click)="deleteAvocatPopup()" [attr.data-target]="'#deleteAvocat'+item.id" data-toggle="modal">Supprimer</a>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="modal fade" id="deleteAvocat{{item.id}}" role="dialog" *ngIf="displayPopupForDeleteCouncel==true" data-backdrop="static" data-keyboard="false"  style="display: none;">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <button style="margin-right: 10px" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <div style="text-align:center">
+                                                    <div class="modal-body Votre-dossier-dacte " style="text-align:center;margin-left: 42px;margin-top: 100px;">
+                                                        Êtes-vous sûr de vouloir supprimer {{item.name}} ?
+                                                        <div style="text-align:center;margin-top: 10%;">
+                                                            <button form="information" type="submit" class="btn  next-button" (click)="deleteAvocat(item)" style="margin-right: 5%;">Oui</button>
+                                                            <button  form="information" type="button" class="btn  save-button" (click)="displayCreateOrder=true;displayConsultOrder=false" data-dismiss="modal">Retour</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="mt-30" *ngIf="orderDetails.status!='En cours de signature' && orderDetails.status!='Signe'&& orderDetails.status!='En cours de validation'">
+                                <span class="synth-section-title">Document(s)</span>
+
+                                <div (dragover)="false"
+                                     (dragend)="false"
+                                     (drop)="handleDrop($event)"
+                                     class="compact-doc-upload-container"
+                                     *ngIf="orderDetails.status!='En cours de signature' && orderDetails.status!='Signe' && orderDetails.status!='En cours de validation'">
+
+                                    <label id="dropzone" for="file-input"
+                                           [ngClass]="['compact-doc-upload', lengthListDocument ? 'animate-doc-upload' : '']"
+                                           *ngIf="readyOnlyForUser===true">
+                                        <div class="compact-doc-upload-image">
+                                            <img src="/logo/addfile.svg" alt=""/>
+                                            <input #inputFile id="file-input" type="file"
+                                                   (change)="onAddDocument($event)" multiple
+                                                   accept="image/*,.pdf"/>
+                                        </div>
+
+                                        <div class="compact-doc-upload-titles">
+                                            <span class="compact-doc-upload-title">Ajouter un ou plusieurs documents /!\ Formats acceptés : .pdf / .jpeg / .jpg / .png / .bmp</span>
+                                            <span class="hidden-xs compact-doc-upload-subtitle">Glissez votre fichier ou téléchargez-le</span>
+                                        </div>
+
+                                    </label>
+                                </div>
+                                <div class="doc-upload-container">
+                                    <div class="form-upload-disclaimer"><p>Les documents déposés ci-dessus seront automatiquement fusionnés dans le même ordre que celui affiché sur cet écran.</p>
+                                        <p> &#9888; Les noms des documents déposés ne doivent pas contenir de caractères spéciaux (é, ~, - , etc.)</p>
+                                        <p> &#9888; La taille de l’ensemble des documents uploadés ne doit pas dépasser 40 Mo</p>
+                                        <p> &#9888; Le nombre total de signatures apposées sur le document final doit être inférieur à 30.</p>
+                                    </div>
+                                </div>
+                                <div *ngIf="notValidpdf" class="doc-upload-container">
+                                    <div class="reject-section error-upload-disclaimer">
+                                        <button (click)="notValidpdf=false" type="button" class="btn close" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                        <p>Votre document PDF est
+                                        endommagé et
+                                        ne pourra pas être signé. Merci de le réparer ou de le générer à nouveau au
+                                        format PDF puis de le recharger sur la plateforme.</p>
+                                        <p> Veuillez <a target="_blank" rel="noopener noreferrer"
+                                                        href="https://assistance.cnb.avocat.fr/hc/fr/articles/360017339280">cliquer
+                                            ici</a> pour obtenir plus d'information sur la FAQ</p></div>
+                                </div>
+
+                                <div class="docs-list" *ngIf="listDocument.length!=0;">
+                                    <div class="docs-list-header">
+                                        <img src="/logo/active-unfocused.png" alt="document" class="mr-10"/>
+                                        <span>
+                                            Mes Document(s)
+                                        </span>
+                                        <span class="pull-right cursor-pointer doc-list-action-icons">
+                                            <span [inlineSVG]="'/logo/download.svg'"
+                                                  (click)="downloadAllDocument()"></span>
+                                        </span>
+                                    </div>
+                                    <div class="docs-list-content">
+                                        <div *ngFor="let file of listDocument;let i=index" class="docs-list-row">
+                                            <div class="truncate-txt">
+                                                <span [style.pointer-events]="i==0?'none':'auto'" [style.opacity]="i==0?0.5:1" *ngIf="listDocument.length>1" [inlineSVG]="'/logo/up.svg'" (click)="upDocumentPosition(file)"></span>
+                                                <span *ngIf="listDocument.length>1" [inlineSVG]="'/logo/down-file.svg'" (click)="downDocumentPosition(file)"></span>
+                                                <span class="docs-list-title">{{file.name}}.pdf</span>
+                                            </div>
+                                            <div class="file-size pl-10">
+                                                {{getFileSize(file.name) | number}} MO
+                                            </div>
+                                            <div class="doc-list-action-icons">
+
+                                                <span class="hidden-xs" [inlineSVG]="'/logo/oeil.svg'" (click)="viewPdf(file)"></span>
+                                                <span>
+                                                    <a  (click)=downloadPDF(file) title={{file.name}} class="c-black">
+                                                        <span [inlineSVG]="'/logo/download.svg'"></span>
+                                                    </a>
+                                                </span>
+                                                <span [inlineSVG]="'/logo/delete.svg'" (click)="deleteDocument(file)" *ngIf="orderDetails.status!='En cours de signature' && orderDetails.status!='Signe' && orderDetails.status!='En cours de validation' && readyOnlyForUser===true"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row add-form-actions">
+                    <div class="signature-action-button oneline">
+                        <button [disabled]="readyOnlyForUser==false" *ngIf="(orderDetails.status=='En Projet' || orderDetails.status=='Abandonne') && readyOnlyForUser==true" form="information" type="button" class="btn  next-button" data-target="#deleteActeModal" data-toggle="modal">Supprimer l'acte</button>
+                        <button [disabled]="readyOnlyForUser==false" *ngIf="orderDetails.status!='Cree' " form="information" type="button" class="btn  next-button" data-target="#modalIdCreated" data-toggle="modal" (click)="updateStatutActe(); documentSavingProcess()">Créer l’acte</button>
+
+                    </div>
+                    <div class="signature-action-button">
+                        <button *ngIf="orderDetails.status=='Cree'" form="information" type="button" class="btn  next-button" (click)="displayCreateOrder=false;displayConsultOrder=false;displaySendTovalidation=true" [disabled]="listeSignataire.length==0 || listDocument.length==0  || readyOnlyForUser===false">Envoyer pour validation</button>
+                        <button *ngIf="orderDetails.status=='Cree'" form="information" type="button" class="btn  next-button" (click)="displayCreateOrder=false;displayConsultOrder=false;vm.displaySentToSignature=true" [disabled]="listeSignataire.length==0 || listDocument.length==0 || readyOnlyForUser===false">Envoyer pour signature</button>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="modal fade" id="modalCreaatedFolder" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content" style="height: 300px;">
+                    <button type="button" style="margin-top: 11px;" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <div class="modal-body Votre-dossier-dacte " style="text-align:center;height: 100px;margin-top: 100px;">
+                        Votre acte est bien enregistré
+                    </div>
+                    <div style="text-align: center;">
+                        <button form="information" type="submit" class="btn  save-button" style="margin-right:36px" (click)="displayCreateOrder=false;displayConsultOrder=false;vm.getData();" data-dismiss="modal">Accueil</button>
+                        <button  form="information" type="button" class="btn  next-button" (click)="displayCreateOrder=true;displayConsultOrder=false" data-dismiss="modal">Retour</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade custom-confirm-modal1" id="deleteActeModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <h1 class="custom-m-title">Êtes-vous sûr de vouloir supprimer cet acte ? Cette action est irréversible</h1>
+
+                        <div class="custom-m-actions">
+                            <button form="information" type="submit" class="btn save-button" (click)="vm.onDeleteActe(orderDetails)" data-dismiss="modal">Oui</button>
+                            <button form="information" type="button" class="btn next-button" data-dismiss="modal" aria-hidden="true">Retour</button>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalIdCreated" role="dialog" style="display:none" *ngIf="orderStatus==true">
+            <div class="modal-dialog">
+                <div class="modal-content create-modal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h5 class="modal-title modal-header-font">Votre acte a bien été enregistré sous le numéro :</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div style="margin: auto;padding-top: 10px;padding-bottom: 10px;height:auto;" class="Rectangle-Copy-6712">
+                            <span style="text-align: center;color:#00aa8b;font-size: 32px;">{{internalFolder}}</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="add-form-actions signature-action-button">
+                            <button style="margin-right: 10px!important;" form="information" type="submit" class="btn  save-button" (click)="displayCreateOrder=false;displayConsultOrder=false;vm.getData();" data-dismiss="modal">Accueil</button>
+                            <button form="information" type="button" class="btn  next-button mr-10" (click)="displayCreateOrder=false;displayConsultOrder=false;displaySendTovalidation=true" [disabled]="listeSignataire.length==0  || listDocument.length==0" data-dismiss="modal">
+                                Envoyer pour validation
+                            </button>
+                            <button form="information" type="button" class="btn  next-button" (click)="vm.displaySentToSignature=true;displayCreateOrder=false;displayConsultOrder=false" [disabled]="listeSignataire.length==0 || listDocument.length==0" data-dismiss="modal">
+                                Envoyer pour signature
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p-toast position="top-right"></p-toast>
+    </div>
+</div>
+
+<div class="modal fade" id="dismissActeModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content" style="">
+            <button type="button" style="margin-right: 21px;margin-top: 11px;" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <div class="modal-body Votre-dossier-dacte " style="text-align:center;margin-top: 50px;margin-bottom: 30px;">
+               Êtes-vous sûr de vouloir abandonner l’acte? Cette action est irréversible. Toutefois, l'acte restera disponible pour consultation sur votre espace sauf si vous le supprimez.
+            </div>
+            <div style="text-align: center;margin-bottom: 50px;">
+                <button form="information" type="submit" class="btn  save-button" style="margin-right:36px" (click)="vm.dismissActe(orderDetails)" data-dismiss="modal">Oui</button>
+                <button form="information" type="button" class="btn  next-button" data-dismiss="modal" aria-hidden="true">Non</button>
+            </div>
+        </div>
+    </div>
+</div>

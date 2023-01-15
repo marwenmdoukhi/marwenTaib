@@ -1,0 +1,86 @@
+{% extends'base.html.twig' %}
+{% block title %} S'inscrire {% endblock %}
+{% block body %}
+    <div role="main" class="main">
+        <div class="page-header "  style="background-image:url({{ asset('image/banner/login.png') }}) ;background-position: top;background-repeat: no-repeat;background-size: cover">
+            <div class="container h-100 mt-5">
+                <div class="row align-items-center justify-content-center h-100 mt-5">
+                    <div class="col-lg-6 pt-5 mb-5">
+                        <br><br><br><br>
+                        <div class=" appear-animation d-flex flex-column  h-100" data-appear-animation="fadeInLeftShorter" data-appear-animation-delay="350" data-appear-animation-duration="350" >
+                                <h2 class="text-black font-weight-bold text-12-4 mb-3 appear-animation" data-appear-animation="blurIn" data-appear-animation-delay="500" data-plugin-options="{'minWindowWidth': 0}">S’inscrire </h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container py-4">
+            <div class="row justify-content-md-center">
+                <div class="appear-animation col-md-7" data-appear-animation="fadeInLeftShorter" data-appear-animation-delay="750" data-appear-animation-duration="750">
+                    <div class="row justify-content-md-center">
+                        <div class="col-md-11">
+                            <div class="featured-box featured-box-primary text-left mt-0">
+                                <div class="box-content">
+                                    <h4 style="color: #000" class="color-primary font-weight-semibold text-4 text-uppercase ">Créer un compte</h4>
+                                    {{ form_start(form) }}
+                                    <div class="form-row">
+                                        <div class="form-group col-lg-6">
+                                            <label>Nom</label>
+                                            {{ form_widget(form.lastName) }}
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label>Nom de famille </label>
+                                            {{ form_widget(form.firstName) }}
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-lg-6">
+                                            <label>Adress Email</label>
+                                            {{ form_row(form.email) }}
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label>Mot de passe</label>
+                                            {{ form_widget(form.hash) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col-lg-6">
+                                            <label>Adress</label>
+                                            {{ form_widget(form.adress) }}
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label>code postal</label>
+                                            {{ form_widget(form.codepostal) }}
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-lg-6">
+                                            <label>Telephone</label>
+                                            {{ form_widget(form.tel) }}
+                                        </div>
+                                    </div>
+                                    <div  class="form-row notification ">
+                                        <div class="form-group col-lg-12">
+                                            {% for message in app.flashes('notice') %}
+                                                <div class="alert alert-info">{{ message }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="align-self-center align-items-center">
+                                        <div class="text-center">
+                                            <button style="background: #000;color: #fff" value="S’inscrire" class="btn  button-loaders  btn-modern " data-loading-text="<i class='fa fa-spinner fa-spin'></i>  s inscrire" type="submit">
+                                                s inscrire
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {{ form_end(form) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

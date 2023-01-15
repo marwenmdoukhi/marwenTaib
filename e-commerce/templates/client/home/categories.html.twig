@@ -1,0 +1,32 @@
+<h1 class="section-title ls-n-20  text-center pt-2 m-b-4">Magasinez par catégorie</h1>
+<div class="owl-carousel owl-theme nav-image-center show-nav-hover nav-outer cats-slider appear-animate"
+     data-animation-name="fadeInUpShorter" data-animation-delay="200" data-animation-duration="1000">
+    <div class="product-category">
+        <a href={{ path('boutiquesolde') }}>
+            <figure>
+                <img src="{{ asset('image/home/promo.png') }}" width="273" height="273"
+                     alt="promo"/>
+            </figure>
+            <div class="category-content">
+                <h3>Promo</h3>
+                <span><mark class="count">{{ promo }}</mark> Produits</span>
+            </div>
+        </a>
+    </div>
+    {% for category in category %}
+
+        <div class="product-category">
+            <a href={{ path('Boutique',{'slug':category.slug}) }}>
+                <figure>
+                    <img src="{{asset('uploads/category/'~category.picture)}}" width="273" height="273"
+                         alt="{{ category.name }}" type="image/webp"/>
+                </figure>
+                <div class="category-content">
+                    <h3>{{ category.name }}</h3>
+                    <span><mark class="count">{{ category.products|length }}</mark> Produits</span>
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+
+</div>

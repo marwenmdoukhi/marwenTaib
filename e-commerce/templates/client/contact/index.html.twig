@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+{% block title %}Contact{% endblock %}
+{% block body %}
+    <div class="page-wrapper">
+        <main class="main banners-page">
+        </main>
+    </div>
+    <main class="main contact-two mt-10 pt-5">
+        <div class="container">
+            <div class="row ">
+                <div class="col-md-6">
+                    <h1 class="ls-n-10 mb-1 pb-2"><strong>Nous contacter</strong></h1>
+                    {% for message in app.flashes('success') %}
+
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    {{ form_start(form) }}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group required-field">
+                                <label for="contact-name">Nom & Prénom</label>
+                                {{ form_widget(form.firstName) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group required-field">
+                                <label for="contact-email">Téléphone</label>
+                                {{ form_widget(form.phone) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group required-field">
+                                <label for="contact-name">Email</label>
+                                {{ form_widget(form.email) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-subject">Sujet</label>
+                        {{ form_widget(form.sujet) }}
+                    </div>
+                    <div class="form-group mb-0">
+                        <label for="contact-message">Message</label>
+
+                        {{ form_widget(form.message) }}
+                    </div>
+                    <div class="form-footer">
+                        <button type="submit" class="btn btn-primary">Envoyer</button>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+
+                <div class="col-md-6">
+                    <h1 class="contact-title"><strong>Entrer en contact</strong></h1>
+                    <p>fmw-store.tn est votre boutique en ligne spécialisée dans la vente des montres et
+                        lunettes solaires tendances pour hommes et femmes qui apprécient la polyvalence, le style et le confort.</p>
+                    <hr class="mt-3 mb-0" />
+
+                    <div class="contact-info mb-2">
+                        <h2 class="contact-title"><strong>Contact</strong></h2>
+
+                        <div class="porto-sicon-box d-flex align-items-center">
+                            <div class="porto-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <h3 class="porto-sicon-title">
+                                <strong>Adresse:</strong> Tunis lafayette 1002
+                            </h3>
+                        </div>
+                        <div class="porto-sicon-box  d-flex align-items-center">
+                            <div class="porto-icon">
+                                <i class="fa fa-phone"></i>
+                            </div>
+                            <h3 class="porto-sicon-title">
+                                <strong>Téléphone:</strong> 25 037 969 - 28 151 578</h3>
+                        </div>
+                        <div class="porto-sicon-box  d-flex align-items-center">
+                            <div class="porto-icon">
+                                <i class="fa fa-envelope"></i></div>
+                            <h3 class="porto-sicon-title">
+                                <strong>Email:</strong> contact@fmw-store.tn</h3>
+                        </div>
+                    </div>
+                    <hr class="mt-1 mb-0" />
+                    <div class="contact-time">
+                        <h1 class="contact-title"><strong>Heures de travail</strong></h1>
+
+                        <div class="porto-sicon-box d-flex align-items-center">
+                            <div class="porto-icon">
+                                <i class="far fa-clock"></i>
+                            </div>
+                            <h3 class="porto-sicon-title">Lundi
+                                9h à 23h</h3>
+                        </div>
+                        <div class="porto-sicon-box d-flex align-items-center">
+                            <div class="porto-icon">
+                                <i class="far fa-clock"></i>
+                            </div>
+                            <h3 class="porto-sicon-title">Mardi
+                                9h à 23h</h3>
+                        </div>
+                        <div class="porto-sicon-box d-flex align-items-center">
+                            <div class="porto-icon">
+                                <i class="far fa-clock"></i>
+                            </div>
+                            <h3 class="porto-sicon-title">Mercredi
+                                9h à 23h</h3>
+                        </div>
+                        <div class="porto-sicon-box d-flex align-items-center">
+                            <div class="porto-icon">
+                                <i class="far fa-clock"></i>
+                            </div>
+                            <h3 class="porto-sicon-title">Jeudi
+                                9h à 23h</h3>
+                        </div>
+                        <div class="porto-sicon-box d-flex align-items-center">
+                            <div class="porto-icon">
+                                <i class="far fa-clock"></i>
+                            </div>
+                            <h3 class="porto-sicon-title">Vendredi
+                                9h à 23h</h3>
+                        </div>
+                        <div class="porto-sicon-box d-flex align-items-center">
+                            <div class="porto-icon">
+                                <i class="far fa-clock"></i>
+                            </div>
+                            <h3 class="porto-sicon-title">Samedi
+                                9h à 23h</h3>
+                        </div>
+
+                        <div class="porto-sicon-box d-flex align-items-center">
+                            <div class="porto-icon">
+                                <i class="far fa-clock"></i>
+                            </div>
+                            <h3 class="porto-sicon-title">Dimanche
+                                9h à 23h</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

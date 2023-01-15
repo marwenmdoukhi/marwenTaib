@@ -1,0 +1,31 @@
+{% extends 'admin.html.twig' %}
+
+{% block title %}Category{% endblock %}
+
+{% block body %}
+    <div class="sub-header-container">
+        <header class="header navbar navbar-expand-sm">
+            <nav class="breadcrumb-two" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('category_index') }}" >Categorie</a>
+                    </li>
+                    <li class="breadcrumb-item active ml-2"><a href="javascript:void(0);">{{ category.name }}</a></li>
+                </ol>
+            </nav>
+
+        </header>
+    </div>
+    <table class="table table-striped">
+            <tr>
+                <th style="color: #ffffff">Id</th>
+                <td>{{ category.id }}</td>
+            </tr>
+            <tr>
+                <th style="color: #ffffff">Nom</th>
+                <td>{{ category.name }}</td>
+            </tr>
+    </table>
+
+
+
+{% endblock %}

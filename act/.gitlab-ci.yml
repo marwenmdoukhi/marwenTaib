@@ -1,0 +1,15 @@
+stages:
+  - sonar_analysis
+
+# sonar analysis
+sonar_analysis:
+  when: manual
+  only:
+    - development
+  variables:
+    GIT_STRATEGY: clone
+  stage: sonar_analysis
+  script:
+    - sonar-scanner -Dsonar.projectKey=e-assp -Dsonar.sources=.   -Dsonar.host.url=http://172.20.2.16:9000   -Dsonar.login=745d8095832567e7b7e2b8b0bd3c2ada5bd58626
+  tags:
+    - cnb-shell

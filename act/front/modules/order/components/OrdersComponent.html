@@ -1,0 +1,366 @@
+﻿<p-toast position="top-right"></p-toast>
+<create *ngIf="displayCreateOrder" [vm]="vm"></create>
+<consultActComponent [vm]="vm" *ngIf="displayConsultOrder || displaySendTovalidation"></consultActComponent>
+<display-component-validate [vm]="vm" *ngIf="vm.displayValidate==true"></display-component-validate>
+<displaySendToSignature [vm]="vm" *ngIf="vm.displaySentToSignature"></displaySendToSignature>
+<syntheseActeRefusee [vm]="vm" *ngIf="vm.displayActeRefused"></syntheseActeRefusee>
+<AbandonedActComponent [vm]="vm" *ngIf="vm.displayAbandonedAct"></AbandonedActComponent>
+<consultActForAvocatComponent [vm]="vm" *ngIf="vm.displayconsultActForAvocatComponent"></consultActForAvocatComponent>
+<consultSignedActComponent [vm]="vm" *ngIf="vm.displayConsultSignedActComponent"></consultSignedActComponent>
+<allResult [vm]="vm" *ngIf="vm.displayAllResult"></allResult>
+<p-dialog *ngIf="userConnected &&  settingsBtn == true"
+          [(visible)]="displayCX " draggable="false" [responsive]="true" [positionTop]="0" modal="true"
+          styleClass="widthModal"
+          [transitionOptions]="'900ms cubic-bezier(0.25, 0.8, 0.25, 1)'">
+    <div class="modal-header" *ngIf="settingsBtn == false">
+        <h4 class="modal-title main-title">C’est votre première connexion, bienvenue !</h4>
+    </div>
+    <div class="modal-header" *ngIf="settingsBtn == true">
+        <h4 class="modal-title main-title">Bienvenue, merci de renseigner les informations suivantes afin de certifier votre identité.</h4>
+    </div>
+    <div class="modal-body">
+        <h4 *ngIf="settingsBtn == false" class="secondary-title">Merci de renseigner les informations suivantes afin de certifier votre
+            identité</h4>
+        <h5>Tous les champs marqués d’un astérisque (*) sont obligatoires</h5>
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input style="font-size: 14px;!important;" class="form-control disabledDiv" type="text" value="{{ userConnected.name }}">
+                    <label style="font-size: 11px;!important;margin-top: -14px;" for="lastnameId" class="control-label">Nom*</label><i class="bar" style="width: 100%"></i>
+                </div>
+                <div class="form-group">
+                    <input style="font-size: 14px;!important;" id="lastnameId" class="form-control disabledDiv" type="text"
+                           value="{{ userConnected.lastName }}">
+                    <label style="font-size: 11px;!important;margin-top: -14px;" for="lastnameId" class="control-label">Prenom*</label><i class="bar" style="width: 100%"></i>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input  style="font-size: 14px!important;width: 100%" id="emailId" class="form-control disabledDiv" type="email"
+                            value="{{ (userConnected.email!==userConnected.cnbId+'cnb@cnb.fr')&&(userConnected.email!==userConnected.cnbId+'@cnb.fr')?userConnected.email:null }}">
+                    <label style="font-size: 11px!important;margin-top: -14px;" for="emailId" class="control-label">Adresse e-mail*</label><i class="bar" style="width: 100%"></i>
+                </div>
+                <div class="form-group">
+                    <input style="font-size: 14px!important;" id="phoneId" class="form-control disabledDiv" type="text"
+                           value="{{ userConnected.phoneNumber }}">
+                    <label style="font-size: 11px!important;margin-top: -14px;" for="phoneId" class="control-label">Téléphone*</label><i class="bar" style="width: 100%"></i>
+                </div>
+
+            </div>
+        </div>
+        <h5 style="margin-bottom: 36px" class="var-secondary-title">Si les informations ci-dessus ne sont pas à jour, vous pouvez saisir
+            les champs suivants : </h5>
+
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group mt-10">
+                    <input [(ngModel)]="userConnected.emailApp" autocomplete="new-password" style="font-size: 14px!important;width: 100%!important;" id="email" class="form-control" type="email"
+                           (keyup)="checkEmailCnb()" >
+                    <label style="font-size: 11px!important;margin-top: -27px" for="email" class="control-label">Adresse e-mail <i style="color: red" *ngIf="isCnbEmail">*</i> (Cette adresse mail
+                        sera utilisée pour vous envoyer des notifications)</label><i class="bar" style="width: 100%"></i>
+                    <div *ngIf="errorMsg"  class="invalid-styles" >Ceci n'est pas une adresse mail
+                        valide</div>
+                    <div *ngIf="hideMsg"  class="invalid-styles" >Ce champs est obligatoire. Merci de saisir votre email.</div>
+                </div>
+            </div>
+            <div style="margin-top: -19px !important;" class="col-md-2">
+                <div class="form-group mt-10">
+                    <international-phone-number autocomplete="new-password" style="font-size: 14px;width: 100%!important"   [allowedCountries]="allowedCountries()" [(ngModel)]="userConnected.codeCountryApp"   [defaultCountry]="(userConnected.codeCountryApp==='' || userConnected.codeCountryApp===null) ?getCountry():''" id="codeCountrytel"></international-phone-number>
+                    <label id="label" style="font-size: 11px!important;color: gray;margin-top: -20px" for="codeCountrytel" class="control-label truncate-txt">Code pays</label><i
+                        class="bar" style="width: 100%"></i>
+                    <input autocomplete="new-password" style="font-size: 14px!important;visibility: hidden" id="codeCountry" class="form-control" type="tel"
+                           value="{{ userConnected.codeCountryApp }}" pattern="^[+][0-9]+$">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mt-10">
+                    <input autocomplete="new-password" style="font-size: 14px!important;width: 100%!important" id="phone" class="form-control" type="number" onPaste="return false"  [(ngModel)]="userConnected.phoneNumberApp"
+                           pattern="[0-9]$" onkeyup="checkPhoneLength()" (keyup)="checkCnbMobile()">
+                    <label style="font-size: 11px!important;width: 100%;margin-top: -26px" for="phone" class="control-label truncate-txt">Téléphone <i style="color: red" *ngIf="isCnbPhone">*</i> (Ce n° de téléphone sera
+                        utilisé pour vous envoyer des sms)</label><i class="bar" style="width: 100%"></i>
+                    <div *ngIf="errorPhoneMsg"  class="invalid-styles" >Ceci n'est pas un N de tel valide</div>
+                    <div *ngIf="hidePhoneMsg"  class="invalid-styles" >Ce champs est obligatoire. Merci de saisir votre numéro de téléphone.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a type="submit" class="btn next-button pull-right" id="confirm"
+           href="#" onclick="modifyUserEmailAndPhone();" (click)="displayCX=false">
+            Confirmer
+        </a>
+        <button *ngIf="settingsBtn" form="information" type="submit" class="btn  save-button" style="margin-right:20px" data-dismiss="modal" (click)="settingsBtn=false;annuler()">Annuler</button>
+
+    </div>
+</p-dialog>
+
+<div class="search-header" *ngIf=" !displayMyAct">
+    <button class="btn burger-menu-btn visible-xs-block" (click)="vm.toggleSidebar()">
+        <img alt="" src="logo/burger.svg" />
+    </button>
+    <div class="search-input" [ngClass]="vm.inputReasearchBar ? 'search-focused' : ''">
+        <input (focus)="vm.displayDivForReasearchBar=true" 
+               type="text" id="input" [(ngModel)]="vm.inputReasearchBar"
+               pInputText
+               placeholder="Chercher un acte, un document, un contact" />
+        <img alt="" src="/logo/search.svg" />
+        <span *ngIf="vm.inputReasearchBar" class="glyphicon glyphicon-remove-sign" (click)="vm.displayDivForReasearchBar=false;vm.inputReasearchBar=null" style=" cursor:pointer; top: 19px;right: 13px;position: absolute;"></span>
+        <div *ngIf="vm.displayDivForReasearchBar" class="role-name-barre-recherche">
+            <div *ngFor="let c of (vm.allData | barPipe : vm.inputReasearchBar | slice:0:10);index as i" (click)="vm.assignActeModel(c)" style="padding-left: 65px;">
+                <span *ngIf="c.nameActe" [inlineSVG]="'/logo/en-attente.svg'" style="margin-right: 2%; vertical-align: middle;"></span> <span *ngIf="c.nameActe" class="Affaire-Pauline-Grin">{{c.nameActe}}</span><span class="dfendeur" style="margin-left: 1%;" *ngIf="c.nameActe">acte</span>
+                <span *ngIf="c.contactName" [inlineSVG]="'/logo/yellow.svg'" style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.contactName" class="Affaire-Pauline-Grin">{{c.contactLastName | titlecase}} {{c.contactName | uppercase}} contact</span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.contactName">contact</span>
+                <span *ngIf="c.documentName" [inlineSVG]="'/logo/document.svg'" style="margin-right: 2%; vertical-align: middle;"></span><span *ngIf="c.documentName" class="Affaire-Pauline-Grin">{{c.documentName}}.pdf </span><span style="margin-left: 1%;" class="dfendeur" *ngIf="c.documentName">document</span>
+            </div>
+            <div *ngIf="vm.inputReasearchBar" class="role-name-barre-recherche" style="border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;border-top: 1px solid #dadada;">
+                <span class="Voir-tous-les-rsult" (click)="vm.displayAllResult=true;vm.displayDivForReasearchBar=false" style="margin-left: 55px;cursor:pointer">Voir tous les résultats pour « {{vm.inputReasearchBar}} »</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="main-content" [hidden]=" displayMyAct" [ngClass]="vm.inputReasearchBar ? 'overlay' : ''">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="my-acte-title">
+                <span>Mes actes</span>
+                <select [(ngModel)]="sort" (change)="onChangeFiltre($event.target.value)" class="filter-select-options truncate-txt">
+                    <option value="0">Date de dernière modification du plus récent au plus ancien</option>
+                    <option value="1">Date de dernière modification du plus ancien au plus récent</option>
+                    <option *ngIf="userConnected && userConnected.roles && userConnected.roles[0] == 'ROLE_USER'" value="2">Date de signature du plus récent au plus ancien</option>
+                    <option *ngIf="userConnected && userConnected.roles && userConnected.roles[0] == 'ROLE_COUNSEL'" value="2">Date de réception du plus récent au plus ancien</option>
+                    <option *ngIf="userConnected && userConnected.roles && userConnected.roles[0] == 'ROLE_USER'" value="3">Date de signature du plus ancien au plus récent</option>
+                    <option *ngIf="userConnected && userConnected.roles && userConnected.roles[0] == 'ROLE_COUNSEL'" value="3">Date de réception du plus ancien au plus récent</option>
+                    <option value="4">Ordre alphabétique A–Z</option>
+                    <option value="5">Ordre alphabétique Z–A</option>
+                </select>
+            </div>
+            <hr [ngStyle]="{'margin-bottom':userConnected && userConnected.roles && userConnected.roles[0] === 'ROLE_COUNSEL'? '45px' : '' }" class="responsive-hr" />
+            <nav class="acte-status" *ngIf="userConnected && userConnected.roles && userConnected.roles[0] === 'ROLE_COUNSEL'">
+                <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                    <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                        <button #validActs (click)="filterActs($event)" [ngClass]="[true==true ? 'nav-item' : '',  true==true ? 'nav-link' : '', activateFilterClass==false ? 'active-filter' : 'inactive-filter', 'big-pill-large']" id="valid" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false" style="width:auto">A valider</button>
+                        <button #consultActs (click)="filterActs($event) " [ngClass]="[true==true ? 'nav-item' : '',  true==true ? 'nav-link' : '', activateFilterClass==true ? 'active-filter' : 'inactive-filter']" id="consult" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true" style="width:auto">A consulter</button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+       
+        <div class="row">
+            <div class="filters-container">
+                <div class="mr-20">
+                    <p-dropdown *ngIf="userConnected && userConnected.roles && userConnected.roles[0] == 'ROLE_USER'" [options]="choices"
+                                [(ngModel)]="vm.filterChocie"
+                                (ngModelChange)="test(vm.filterChocie)"
+                                [filter]="false"
+                                class="form-control DivFiltre"
+                                [style]="{width: '200px'}"
+                                [autoWidth]="false">
+                    </p-dropdown>
+                    <p-dropdown *ngIf="userConnected && userConnected.roles && userConnected.roles[0] == 'ROLE_COUNSEL'" [options]="choicesAvocat"
+                                [(ngModel)]="vm.filterChocie"
+                                (ngModelChange)="test(vm.filterChocie)"
+                                [filter]="false"
+                                class="form-control DivFiltre"
+                                [style]="{width: '200px'}"
+                                [autoWidth]="false">
+                    </p-dropdown>
+                </div>
+                <div class="p-relative mr-20" *ngIf="vm.filterDateCreation">
+                    <p-calendar [(ngModel)]="vm.creationDate"
+                                dateFormat="dd/mm/yy"
+                                dataType="string"
+                                (ngModelChange)="tableOrders.filter(vm.creationDate, 'requestDate', 'requestDateFilter')"
+                                [locale]="vm.fr"
+                                name="creationDate"
+                                [readonlyInput]="isMobileSize"
+                                icon="fa-pencil-square-o"
+                                class="pCalender"
+                                hourFormat="24"
+                                monthNavigator="true"
+                                selectionMode="range"
+                                [selectOtherMonths]="true"
+                                yearNavigator="true"
+                                yearRange="{{2010}}:{{2020}}"
+                                [style]="{'height':'48px'}"
+                                [inputStyle]="{'width':'226px','height':'48px'}"
+                                inputStyleClass=""
+                                placeholder="Date de dernière modification">
+
+                    </p-calendar>
+                    <em class="fa fa-calendar form-control-feedback align-filter-icon"></em>
+                </div>
+                <div class="p-relative mr-20" *ngIf="vm.filterDateSigning && userConnected && userConnected.roles && userConnected.roles[0] === 'ROLE_USER'">
+                    <p-calendar [(ngModel)]="vm.signatureDate"
+                                dateFormat="dd/mm/yy"
+                                dataType="string"
+                                (ngModelChange)="tableOrders.filter(vm.signatureDate, 'signingDate', 'signingDateFilter')"
+                                [locale]="vm.fr"
+                                name="signatureDate"
+                                appendTo="body"
+                                icon="fa-pencil-square-o"
+                                class="pCalender"
+                                hourFormat="24"
+                                [readonlyInput]="isMobileSize"
+                                monthNavigator="true"
+                                selectionMode="range"
+                                [selectOtherMonths]="true"
+                                yearNavigator="true"
+                                yearRange="{{2010}}:{{2020}}"
+                                [style]="{'height':'48px'}"
+                                [inputStyle]="{'width':'226px','height':'48px'}"
+                                inputStyleClass="form-control fake-disabled-input"
+                                panelStyleClass=""
+                                placeholder="Date de signature">
+                    </p-calendar>
+                    <em class="fa fa-calendar form-control-feedback align-filter-icon"></em>
+                </div>
+                <div class="p-relative mr-20" *ngIf="vm.filterDateSigning && userConnected && userConnected.roles && userConnected.roles[0] === 'ROLE_COUNSEL'">
+                    <p-calendar [(ngModel)]="vm.signatureDate"
+                                dateFormat="dd/mm/yy"
+                                dateFormat="dd/mm/yy"
+                                dataType="string"
+                                (ngModelChange)="tableOrders.filter(vm.signatureDate, 'receptionDate', 'signingDateFilter')"
+                                [locale]="vm.fr"
+                                name="signatureDate"
+                                appendTo="body"
+                                icon="fa-pencil-square-o"
+                                class="pCalender"
+                                [readonlyInput]="isMobileSize"
+                                hourFormat="24"
+                                monthNavigator="true"
+                                selectionMode="range"
+                                [selectOtherMonths]="true"
+                                yearNavigator="true"
+                                yearRange="{{2010}}:{{2020}}"
+                                [style]="{'height':'48px'}"
+                                [inputStyle]="{'width':'226px','height':'48px'}"
+                                inputStyleClass="form-control"
+                                placeholder="Date de récéption">
+                    </p-calendar>
+                    <em class="fa fa-calendar form-control-feedback align-filter-icon"></em>
+                </div>
+                <div class="mr-20" *ngIf="activFilterStatus">
+                    <p-dropdown [options]="vm.statuts"
+                                [filter]="true"
+                                [(ngModel)]="vm.choosenStatuts"
+                                placeholder="Statut"
+                                (ngModelChange)="tableOrders.filter($event, 'status', equal)"
+                                class="form-control DivFiltre"
+                                [style]="{width: '200px'}"
+                                [autoWidth]="false">
+                    </p-dropdown>
+                </div>
+                <div *ngIf="orderTableMesActes ==false || vm.choosenStatuts || vm.filterDateCreation || vm.filterDateSigning|| vm.filterChocie  || vm.creationDate " style="margin-left: auto;" (click)=" initializeFilterAndSorting(dd);" class="cursor-pointer">
+                    <button type="button" class="close"  aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                    <span style="margin-right: 5px;vertical-align: middle;">Supprimer les filtres</span>
+                </div>
+            </div>
+        </div>
+        <div class="row create-folder-section blue-border" *ngIf="userConnected && userConnected.roles && userConnected.roles[0] === 'ROLE_USER' && readyOnlyForUser===true" (click)="create()">
+            <img src="/logo/active.svg" class="active" alt="add folder" />
+            <span>Créer un nouvel acte</span>
+        </div>
+        <div class="row">
+            <p-table #tableOrders [style]="{'margin-top':'-10px','width':'100%','margin-bottom':'20px'}"
+                     [value]="vm.listOrder"
+                     [rows]="25"
+                     selectionMode="single"
+                     compareSelectionBy="equals"
+                     [paginator]="true"
+                     (onFilter)="isEmpty($event)"
+                     [pageLinks]="3"
+                     [responsive]="true"
+                     [globalFilterFields]="['folderName','name','requestDate','signingDate','status']">
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th id="th" *ngFor="let col of vm.columns" class="ref" pSortableColumnDisabled="true"
+                            [ngStyle]="styleObject(col)">
+                            {{col.header}}
+                            <p-sortIcon *ngIf="true === false" [field]="col.colkey"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-order>
+                    <tr [attr.disable]="!reloadComplete" *ngIf="showAbondonne(order.status,vm.choosenStatuts)" class="RowMesActes border_bottom" style="height: 65px;font-family: Palanquin,serif;cursor: pointer;" (click)="vm.assignActeModel(order);">
+                        <td>
+                            <span style="float: left" class="Oval-Copy"><img alt="" src="/logo/dossier.svg" class="active" style="margin-top:7px;vertical-align: super;width: 24px;height: 19px;object-fit: contain;"></span>
+                            <div style="padding-left: 4%;display: inline-block;width: 90px">
+                                <div tooltip=" {{order.name}}" placement="top" show-delay="200" class="truncate-txt" *ngIf="order.status != 'Signee'" style="vertical-align: super;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color:#1c1e25;">
+                                    {{order.name}}
+                                </div>
+                                <div tooltip=" {{order.name}}" placement="top" show-delay="200" *ngIf="order.status == 'Signee'" style="vertical-align: super;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color:#1c1e25;" class="truncate-txt">
+                                    {{order.name}}
+                                </div>
+                                <div style="font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color: #51596d">
+                                    <span *ngIf="order.folderNumber != null"
+                                          style="vertical-align: super;font-size: 12px;"> {{order.folderNumber}}</span>
+                                    <span *ngIf="order.folderNumber == null" style="vertical-align: super;">-</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="truncate-txt" tooltip=" {{order.folderName}}" placement="top" show-delay="200" style="vertical-align: super;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;color:#1c1e25">
+                                {{order.folderName}}
+                            </div>
+                            <div class="truncate-txt" tooltip="{{order.internalNumber}}" placement="top" show-delay="200" style="font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.33;letter-spacing: normal;color: #51596d">
+                                {{order.internalNumber}}
+                            </div>
+                        </td>
+                        <td class="hidden-xs" style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25">
+                            {{vm.getRequestDate(order)}}
+                        </td>
+                        <td class="visible-xs" style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25">
+                            Date de dernière modification :  {{vm.getRequestDate(order)}}
+                        </td>
+                        <td *ngIf="userConnected && userConnected.roles && userConnected.roles[0] === 'ROLE_COUNSEL'">
+                            <div class="hidden-xs" style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25"
+                                 *ngIf="order.receptionDate !=null">
+                                {{vm.getReceptionDate(order)}}
+                            </div>
+                            <div class="visible-xs" style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25"
+                                 *ngIf="order.receptionDate !=null">
+                                Date de réception : {{vm.getReceptionDate(order)}}
+                            </div>
+                            <div style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;margin-left:16%;letter-spacing: normal;color:#1c1e25"
+                                 *ngIf="order.receptionDate ==null">
+                                -
+                            </div>
+                        </td>
+                        <td *ngIf="userConnected && userConnected.roles && userConnected.roles[0] === 'ROLE_USER'">
+                            <div class="hidden-xs" style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25"
+                                 *ngIf="order.signingDate !=null">
+                                {{order.signingDate}}
+                            </div>
+                            <div class="visible-xs" style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;color:#1c1e25"
+                                 *ngIf="order.signingDate !=null">
+                                Date de signature : {{order.signingDate}}
+                            </div>
+                            <div style="font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;margin-left:16%;letter-spacing: normal;color:#1c1e25"
+                                 *ngIf="order.signingDate ==null">
+                                -
+                            </div>
+                        </td>
+                        <td>
+                            <div *ngIf="order.status == 'Validation refusee' || order.status=='Signature refusee'"
+                                 style=" font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;text-align: center;color:#e21647">
+                                <span><em class="fa fa-close" style="color: #e21647"></em></span>
+                                <span>{{vm.getStatut(order.status)}}</span>
+                            </div>
+                            <div *ngIf="order.status != 'Validation refusee' && order.status !='Signature refusee'"
+                                 style=" font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;text-align: center;color:#1c1e25">
+                                {{vm.getStatut(order.status)}}
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <div *ngIf="noRecordMsgFlag">
+                <p style="border:1px solid #0000ff1f;text-align: center;">Aucun élément ne correspond à votre recherche</p>
+            </div>
+        </div>
+    </div>
+</div>

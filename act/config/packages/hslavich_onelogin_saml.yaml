@@ -1,0 +1,40 @@
+hslavich_onelogin_saml:
+  # Basic settings
+  idp:
+    entityId: 'https://preprod-idp.avocat.fr'
+    singleSignOnService:
+      url: 'https://preprod-idp.avocat.fr:443/auth/SSORedirect/metaAlias/RealmCNB/Identitas-IDP'
+      binding: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
+    singleLogoutService:
+      url: 'https://preprod-idp.avocat.fr:443/auth/IDPSloRedirect/metaAlias/RealmCNB/Identitas-IDP'
+      binding: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
+    x509cert: 'MIIC0jCCAjugAwIBAgIEfl8IKDANBgkqhkiG9w0BAQsFADCBmzELMAkGA1UEBhMCRlIxDzANBgNVBAgTBkZyYW5jZTEOMAwGA1UEBxMFUGFyaXMxJjAkBgNVBAoTHUNvbnNlaWwgTmF0aW9uYWwgZGVzIEJhcnJlYXV4MSYwJAYDVQQLEx1Db25zZWlsIE5hdGlvbmFsIGRlcyBCYXJyZWF1eDEbMBkGA1UEAxMSQ05CIFNBTUwgc2lnbmF0dXJlMB4XDTE1MTIxNTExMjA1MloXDTE3MTIxNDExMjA1MlowgZsxCzAJBgNVBAYTAkZSMQ8wDQYDVQQIEwZGcmFuY2UxDjAMBgNVBAcTBVBhcmlzMSYwJAYDVQQKEx1Db25zZWlsIE5hdGlvbmFsIGRlcyBCYXJyZWF1eDEmMCQGA1UECxMdQ29uc2VpbCBOYXRpb25hbCBkZXMgQmFycmVhdXgxGzAZBgNVBAMTEkNOQiBTQU1MIHNpZ25hdHVyZTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA7pCqVSYE3c5aZ2f244uIKXp82aQZqQh6qFwewjTpHNxjqhb8Dma1MV/hjl/SuqHUqs7CnUMBfR2nSKa34tDQNdCSgOq/hjh/J6pemvjG5m9/osf9VoS5eLgQZtxMl02D+gerA9rRL6kZJYXBsCpAWSVrw6JNWHKpKjn5sMEkcSMCAwEAAaMhMB8wHQYDVR0OBBYEFFP/PXJxHivZ1MsvAxOLpoYPG0ayMA0GCSqGSIb3DQEBCwUAA4GBAM7ycLmAXBesqhTVKl98zVuHa985p6ekVv2fUNDHZMVHX39mWhAZ3f4rsAcAu8cCKFZ+Ct3wWZX5vnr6nJVTcrlOeZ6ws78bJZGGVLARxy/SPpCaxZD9E3pwYfQcMPGCq4k6G3C/QGrV1MVqUH/3/IfoOx76A4NPYceDTYhZaIaI'
+  sp:
+    entityId: 'SP-PP_assp'
+    NameIDFormat: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient'
+    assertionConsumerService:
+      url: '%env(HOST)%saml/acs'
+      binding: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
+    singleLogoutService:
+      url: '%env(HOST)%logout'
+      binding: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
+    x509cert: '%env(PUBLIC_KEY)%'
+    privateKey: '%env(PRIVATE_KEY)%'
+  # Optional settings
+  strict: false
+  debug: true
+  security:
+    nameIdEncrypted:       false
+    authnRequestsSigned:   false
+    logoutRequestSigned:   false
+    logoutResponseSigned:  false
+    wantMessagesSigned:    false
+    wantAssertionsSigned:  false
+    wantNameIdEncrypted:   false
+    requestedAuthnContext: true
+    signMetadata: true
+    wantXMLValidation: false
+    signatureAlgorithm: 'http://www.w3.org/2001/04/xmlenc#aes128-cbc'
+    digestAlgorithm: 'http://www.w3.org/2001/04/xmlenc#'
+
+

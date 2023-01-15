@@ -1,0 +1,91 @@
+
+        {% if not app.user %}
+            <div style="width: 100%">
+                <div style="display: none" class=" test alert alert-danger text-center">Nom d'utilisateur ou mot de passe invalide </div>
+                <div style="display: none" class=" success  alert alert-success text-center ">Bienvenue à fashion for men and women</div>
+            </div>
+
+            <div class="signin-form">
+                <form  name="loginheader" action="{{ path('account_login') }}" method="post"   class="needs-validation" style="    margin-bottom:7px; margin-top: 7px;">
+                <div class="form-group">
+                    <label for="email" class="mb-1 text-2 opacity-8">Adresse Email *</label>
+                    <input type="text" name="_username" id="email"
+                                                      class="form-control form-control-lg  lesinputs"
+                                                      placeholder="Adresse Email  " required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="mb-1 text-2 opacity-8">Mot de passe *</label>
+                         <input type="password" name="_password" id="password"
+                                                             class="form-control-lg  form-control lesinputs"
+                                                             placeholder="Mote de passe  " required>
+                    </div>
+
+                    <div class="actions">
+                        <div class="form-row">
+                            <div class="col d-flex justify-content-end">
+                                <button  class="btn btn-block button-loader" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Login" type="submit">
+                                    Connexion
+                                </button>
+                            </div>
+                        </div>
+                        <a class="text-uppercase text-1 font-weight-bold text-color-dark mt-1"  href="{{ path('reset_password') }}">MOT DE PASSE PERDU?</a>
+
+                    </div>
+
+                    <div class="extra-actions mt-1">
+                        <p>Vous n'avez pas encore de compte ?
+                            <a href="{{ path('account_register') }}" class="text-uppercase text-1 font-weight-bold text-color-dark">S'inscrire</a></p>
+                    </div>
+                </form>
+            </div>
+
+        {% else %}
+
+
+            <ul class="   nav nav-list flex-column " >
+                <li class=" menu-profil nav-item  sansborder">
+                    <a  href="{{ path('editerprofil')}}"   style="color: #0c0b09">
+                        <i style="color:#ffb4b4;" data-feather="user"></i>
+                        <div class=" d-flex">
+                            <h6 class="profi" style=" position: relative; left: 5px; top: 5px;">Modifier Mes informations</h6>
+                        </div>
+                    </a>
+                </li>
+
+                <li class=" menu-profil nav-item  sansborder">
+                    <a  href="{{ path('user_password')}}"   style="color: #0c0b09">
+                        <i style="color:#ffb4b4;" data-feather="user"></i>
+                        <div class=" d-flex">
+                            <h6 class="profi" style=" position: relative; left: 5px; top: 5px;">Modifier Mot de Passe</h6>
+                        </div>
+                    </a>
+                </li>
+                <li class=" menu-profil nav-item  sansborder">
+                    <a href="{{ path('mescommande')}}"   style="color: #0c0b09">
+                        <i style="color:#ffb4b4;" data-feather="user"></i>
+                        <div class=" d-flex">
+                            <h6 class="profi" style=" position: relative; left: 5px; top: 5px;">Mes demandes</h6>
+                        </div>
+                    </a>
+                </li>
+                <li class=" menu-profil nav-item  sansborder">
+                    <a href="{{ path('historique')}}"   style="color: #0c0b09">
+                        <i style="color:#ffb4b4;" data-feather="user"></i>
+                        <div class=" d-flex">
+                            <h6 class="profi" style=" position: relative; left: 5px; top: 5px;">Historique</h6>
+                        </div>
+                    </a>
+                </li>
+                <li class=" menu-profil nav-item  sansborder">
+                    <a href="{{ path('account_logout')}}"   style="color: #0c0b09">
+                        <i style="color:#ffb4b4;" data-feather="user"></i>
+                        <div class=" d-flex">
+                            <h6 class="profi" style=" position: relative; left: 5px; top: 5px;"> Se déconnecter</h6>
+                        </div>
+                    </a>
+                </li>
+
+
+            </ul>
+        {% endif %}
+
